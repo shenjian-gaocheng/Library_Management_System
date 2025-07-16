@@ -28,8 +28,7 @@
     
     Windows → Installers → x64下载并运行exe
 
-#### 2.三个小组分别开启分支
-- 根据小组更换环境变量/books_management_system/backend/.env.development下的DB_USERNAME，这控制了后端向服务器哪个用户发出api调用
+#### 2.三个小组分别创建分支reader book admin
 
 - 提交
 
@@ -58,7 +57,7 @@ dotnet watch run
 
 - 数据库代码运行方式
 
-方案一 (图形化，推荐)拖拽到sql develop运行，sql develop连接到远程服务器运行代码
+方案一 (图形化，推荐)vscode在项目中写完sql语句，拖拽到sql develop运行，sql develop上执行的代码就是服务器执行的代码
 
 方案二 (命令行)vscode远程连接服务器控制台运行sql代码
 
