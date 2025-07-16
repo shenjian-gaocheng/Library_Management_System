@@ -28,11 +28,20 @@
     
     Windows → Installers → x64下载并运行exe
 
--  更换环境变量/books_management_system/backend/.env.development
+#### 2.三个小组分别开启分支
+- 根据小组更换环境变量/books_management_system/backend/.env.development下的DB_USERNAME，这控制了后端向服务器哪个用户发出api调用
 
-   ![alt text](image.png)
+- 提交
 
-#### 2.开发环境启动方式 前端后端都运行在本地+数据库运行在远程服务器（大家在window上这样启动）
+   你的分支 (your-branch) → git merge main → 测试冲突 → 解决冲突 → 测试通过 → 合并到 main
+                 
+         ↑                                      |
+                  
+         |______________________________________|
+                  提前发现问题
+
+
+#### 3.开发环境启动方式 前端后端都运行在本地+数据库运行在远程服务器（大家在window上这样启动）
 
 - 前端
 ```
@@ -53,7 +62,7 @@ dotnet watch run
 
 方案二 (命令行)vscode远程连接服务器控制台运行sql代码
 
-#### 3.部署后服务器上启动方式
+#### 4.部署后服务器上启动方式
 - 前端
 ```
 cd frontend
