@@ -50,9 +50,9 @@ npm run dev    # 自动读取 .env.development
 
 - 后端
 ```
-cd backend
-export ASPNETCORE_ENVIRONMENT=Development
-dotnet watch run
+# Windows PowerShell
+set ASPNETCORE_ENVIRONMENT=Development
+dotnet run
 ```
 
 - 数据库代码运行方式
@@ -66,4 +66,10 @@ dotnet watch run
 ```
 cd frontend
 npm run build     # 读取 .env.production
+```
+
+- 后端
+```
+export ASPNETCORE_ENVIRONMENT=Production
+dotnet backend.dll
 ```

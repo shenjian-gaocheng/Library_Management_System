@@ -7,12 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Oracle EF Core 驱动 -->
-    <PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.0" />
-    <!-- 用于从 .env 加载环境变量 -->
+    <!-- Oracle ADO.NET 驱动（用于 Dapper） -->
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
+
+    <!-- Dapper ORM -->
+    <PackageReference Include="Dapper" Version="2.0.123" />
+
+    <!-- 可选：用于从 .env 文件加载环境变量 -->
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
-    <!-- JWT 身份验证 -->
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.10" />
+
+    <!-- Swagger 用于 API 文档 -->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
   </ItemGroup>
 

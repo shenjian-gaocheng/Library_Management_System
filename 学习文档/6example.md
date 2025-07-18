@@ -1,4 +1,4 @@
-﻿# 示例项目： book组 图书的查找功能
+﻿# 示例项目： book组 图书的查找功能，先分支
 ## 1.目录
 
     library_system/
@@ -62,6 +62,7 @@
 
 ## 3.后端层
 ### 1.BookController.cs
+    using Microsoft.AspNetCore.Mvc;
     [ApiController]
     [Route("api/[controller]")]
     public class BookController : ControllerBase
@@ -130,28 +131,47 @@
 ### 5.Program.cs
     var builder = WebApplication.CreateBuilder(args);
 
-    // 添加控制器
+    // 输出当前环境（Development / Production）
+    Console.WriteLine($"当前运行环境: {builder.Environment.EnvironmentName}");
+
+    // 添加控制器服务
     builder.Services.AddControllers();
 
-    // 连接字符串
+    // 添加 CORS 支持（便于前端访问）
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy
+                .AllowAnyOrigin()      // 生产环境可替换为具体域名
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+    });
+
+    // 日志输出到控制台（调试用）
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+
+    // 读取连接字符串（根据环境自动读取 appsettings.Development.json 或 appsettings.Production.json）
     var connectionString = builder.Configuration.GetConnectionString("OracleDB");
 
-    // 注册服务
+    // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
     builder.Services.AddSingleton(new BookRepository(connectionString));
     builder.Services.AddTransient<BookService>();
 
     var app = builder.Build();
+
+    // 使用 CORS（顺序要在 MapControllers 之前）
+    app.UseCors();
+
+    // 启用控制器路由
     app.UseRouting();
     app.MapControllers();
 
+    // 启动应用
     app.Run();
-### 6.appsettings.json
-    {
-        "ConnectionStrings": {
-            "OracleDB": "User Id=your_user;Password=your_pass;Data Source=your_oracle_db"
-        }
-    }
-### 7.运行方法
+### 6.运行方法
 - 开发时：运行在本地
 ```
 export ASPNETCORE_ENVIRONMENT=Development
