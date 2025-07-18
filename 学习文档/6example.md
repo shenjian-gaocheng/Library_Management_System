@@ -174,7 +174,7 @@
 ### 6.运行方法
 - 开发时：运行在本地
 ```
-export ASPNETCORE_ENVIRONMENT=Development
+set ASPNETCORE_ENVIRONMENT=Development
 dotnet watch run
 ```
 - 答辩前运行在服务器
@@ -182,15 +182,23 @@ dotnet watch run
 export ASPNETCORE_ENVIRONMENT=Production
 dotnet watch run
 ```
-## 4.前端层
+### 7.测试方法
+    http://localhost:5000/api/book/search?keyword=操作系统
+
+## 4.前端层(   无需重复 npm install axios)
 ### 1.api.js
+    import http from '@/services/http.js' 
+
     export function getBooks(keyword) {
-        return http.get('/api/book/search', { params: { keyword } });
+    return http.get('/book/search', {
+        params: { keyword }
+    })
     }
-### 2.BookSearchPage.vue
+### 2./component/BookSearchComponent.vue
+    <!-- BookSearch.vue -->
     <script setup>
     import { ref } from 'vue'
-    import { getBooks } from './api.js'
+    import { getBooks } from '../api.js'  // 根据你的模块路径，调整为相对路径
 
     const keyword = ref('')
     const books = ref([])
@@ -202,14 +210,31 @@ dotnet watch run
     </script>
 
     <template>
-    <input v-model="keyword" placeholder="请输入书名或作者" />
-    <button @click="search">搜索</button>
+    <div class="book-search">
+        <input v-model="keyword" placeholder="请输入书名或作者" />
+        <button @click="search">搜索</button>
 
-    <div v-for="book in books" :key="book.BookID">
+        <div v-for="book in books" :key="book.BookID">
         <p>{{ book.Title }} - {{ book.Author }}</p>
+        </div>
     </div>
     </template>
-### 3.运行方法
+
+    <style scoped>
+    .book-search {
+    padding: 1rem;
+    }
+    input {
+    margin-right: 0.5rem;
+    }
+    </style>
+### 3.调用组件
+
+    import BookSearch from '@/modules/book/components/BookSearch.vue'
+
+
+    <BookSearch />
+### 4.运行方法
 - 开发时
 ```
 npm run dev
