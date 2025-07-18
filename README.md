@@ -18,7 +18,7 @@
     node -v
     npm -v
     ```
- - 下载并锁定依赖
+ -
     ```
     npm install
     ```
@@ -27,6 +27,10 @@
     https://dotnet.microsoft.com/en-us/download/dotnet/8.0
     
     Windows → Installers → x64下载并运行exe
+ - 
+   ```
+   npm install axios
+   ```
 
 #### 2.三个小组分别创建分支reader book admin
 
