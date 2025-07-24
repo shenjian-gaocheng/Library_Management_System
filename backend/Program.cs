@@ -4,7 +4,12 @@
 Console.WriteLine($"当前运行环境: {builder.Environment.EnvironmentName}");
 
 // 添加控制器服务
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
+
 
 // 添加 CORS 支持（便于前端访问）
 builder.Services.AddCors(options =>
@@ -23,8 +28,8 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
 // 读取连接字符串（根据环境自动读取 appsettings.Development.json 或 appsettings.Production.json）
-var connectionString = builder.Configuration.GetConnectionString("OracleDB");
-
+var connectionString = builder.Configuration.GetConnectionString("OracleDB")
+                      ?? throw new InvalidOperationException("缺少 OracleDB 连接字符串配置");
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
 builder.Services.AddTransient<BookService>();
