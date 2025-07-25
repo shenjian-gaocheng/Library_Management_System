@@ -40,6 +40,8 @@ const navItems = [
   { path: '/research', label: '科研支持' },
   { path: '/culture', label: '文化活动' },
   { path: '/community', label: '互动交流' },
+
+  { path: '/admin/librarians', label: '管理员管理' },
 ] as const
 
 type NavItem = (typeof navItems)[number]

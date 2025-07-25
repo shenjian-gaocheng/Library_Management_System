@@ -5,7 +5,9 @@ import LayoutDefault from '@/shared/components/layouts/LayoutDefault.vue';
 <template>
   <main>
     <LayoutDefault>
-      <div>活動資訊</div>
+
+      <router-view />
+      
     </LayoutDefault>
   </main>
 </template>
