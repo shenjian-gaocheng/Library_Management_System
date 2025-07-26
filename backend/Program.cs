@@ -1,42 +1,24 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using backend;
 
-// 输出当前环境（Development / Production）
+var builder = WebApplication.CreateBuilder(args);
+
+// 输出当前环境
 Console.WriteLine($"当前运行环境: {builder.Environment.EnvironmentName}");
 
-// 添加控制器服务
-builder.Services.AddControllers();
-
-// 添加 CORS 支持（便于前端访问）
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy
-            .AllowAnyOrigin()      // 生产环境可替换为具体域名
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
-
-// 日志输出到控制台（调试用）
+// 日志配置
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-// 读取连接字符串（根据环境自动读取 appsettings.Development.json 或 appsettings.Production.json）
-var connectionString = builder.Configuration.GetConnectionString("OracleDB");
-
-// 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
-builder.Services.AddSingleton(new BookRepository(connectionString));
-builder.Services.AddTransient<BookService>();
+// 添加 Startup 并手动调用其方法
+var startup = new Startup(builder.Configuration);
+startup.ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
-// 使用 CORS（顺序要在 MapControllers 之前）
-app.UseCors();
-
-// 启用控制器路由
-app.UseRouting();
-app.MapControllers();
+// 中间件配置
+var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+var logger = loggerFactory.CreateLogger<Startup>();
+startup.Configure(app, app.Environment, logger);
 
 // 启动应用
 app.Run();

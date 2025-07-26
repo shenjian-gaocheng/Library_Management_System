@@ -1,4 +1,4 @@
-﻿import axios from 'axios'
+import axios from 'axios'
 
 // 创建 axios 实例，统一使用环境变量中的 API 地址
 const http = axios.create({
@@ -7,6 +7,15 @@ const http = axios.create({
   headers: {
     'Content-Type': 'application/json'
   }
+})
+
+// 自动带上 JWT Token
+http.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
 })
 
 export default http
