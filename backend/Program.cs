@@ -61,19 +61,29 @@ builder.Services.AddDbContext<OracleDbContext>(options =>
 
 // --- 注册控制器和 Swagger (您原有的) ---
 builder.Services.AddControllers();
+
+// 【核心修正】在 AddControllers 后面追加 AddJsonOptions 配置
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    // 配置 JSON 序列化器，使其自动将属性名转换为 camelCase
+    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // --- ↓↓↓ 我们新增的服务注册代码 ↓↓↓ ---
 // 为“管理员增删改查”功能注册 Repository 和 Service。
 // 我们使用 Dapper，所以这里是独立于 EF Core 的。
-// AddSingleton: 对于 Repository 来说是好的选择，因为它无状态且线程安全。
+
+// 1. 注册“管理员增删改查”功能所需的服务
+// 【注意】这一部分很可能是您之前缺失的！
 builder.Services.AddSingleton(new AdminRepository(connString));
-// AddTransient: Service 每次被请求时都会创建一个新的实例。
 builder.Services.AddTransient<AdminService>();
-// --- ↑↑↑ 新增代码结束 ↑↑↑ ---
 
-
+// 2. 注册“公告发布”功能所需的服务
+builder.Services.AddSingleton(new library_system.Repositories.Admin.AnnouncementRepository(connString));
+builder.Services.AddTransient<library_system.Services.Admin.AnnouncementService>();
 // --- JWT 身份验证 (您原有的) ---
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -124,4 +134,6 @@ app.MapControllers();           // 映射控制器路由
 // ===================================================================
 // 6. 运行应用
 // ===================================================================
+
+
 app.Run();

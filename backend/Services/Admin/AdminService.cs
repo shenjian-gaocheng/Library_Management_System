@@ -1,3 +1,6 @@
+// 文件: backend/Services/Admin/AdminService.cs
+// 这是修正后的完整代码
+
 using library_system.DTOs.Admin;
 using library_system.Repositories.Admin;
 using System.Collections.Generic;
@@ -14,7 +17,9 @@ namespace library_system.Services.Admin
             _repository = repository;
         }
 
-        public Task<IEnumerable<LibrarianDto>> GetAllLibrariansAsync() => _repository.GetAllAsync();
+        // 【修正】移除了这里的 string? keyword 参数，使其与 Repository 匹配
+        public Task<IEnumerable<LibrarianDto>> GetAllLibrariansAsync() => _repository.GetAllAsync(); 
+        
         public Task<LibrarianDto> CreateLibrarianAsync(CreateLibrarianDto librarianDto) => _repository.CreateAsync(librarianDto);
         public Task<bool> UpdateLibrarianAsync(string id, UpdateLibrarianDto librarianDto) => _repository.UpdateAsync(id, librarianDto);
         public Task<bool> DeleteLibrarianAsync(string id) => _repository.DeleteAsync(id);

@@ -41,7 +41,9 @@ const navItems = [
   { path: '/culture', label: '文化活动' },
   { path: '/community', label: '互动交流' },
 
-  { path: '/admin/librarians', label: '管理员管理' },
+  // --- 管理员专属链接 ---
+  { path: '/admin/librarians', label: '账户管理' }, // 您已有的
+  { path: '/admin/announcements', label: '公告管理' } // <-- 【新增】在这里添加这一行
 ] as const
 
 type NavItem = (typeof navItems)[number]

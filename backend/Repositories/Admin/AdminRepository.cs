@@ -16,9 +16,9 @@ namespace library_system.Repositories.Admin
         }
 
         // 查 (所有)
-        public async Task<IEnumerable<LibrarianDto>> GetAllAsync()
+        public async Task<IEnumerable<LibrarianDto>> GetAllAsync() // <-- 确保这里没有参数
         {
-            var sql = "SELECT LibrarianID, Name, Permission FROM librarian_view"; // 从视图查询
+            var sql = "SELECT LibrarianID, Name, Permission FROM librarian_view";
             using var connection = new OracleConnection(_connectionString);
             return await connection.QueryAsync<LibrarianDto>(sql);
         }

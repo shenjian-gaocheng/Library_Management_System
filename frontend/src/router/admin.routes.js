@@ -1,10 +1,15 @@
 ﻿// 文件: frontend/src/router/admin.routes.js
+// 这个文件现在包含了所有管理员相关的路由
+
 export default [
   {
-    path: '/admin/librarians', // 使用一个清晰的路径
+    path: '/admin/librarians',
     name: 'AdminLibrarianManagement',
-    // 使用懒加载方式引入页面组件
     component: () => import('@/modules/admin/pages/LibrarianManagementPage.vue')
+  },
+  {
+    path: '/admin/announcements',
+    name: 'AdminAnnouncementManagement',
+    component: () => import('@/modules/admin/pages/AnnouncementManagementPage.vue')
   }
-  // ... 其他管理员相关的路由
 ];
