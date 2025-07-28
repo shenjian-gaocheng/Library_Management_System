@@ -30,9 +30,11 @@ builder.Logging.AddConsole();
 // 读取连接字符串（根据环境自动读取 appsettings.Development.json 或 appsettings.Production.json）
 var connectionString = builder.Configuration.GetConnectionString("OracleDB")
                       ?? throw new InvalidOperationException("缺少 OracleDB 连接字符串配置");
+
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
 builder.Services.AddTransient<BookService>();
+
 
 var app = builder.Build();
 
