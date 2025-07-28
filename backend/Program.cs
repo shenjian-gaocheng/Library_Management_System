@@ -31,6 +31,11 @@ builder.Logging.AddConsole();
 var connectionString = builder.Configuration.GetConnectionString("OracleDB")
                       ?? throw new InvalidOperationException("缺少 OracleDB 连接字符串配置");
 
+// 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
+builder.Services.AddSingleton(new BookRepository(connectionString));
+builder.Services.AddTransient<BookService>();
+
+
 var app = builder.Build();
 
 // 使用 CORS（顺序要在 MapControllers 之前）
