@@ -61,6 +61,21 @@
 ### 4.我已经插入部分数据，数据先不要自行insert，过几天统一导入
 
 ## 3.后端层
+### 总览
+    前端请求
+    ↓
+    [Controller] BookController.cs        ← 接收请求，做参数处理
+    ↓
+    [Service] BookService.cs              ← 实现业务逻辑/组合数据
+    ↓
+    [Repository] BookRepository.cs        ← 直接操作数据库
+    ↓
+    数据库（Oracle）                     ← 查询 book_detail_view 视图
+    ↓
+    返回 DTO 列表 BookDetailDto.cs       ← 每一项是一本书的数据结构
+    ↑
+    JSON 返回到前端
+
 ### 1.BookController.cs
     using Microsoft.AspNetCore.Mvc;
     [ApiController]
@@ -135,7 +150,11 @@
     Console.WriteLine($"当前运行环境: {builder.Environment.EnvironmentName}");
 
     // 添加控制器服务
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.PropertyNamingPolicy = null;
+        });
 
     // 添加 CORS 支持（便于前端访问）
     builder.Services.AddCors(options =>
@@ -154,8 +173,8 @@
     builder.Logging.AddConsole();
 
     // 读取连接字符串（根据环境自动读取 appsettings.Development.json 或 appsettings.Production.json）
-    var connectionString = builder.Configuration.GetConnectionString("OracleDB");
-
+    var connectionString = builder.Configuration.GetConnectionString("OracleDB")
+                        ?? throw new InvalidOperationException("缺少 OracleDB 连接字符串配置");
     // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
     builder.Services.AddSingleton(new BookRepository(connectionString));
     builder.Services.AddTransient<BookService>();
