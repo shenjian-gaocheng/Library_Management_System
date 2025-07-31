@@ -19,11 +19,13 @@
   padding: 1.5rem 1rem;
   font-size: 0.9rem;
   margin-top: auto;
+  position: relative;
 }
 
 .footer-content {
   max-width: 1200px;
   margin: auto;
   line-height: 1.6;
+  
 }
 </style>

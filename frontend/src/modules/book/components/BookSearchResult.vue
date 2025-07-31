@@ -1,5 +1,5 @@
 ﻿<template>
-  <section class="search-result-wrapper">
+  <section class="search-result-wrapper bg-gray-100">
     <h2 class="title">搜索结果："{{ keyword }}"</h2>
 
     <div v-if="loading" class="loading">加载中...</div>
@@ -8,11 +8,25 @@
 
     <div v-else>
       <p v-if="books.length === 0" class="empty">未找到相关图书</p>
-      <ul v-else class="book-list">
-        <li v-for="book in books" :key="book.BookID" class="book-card">
-          <h3>{{ book.Title }}</h3>
-          <p class="author">作者：{{ book.Author }}</p>
-        </li>
+      <ul v-else class="flex flex-wrap gap-6 justify-center">
+        <div v-for="book in books" :key="book.ISBN" class="wr_suggestion_card_wrapper">
+          <div class="wr_suggestion_card_content">
+            <img
+              :src="`/covers/${book.ISBN}.jpg`"
+              alt="封面"
+              class="fixed-cover-size"
+              @error="e => (e.target.src = defaultCover)"
+            />
+            <div class="mt-4 text-center">
+              <div class="text-base font-semibold leading-tight">
+                {{ book.Title }}
+              </div>
+              <div class="text-sm text-gray-600 mt-1">
+                作者：{{ book.Author }}
+              </div>
+            </div>
+          </div>
+        </div>
       </ul>
     </div>
   </section>
@@ -28,6 +42,9 @@ const keyword = ref(route.query.q || '')
 const books = ref([])
 const loading = ref(false)
 const error = ref('')
+
+// 默认封面
+const defaultCover = new URL('@/assets/book_cover_default.jpg', import.meta.url).href
 
 async function fetchBooks() {
   if (!keyword.value) return
@@ -54,14 +71,15 @@ watch(
     fetchBooks()
   }
 )
+
 </script>
 
 <style scoped>
 .search-result-wrapper {
-  position: absolute;
-  max-width: 900px;
+  position: relative;
   margin: 2rem auto;
-  padding: 0 1rem;
+  padding: 0 12rem;
+  color:#666;
 }
 .title {
   font-size: 1.25rem;
@@ -76,35 +94,43 @@ watch(
   padding: 2rem 0;
   color: #666;
 }
-.book-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1rem;
+
+
+.wr_suggestion_card_wrapper {
+  background: #ffffff; 
+  border: 1px solid #e5e7eb; /* 添加浅灰色边框 */
+  border-radius: 12px;
+  box-sizing: border-box;
+  cursor: pointer;
+  padding: 40px 20px;
+  transition: transform 0.3s;
+  width: 282px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* 轻微阴影 */
 }
-.book-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+.wr_suggestion_card_wrapper:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
-.book-card h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
+
+.wr_suggestion_card_content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 100%;
 }
-.book-card .author {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 0.5rem;
-}
-.book-card .desc {
-  font-size: 0.85rem;
-  color: #666;
-  max-height: 4.5em;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+.fixed-cover-size {
+  width: 120px;    
+  height: 170px;     
+  object-fit: contain;
+  border-radius: 4px;
+  margin-bottom: 12px;
 }
 </style>
