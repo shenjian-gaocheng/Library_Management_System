@@ -7,7 +7,7 @@
         _repository = repository;
     }
 
-    public Task<IEnumerable<BookDetailDto>> SearchBooksAsync(string keyword)
+    public Task<IEnumerable<BookInfoDto>> SearchBooksAsync(string keyword)
     {
         return _repository.SearchBooksAsync(keyword);
     }

@@ -11,7 +11,7 @@ public class BookController : ControllerBase
     }
 
     [HttpGet("search")]
-    public async Task<IEnumerable<BookDetailDto>> Search(string keyword)
+    public async Task<IEnumerable<BookInfoDto>> Search(string keyword)
     {
         return await _service.SearchBooksAsync(keyword ?? "");
     }
