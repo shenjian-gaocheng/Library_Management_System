@@ -24,6 +24,8 @@
 
             <!-- 添加我的书单 -->
             <router-link to="/user/booklist">我的书单</router-link>
+            <!-- 添加书架管理 -->
+            <router-link to="/user/bookshelf">书架管理</router-link>
 
             <router-link to="/user/history">借阅历史</router-link>
           </div>
