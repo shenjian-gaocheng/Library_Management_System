@@ -23,10 +23,8 @@
     npm install
     ```
  - .net8.0
-    下载地址
-    https://dotnet.microsoft.com/en-us/download/dotnet/8.0
-    
-    Windows → Installers → x64下载并运行exe
+    下载并运行exe
+    https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.412/dotnet-sdk-8.0.412-win-x64.exe
  - /frontend运行
    ```
    npm install axios
