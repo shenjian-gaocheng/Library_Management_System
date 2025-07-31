@@ -31,6 +31,16 @@
           </div>
         </div>
 
+        <div class="nav-item dropdown">
+          <span>管理员操作</span>
+          <div class="dropdown-menu">
+
+            <router-link to="example-route">example-title</router-link>
+            <!-- 管理员操作临时入口，以后需要改到管理员主页里 -->
+            <!-- 在下面新增：路由，功能名称 -->
+          </div>
+        </div>
+
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>
 
