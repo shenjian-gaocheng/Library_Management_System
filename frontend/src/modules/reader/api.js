@@ -14,3 +14,12 @@ export const logout = () => http.post('/logout')
 export const getCaptcha = () => http.get('/captcha')
 
 export const register = (data) => http.post('/register', data)
+
+
+export const getBorrowingRecords = (params) => http.get('/borrowing', { params });
+export const getBorrowingRecordById = (id) => http.get(`/borrowing/${id}`);
+export const addBorrowingRecord = (data) => http.post('/borrowing', data);
+export const updateBorrowingRecord = (data) => http.put('/borrowing', data);
+export const deleteBorrowingRecord = (id) => http.delete(`/borrowing/${id}`);
+export const returnBook = (id) => http.put(`/borrowing/${id}/return`);
+export const renewBorrowing = (id) => http.put(`/borrowing/${id}/renew`);

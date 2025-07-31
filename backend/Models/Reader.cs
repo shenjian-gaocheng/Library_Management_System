@@ -17,7 +17,7 @@ public class Reader: User
 
     public string AccountStatus { get; set; }
 
-    public string Permission { get; set; } = "��ͨ";
+    public string Permission { get; set; } = "ÆÕÍ¨";
 
     public string UserName
     {

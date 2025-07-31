@@ -16,7 +16,8 @@
         "/api/register",
         "/api/docs",
         "/api/docs/index.html",
-        "/favicon.ico"
+        "/favicon.ico",
+        "/api"
     };
 
 

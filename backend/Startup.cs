@@ -1,6 +1,8 @@
 ﻿using backend.Common.MiddleWare;
 using backend.Repositories.ReaderRepository;
 using backend.Services.ReaderService;
+using backend.Repositories.BorrowRecordRepository;
+using backend.Services.BorrowingService;
 using backend.Services.Web;
 using StackExchange.Redis;
 
@@ -71,7 +73,8 @@ namespace backend
             services.AddScoped<LoginService>();
 
             // 5. 注册 ReaderRepository 和 ReaderService
-            services.AddSingleton(ocr => {
+            services.AddSingleton(ocr =>
+            {
                 // 读取连接字符串
                 var connectionString = _configuration.GetConnectionString("OracleDB");
                 if (string.IsNullOrEmpty(connectionString))
@@ -81,6 +84,20 @@ namespace backend
                 return new ReaderRepository(connectionString);
             });
             services.AddTransient<ReaderService>();
+            
+            // 6. 注册 BorrowRecordRepository 和 BorrowingService
+            services.AddSingleton(ocr =>
+            {                
+                // 读取连接字符串
+                var connectionString = _configuration.GetConnectionString("OracleDB");
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new ArgumentException("未配置 Oracle 数据库连接字符串");
+                }
+                return new BorrowRecordRepository(connectionString);
+            });
+            services.AddTransient<BorrowingService>();
+            
         }
 
         // 配置中间件
