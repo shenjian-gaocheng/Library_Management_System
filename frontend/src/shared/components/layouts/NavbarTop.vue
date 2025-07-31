@@ -21,6 +21,10 @@
           <div class="dropdown-menu">
             <router-link to="/user/borrowed">当前借阅</router-link>
             <router-link to="/user/favorites">收藏图书</router-link>
+
+            <!-- 添加我的书单 -->
+            <router-link to="/user/booklist">我的书单</router-link>
+
             <router-link to="/user/history">借阅历史</router-link>
           </div>
         </div>
