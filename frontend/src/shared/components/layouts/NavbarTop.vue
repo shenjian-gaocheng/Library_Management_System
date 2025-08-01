@@ -38,7 +38,7 @@
             <!-- 在下面新增：路由，功能名称 -->
           </div>
         </div>
-
+        <router-link to="/category/manage" class="nav-item">分类管理</router-link>
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>
 
