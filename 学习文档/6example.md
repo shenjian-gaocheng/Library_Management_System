@@ -191,15 +191,15 @@
     // 启动应用
     app.Run();
 ### 6.运行方法
-- 开发时：运行在本地
+- 开发时：运行在本地/backend根目录命令行启动方法
 ```
 set ASPNETCORE_ENVIRONMENT=Development
-dotnet watch run
+dotnet run
 ```
 - 答辩前运行在服务器
 ```
 export ASPNETCORE_ENVIRONMENT=Production
-dotnet watch run
+dotnet run
 ```
 ### 7.测试方法
     http://localhost:5000/api/book/search?keyword=操作系统原理
