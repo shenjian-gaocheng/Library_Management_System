@@ -11,4 +11,9 @@ public class CommentService
     {
         return _repository.SearchCommentAsync(ISBN);
     }
+
+    public async Task<int> AddCommentAsync(CommentDetailDto commentDto)
+    {
+        return await _repository.AddCommentAsync(commentDto);
+    }
 }

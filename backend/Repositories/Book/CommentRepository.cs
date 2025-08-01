@@ -19,4 +19,16 @@ public class CommentRepository
 
         return await Dapper.SqlMapper.QueryAsync<CommentDetailDto>(connection, sql, new { ISBN = ISBN });
     }
+    
+    public async Task<int> AddCommentAsync(CommentDetailDto commentDto)
+    {
+        var sql = @"
+            INSERT INTO Comment_Table (READERID, ISBN, RATING, REVIEWCONTENT, CREATETIME, STATUS)
+            VALUES (:ReaderID, :ISBN, :Rating, :REVIEWCONTENT, :CREATETIME, :Status)";
+
+        using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
+        await connection.OpenAsync();
+        
+        return await Dapper.SqlMapper.ExecuteAsync(connection, sql, commentDto);
+    }
 }

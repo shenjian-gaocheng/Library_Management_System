@@ -1,4 +1,5 @@
 ﻿import BookBooklistPage from '@/modules/book/pages/BooklistPage.vue'
+import BookCommentsPage from '@/modules/book/pages/BookCommentsPage.vue'
 
 export default [
   // 图书搜索结果页
@@ -21,6 +22,17 @@ export default [
     meta: {
       requiresAuth: true,
       title: '我的书单'
+    }
+  },
+  
+  // 评论页面路由
+  {
+    path: '/comments',
+    name: 'BookComments',
+    component: BookCommentsPage,
+    meta: {
+      requiresAuth: false,
+      title: '图书评论'
     }
   }
 ]

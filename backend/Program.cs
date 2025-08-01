@@ -33,7 +33,9 @@ var connectionString = builder.Configuration.GetConnectionString("OracleDB")
 
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
+builder.Services.AddSingleton(new CommentRepository(connectionString));
 builder.Services.AddTransient<BookService>();
+builder.Services.AddTransient<CommentService>();
 
 
 var app = builder.Build();
