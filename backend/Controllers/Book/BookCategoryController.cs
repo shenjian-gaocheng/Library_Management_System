@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -15,8 +18,18 @@ public class CategoryController : ControllerBase
     [HttpGet("tree")]
     public async Task<ActionResult<List<CategoryNode>>> GetTree()
     {
-        var tree = await _service.GetCategoryTreeAsync();
-        return Ok(tree);
+        Console.WriteLine("收到获取分类树请求");
+        try
+        {
+            var tree = await _service.GetCategoryTreeAsync();
+            Console.WriteLine($"成功获取分类树，共 {tree?.Count ?? 0} 个顶级分类");
+            return Ok(tree);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"获取分类树失败: {ex.Message}");
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     // 添加分类

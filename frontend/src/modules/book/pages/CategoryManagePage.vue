@@ -149,7 +149,9 @@ export default {
       try {
         const operatorId = 'admin001' // 这里应该从用户登录状态获取
         await deleteCategory(categoryToDelete.value.CategoryID, operatorId)
-        alert('分类删除成功')
+        // 使用更友好的提示
+        const message = `分类 "${categoryToDelete.value.CategoryName}" 删除成功`
+        console.log(message)
         showDeleteModal.value = false
         categoryToDelete.value = null
         // 重新加载分类树
@@ -158,7 +160,8 @@ export default {
         }
       } catch (error) {
         console.error('删除失败:', error)
-        alert('删除失败: ' + (error.response?.data?.message || error.message))
+        const errorMessage = error.response?.data?.message || error.message || '删除失败'
+        console.error('删除失败:', errorMessage)
       } finally {
         submitting.value = false
       }

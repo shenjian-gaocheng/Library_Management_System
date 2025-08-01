@@ -19,14 +19,14 @@ export function addComment(commentData) {
 }
 
 export function getCategoryTree() {
-  return http.get('/category/tree')
+  return http.get('/api/Category/tree')
 }
 export function addCategory(data) {
-  return http.post('/category', data)
+  return http.post('/api/Category', data)
 }
 export function updateCategory(data) {
-  return http.put('/category', data)
+  return http.put('/api/Category', data)
 }
 export function deleteCategory(id, operatorId) {
-  return http.delete(`/category/${id}?operatorId=${operatorId}`)
+  return http.delete(`/api/Category/${id}?operatorId=${operatorId}`)
 }

@@ -58,11 +58,23 @@ export default {
     const loadCategories = async () => {
       loading.value = true
       try {
+        console.log('开始加载分类树...')
         const response = await getCategoryTree()
+        console.log('API响应:', response)
         categories.value = response.data || []
+        console.log('分类树加载成功，共', categories.value.length, '个顶级分类')
       } catch (error) {
         console.error('加载分类失败:', error)
-        alert('加载分类失败: ' + (error.response?.data?.message || error.message))
+        console.error('错误详情:', {
+          message: error.message,
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          config: error.config
+        })
+        const errorMessage = error.response?.data?.message || error.message || '加载分类失败'
+        console.error('加载分类失败:', errorMessage)
+        categories.value = []
       } finally {
         loading.value = false
       }

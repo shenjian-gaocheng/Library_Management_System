@@ -150,4 +150,4 @@ public class BookCategoryTreeOperation
         var count = await connection.ExecuteScalarAsync<int>(sql, parameters);
         return count > 0;
     }
-}
+} 
