@@ -99,10 +99,15 @@ namespace backend
                 });
             }
 
+            app.UseStaticFiles(); //启用wwwroot目录下的静态文件
+
 
             app.UseCors(); // 必须在 MapControllers 前调用
 
             app.UseRouting();
+
+            //使用异常处理中间件,必须在所有可能抛出异常的中间件之前调用
+            app.UseMiddleware<ExceptionMiddleware>();
 
             // 使用jwt认证中间件
             app.UseMiddleware<JwtAuthenticationMiddleware>();

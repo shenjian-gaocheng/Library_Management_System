@@ -1,6 +1,6 @@
 ﻿using StackExchange.Redis;
+using System.Text.Json;
 
-using Newtonsoft.Json;
 
 public class RedisService
 {
@@ -16,7 +16,7 @@ public class RedisService
     /// </summary>
     public async Task SetCacheAsync<T>(string key, T value, TimeSpan? expiry = null)
     {
-        var json = JsonConvert.SerializeObject(value);
+        var json = JsonSerializer.Serialize(value);
         await _db.StringSetAsync(key, json, expiry);
     }
 
@@ -26,7 +26,7 @@ public class RedisService
     public async Task<T?> GetCacheAsync<T>(string key)
     {
         var value = await _db.StringGetAsync(key);
-        return value.HasValue ? JsonConvert.DeserializeObject<T>(value!) : default;
+        return value.HasValue ? JsonSerializer.Deserialize<T>(value!) : default;
     }
 
     /// <summary>

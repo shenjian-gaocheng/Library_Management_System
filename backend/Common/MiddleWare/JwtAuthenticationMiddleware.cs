@@ -1,28 +1,38 @@
-﻿namespace backend.Common.MiddleWare
+﻿
+namespace backend.Common.MiddleWare
 {
     public class JwtAuthenticationMiddleware
     {
         private readonly RequestDelegate _next;
+ 
 
         public JwtAuthenticationMiddleware(RequestDelegate next)
         {
             _next = next;
         }
 
-        // 配置不需要验证的路径
+        // 配置不需要验证的路径，以一下路径为根的所有路径都会放行
         private static readonly string[] _excludedPaths = new[]
         {
         "/api/login",
-        "/api/register",
-        "/api/docs",
-        "/api/docs/index.html",
-        "/favicon.ico"
+        "/api/register",          // 登录和注册接口
+        "/api/docs",              //swagger UI 的根路径
+        "/api/docs/index.html",   //swagger UI 的入口文件
+        "/favicon.ico",           // 网站图标
+       // "/api"      //测试阶段全部放行
     };
 
 
-        public async Task Invoke(HttpContext context, TokenService tokenService) {
+        public async Task Invoke(HttpContext context,TokenService tokenService) {
 
             var path = context.Request.Path.Value;
+
+            // 先单独放行根路径请求，主要是去掉初始报错
+            if (path == "/")
+            {
+                await _next(context);
+                return;
+            }
 
             // 判断是否跳过认证
             if (_excludedPaths.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
@@ -34,12 +44,16 @@
             var loginUser = await tokenService.GetLoginUserAsync(context);
             if (loginUser != null)
             {
+                //每次请求都校验token是否过期，如不过期，则刷新token
+                await tokenService.VerifyToken(loginUser);
+
+                // 将登录用户信息存入HttpContext
                 context.Items["LoginUser"] = loginUser;
             }
             else
             {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized; // 未授权
-                return;
+
+                throw new UnauthorizedAccessException("未认证，请先登录。");
             }
             await _next(context); // 调用下一个中间件
         }

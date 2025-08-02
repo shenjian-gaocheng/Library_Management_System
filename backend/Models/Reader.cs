@@ -1,27 +1,24 @@
 
-
-
 namespace backend.Models;
 
 public class Reader: User
 {
-    public string ReaderID { get; set; }
+    public long ReaderID { get; set; }
 
+    public string UserName { get; set; }
     public string Password { get; set; }
 
-    public string Name { get; set; }
+    public string? FullName { get; set; } = "";
 
-    public int? CreditScore { get; set; }
+    public string? NickName { get; set; } = "默认用户昵称";
 
-    public string ReaderType { get; set; }
+    public string? Avatar { get; set; } = "";
 
-    public string AccountStatus { get; set; }
+    public int CreditScore { get; set; } = 100;
+
+    public string AccountStatus { get; set; } = "正常";
 
     public string Permission { get; set; } = "普通";
 
-    public string UserName
-    {
-        get { return ReaderID; }
-        set { ReaderID = value; }
-    }
+
 }

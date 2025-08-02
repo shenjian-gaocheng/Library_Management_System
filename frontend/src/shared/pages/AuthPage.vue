@@ -64,15 +64,19 @@
 
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
-import { login, register } from '@/modules/reader/api.js'
+import { getMyProfile, login, register } from '@/modules/reader/api.js'
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
 
 const isLogin = ref(true)
 const loading = ref(false)
 const rememberMe = ref(false)
 
 const form = reactive({
-  username: '',
-  password: '',
+  username: 'admin',
+  password: 'admin123',
   confirmPassword: '',
 })
 
@@ -98,18 +102,16 @@ function validate() {
 
   if (!form.username) {
     errors.username = '请输入用户名'
-  } else if (form.username.length < 3) {
-    errors.username = '用户名至少3个字符'
+  } else if (form.username.length < 2) {
+    errors.username = '用户名至少2个字符'
   } else if (!/^[a-zA-Z0-9]+$/.test(form.username)) {
     errors.username = '用户名只能包含字母和数字'
   }
 
   if (!form.password) {
     errors.password = '请输入密码'
-  } else if (form.password.length < 6) {
-    errors.password = '密码至少6个字符'
-  } else if (!/(?=.*[A-Za-z])(?=.*\d)/.test(form.password)) {
-    errors.password = '密码必须包含字母和数字'
+  } else if (form.password.length < 5) {
+    errors.password = '密码至少5个字符'
   }
 
   if (!isLogin.value) {
@@ -137,8 +139,14 @@ async function onSubmit() {
         } else {
           localStorage.removeItem('rememberedUser')
         }
+        localStorage.setItem('token',res.data);
+        const user = (await getMyProfile()).data
+        localStorage.setItem("user",JSON.stringify(user))
         alert('登录成功')
         // 登录成功后跳转或操作
+        // 读取重定向地址，默认跳转到 /my-library
+        const redirectPath = route.query.redirect || '/my/home/dashboard'
+        await router.push(redirectPath);
       } else {
         alert(res.msg || '登录失败')
       }

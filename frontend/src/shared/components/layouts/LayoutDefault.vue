@@ -11,6 +11,5 @@
 </template>
 
 <script setup>
-import NavbarTop from '@/shared/components/navigation/NavbarTop.vue'
 
 </script>

@@ -91,7 +91,7 @@ function isActive(path: NavItem['path']) {
 
 /* ----- link style ----- */
 .nav-link {
-  white-space: nowrap; 
+  white-space: nowrap;
   display: block;
   padding: 1rem 2.25rem;
   color: #ffffff;

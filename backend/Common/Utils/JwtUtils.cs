@@ -1,7 +1,5 @@
 ﻿using backend.DTOs.Web;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,7 +12,7 @@ public static class JwtUtils
         var secret = config["Jwt:Secret"];
         var issuer = config["Jwt:Issuer"];
         var audience = config["Jwt:Audience"];
-        var expireMinutes = int.Parse(config["Jwt:ExpireMinutes"] ?? "120");
+        var expireMinutes = int.Parse(config["Jwt:ExpireMinutes"] ?? "30");
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

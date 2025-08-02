@@ -1,14 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace backend.DTOs.Web
+namespace backend.DTOs.Reader
 {
-    public class RegisterDto
+    public class ReaderRegisterDto
     {
         public string UserName { get; set; }
         public string Password { get; set; }
       
-        [JsonConstructor] // 序列化特性
-        public RegisterDto(string userName, string password)
+        [JsonConstructor]
+        public ReaderRegisterDto(string userName, string password)
         {
             UserName = userName;
             Password = password;
