@@ -5,8 +5,11 @@ import http from '@/services/http.js'
 export function getBooks(keyword) {
   return http.get('/book/search', {
     params: { keyword }
-  })
+})
 }
+
+
+
 
 export function getCommentsByISBN(ISBN) {
   return http.get('/comment/search', {
@@ -29,4 +32,10 @@ export function updateCategory(data) {
 }
 export function deleteCategory(id, operatorId) {
   return http.delete(`/api/Category/${id}?operatorId=${operatorId}`)
+}
+
+export function getBooksBookShelf(keyword) {
+return http.get('/book/search_book_which_shelf', {
+    params: { keyword }
+})
 }

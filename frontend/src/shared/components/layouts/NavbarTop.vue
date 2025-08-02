@@ -25,6 +25,7 @@
             <!-- 添加我的书单 -->
             <router-link to="/user/booklist">我的书单</router-link>
 
+
             <router-link to="/user/history">借阅历史</router-link>
           </div>
         </div>
@@ -32,10 +33,12 @@
         <div class="nav-item dropdown">
           <span>管理员操作</span>
           <div class="dropdown-menu">
-
+            
             <router-link to="example-route">example-title</router-link>
             <!-- 管理员操作临时入口，以后需要改到管理员主页里 -->
             <!-- 在下面新增：路由，功能名称 -->
+            <!-- 添加书架管理 -->
+            <router-link to="bookshelf">书架管理</router-link>
           </div>
         </div>
         <router-link to="/admin/category" class="nav-item">分类管理</router-link>
