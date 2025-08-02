@@ -24,7 +24,18 @@ export default [
       title: '我的书单'
     }
   },
-<<<<<<< HEAD
+  
+  // 评论页面路由
+  {
+    path: '/comments',
+    name: 'BookComments',
+    component: BookCommentsPage,
+    meta: {
+      requiresAuth: false,
+      title: '图书评论'
+    }
+  },
+
    //书架管理
   {
     path: '/bookshelf',
@@ -38,17 +49,6 @@ export default [
       requiresAuth: true,
       title: '书架管理',
       //role: 'librarian' // 添加权限控制，仅管理员可见
-=======
-  
-  // 评论页面路由
-  {
-    path: '/comments',
-    name: 'BookComments',
-    component: BookCommentsPage,
-    meta: {
-      requiresAuth: false,
-      title: '图书评论'
->>>>>>> 74dae4eb677f251d8f52789cbe3cfdfe1b358b0e
     }
   }
 ]

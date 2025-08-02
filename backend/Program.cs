@@ -40,10 +40,11 @@ builder.Services.AddSingleton(new BookRepository(connectionString));
 builder.Services.AddSingleton(new CommentRepository(connectionString));
 builder.Services.AddSingleton(new BookCategoryTreeOperation(connectionString));
 builder.Services.AddSingleton(new LogService(connectionString));
+builder.Services.AddSingleton(new BookShelfRepository(connectionString));
 builder.Services.AddTransient<BookService>();
 builder.Services.AddTransient<CommentService>();
 builder.Services.AddTransient<BookCategoryService>();
-
+builder.Services.AddTransient<BookShelfService>();
 
 var app = builder.Build();
 

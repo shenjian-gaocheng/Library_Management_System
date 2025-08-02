@@ -35,7 +35,7 @@ export function deleteCategory(id, operatorId) {
 }
 
 export function getBooksBookShelf(keyword) {
-return http.get('/book/search_book_which_shelf', {
+return http.get('/bookshelf/search_book_which_shelf', {
     params: { keyword }
 })
 }
