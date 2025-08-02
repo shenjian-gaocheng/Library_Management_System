@@ -737,3 +737,13 @@ test/
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/vue,node,csharp,visualstudio,vscode,oracle
+
+
+backend/Common/Constants/ErrorCodes.cs
+backend/Common/Constants/ResultStatus.cs
+backend/Common/Domain
+backend/Common/Exceptions
+backend/Controllers/Profile
+backend/Properties
+backend/Repositories/BaseRepository
+Note
