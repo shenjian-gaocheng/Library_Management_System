@@ -13,7 +13,7 @@
       />
     </div>
     
-    <!-- 功能选项卡 -->
+    <!-- 功能选项卡（包含借阅图书选项） -->
     <div class="tabs">
       <button 
         @click="activeTab = 'getAll'" 
@@ -57,9 +57,27 @@
       >
         删除记录
       </button>
+      <button 
+        @click="activeTab = 'return'" 
+        :class="{ active: activeTab === 'return' }"
+      >
+        归还图书
+      </button>
+      <button 
+        @click="activeTab = 'borrow'" 
+        :class="{ active: activeTab === 'borrow' }"
+      >
+        借阅图书
+      </button>
+      <button 
+        @click="activeTab = 'getByRecentReader'" 
+        :class="{ active: activeTab === 'getByRecentReader' }"
+      >
+        查询当前读者借阅记录
+      </button>
     </div>
     
-    <!-- 功能内容区域 -->
+    <!-- 功能内容区域（新增借阅图书标签页） -->
     <div class="tab-content">
       <!-- 查询所有借阅记录 -->
       <div v-show="activeTab === 'getAll'" class="tab-pane">
@@ -240,6 +258,107 @@
           删除记录
         </button>
       </div>
+
+      <!-- 归还图书标签页 -->
+      <div v-show="activeTab === 'return'" class="tab-pane">
+        <div class="form-group">
+          <label for="returnReaderId">读者ID:</label>
+          <input 
+            type="text" 
+            id="returnReaderId" 
+            v-model="returnInfo.readerId" 
+            placeholder="请输入读者ID"
+          />
+        </div>
+        <div class="form-group">
+          <label for="returnBookId">图书ID:</label>
+          <input 
+            type="text" 
+            id="returnBookId" 
+            v-model="returnInfo.bookId" 
+            placeholder="请输入图书ID"
+          />
+        </div>
+        <button @click="returnBook" class="btn-primary">
+          确认归还
+        </button>
+      </div>
+
+      <!-- 新增：借阅图书标签页 -->
+      <div v-show="activeTab === 'borrow'" class="tab-pane">
+        <div class="form-group">
+          <label for="borrowReaderId">读者ID:</label>
+          <input 
+            type="text" 
+            id="borrowReaderId" 
+            v-model="borrowInfo.readerId" 
+            placeholder="请输入读者ID"
+          />
+        </div>
+        <div class="form-group">
+          <label for="borrowBookId">图书ID:</label>
+          <input 
+            type="text" 
+            id="borrowBookId" 
+            v-model="borrowInfo.bookId" 
+            placeholder="请输入图书ID"
+          />
+        </div>
+        <div class="form-group">
+          <label>当前系统时间:</label>
+          <p class="system-time">{{ currentTime }}</p>
+          <small>（将自动作为借阅时间）</small>
+        </div>
+        <button @click="borrowBook" class="btn-primary">
+          确认借阅
+        </button>
+      </div>  
+
+        <!-- 新增：查询当前读者借阅记录标签页 -->
+      <div v-show="activeTab === 'getByRecentReader'" class="tab-pane">
+        <div class="form-group">
+          <label for="borrowReaderId">读者ID:</label>
+          <input 
+            type="text" 
+            id="queryByRecentReaderId" 
+            v-model="queryByRecentReader" 
+            placeholder="请输入读者ID"
+          />
+        </div>
+        <button @click="getMyBorrowRecordsByReader" class="btn-primary">
+          开始查询
+        </button>
+
+        <!-- 新增：查询结果表格 -->
+        <div class="result-table" v-if="responseData && activeTab === 'getByRecentReader'">
+          <table>
+            <thead>
+              <tr>
+                <th>图书ISBN</th>
+                <th>图书名字</th>
+                <th>读者名字</th>
+                <th>借阅时间</th>
+                <th>归还时间</th>
+                <th>逾期费用</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr 
+                v-for="(item, index) in responseData" 
+                :key="index"
+              >
+                <td>{{ item.isbn }}</td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.author }}</td>
+                <td>{{ formatDate(item.borrowTime) }}</td>
+                <td>{{ item.returnTime ? formatDate(item.returnTime) : '未归还' }}</td>
+                <td>{{ item.overdueFine }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+      </div>
     </div>
     
     <!-- 结果展示区域 -->
@@ -264,7 +383,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRaw } from 'vue';
+import { ref, reactive, toRaw, onMounted } from 'vue';
 import axios from 'axios';
 
 // 基础URL
@@ -278,6 +397,7 @@ const queryById = ref('');
 const queryByReader = ref('');
 const queryByBook = ref('');
 const deleteId = ref('');
+const queryByRecentReader = ref('');
 
 // 新增记录数据
 const newRecord = reactive({
@@ -298,32 +418,57 @@ const updateRecord = reactive({
   overdueFine: 0
 });
 
+// 归还图书数据
+const returnInfo = reactive({
+  readerId: '',
+  bookId: ''
+});
+
+// 新增：借阅图书数据
+const borrowInfo = reactive({
+  readerId: '',
+  bookId: ''
+});
+
+// 新增：显示当前系统时间（用于借阅功能）
+const currentTime = ref('');
+const updateCurrentTime = () => {
+  currentTime.value = new Date().toLocaleString();
+};
+
+// 初始化时更新时间并每秒刷新
+onMounted(() => {
+  updateCurrentTime();
+  setInterval(updateCurrentTime, 1000);
+});
+
 // 响应结果
 const responseData = ref(null);
 const responseStatus = ref(null);
-
-// 格式化响应数据用于展示
 const formattedResponse = ref('');
 
-// 通用请求函数
-const apiRequest = async (method, url, data = null) => {
+// 通用请求函数（支持查询参数和请求体）
+const apiRequest = async (method, url, data = null, params = null) => {
   try {
     const startTime = new Date();
     const fullUrl = `${baseUrl.value}/borrowing${url}`;
     
+    // 配置参数（查询参数通过params传递）
+    const config = params ? { params } : {};
+    
     let response;
     switch(method) {
       case 'get':
-        response = await axios.get(fullUrl);
+        response = await axios.get(fullUrl, config);
         break;
       case 'post':
-        response = await axios.post(fullUrl, data);
+        response = await axios.post(fullUrl, data, config);
         break;
       case 'put':
-        response = await axios.put(fullUrl, data);
+        response = await axios.put(fullUrl, data, config);
         break;
       case 'delete':
-        response = await axios.delete(fullUrl);
+        response = await axios.delete(fullUrl, config);
         break;
       default:
         throw new Error('不支持的请求方法');
@@ -354,6 +499,12 @@ const apiRequest = async (method, url, data = null) => {
     responseData.value = error.response?.data || { error: error.message };
     formattedResponse.value = JSON.stringify(responseData.value, null, 2);
     
+    // 错误提示（根据后端返回的message）
+    if (error.response?.data?.message) {
+      alert(`操作失败：${error.response.data.message}`);
+    } else {
+      alert(`操作失败：${error.message}`);
+    }
     throw error;
   }
 };
@@ -398,6 +549,7 @@ const addBorrowRecord = async () => {
   }
   
   await apiRequest('post', '', toRaw(newRecord));
+  alert('添加成功');
 };
 
 // 更新借阅记录
@@ -408,6 +560,7 @@ const updateBorrowRecord = async () => {
   }
   
   await apiRequest('put', '', toRaw(updateRecord));
+  alert('更新成功');
 };
 
 // 删除借阅记录
@@ -419,11 +572,80 @@ const deleteBorrowRecord = async () => {
   
   if (confirm(`确定要删除ID为${deleteId.value}的借阅记录吗？`)) {
     await apiRequest('delete', `/${deleteId.value}`);
+    alert('删除成功');
   }
+};
+
+// 归还图书方法
+const returnBook = async () => {
+  if (!returnInfo.readerId || !returnInfo.bookId) {
+    alert('读者ID和图书ID为必填项');
+    return;
+  }
+  
+  await apiRequest(
+    'post', 
+    '/return', 
+    null, 
+    { readerId: returnInfo.readerId,bookId: returnInfo.bookId }
+);
+alert (' 归还成功 ');
+// 清空表单
+returnInfo.readerId = '';
+returnInfo.bookId = '';
+};
+
+// 新增：借阅图书方法
+const borrowBook = async () => {
+  // 参数校验
+  if (!borrowInfo.readerId || !borrowInfo.bookId) {
+    alert('读者 ID 和图书 ID 为必填项');
+    return;
+  }
+
+  // 调用后端借阅接口，通过查询参数传递 readerId 和 bookId
+  await apiRequest(
+    'post',
+    '/borrow', // 对应后端 BorrowBookAsync 接口的路由
+    null, // 无请求体数据（后端自动处理借阅时间）
+    {
+      readerId: borrowInfo.readerId,
+      bookId: borrowInfo.bookId
+    }
+  );
+
+  alert('借阅成功');
+  // 清空表单
+  borrowInfo.readerId = '';
+  borrowInfo.bookId = '';
+};
+
+// 按读者ID查询当前读者的所有借阅记录
+const getMyBorrowRecordsByReader = async () => {
+  if (!queryByRecentReader.value) {
+    alert('请输入读者ID');
+    return;
+  }
+  await apiRequest('get', `/reader/MyBorrowRecords/${queryByRecentReader.value}`);
+};
+
+// 日期格式化函数（用于表格中时间显示）
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
 };
 </script>
 
 <style scoped>
+/* 原有样式保持不变 */
 .container {
   max-width: 800px;
   margin: 0 auto;
@@ -523,5 +745,38 @@ button {
   border-radius: 4px;
   border: 1px solid #ddd;
   overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* 新增：系统时间显示样式 */
+.system-time {
+  margin: 5px 0;
+  padding: 8px;
+  background-color: #f0f8ff;
+  border-radius: 4px;
+  color: #333;
+}
+
+.result-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.result-table th,
+.result-table td {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.result-table th {
+  background-color: #f5f7fa;
+  font-weight: 600;
+}
+
+.result-table tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 </style>

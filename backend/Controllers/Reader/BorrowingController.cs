@@ -137,6 +137,58 @@ namespace backend.Controllers
             }
         }
 
+
+        [HttpPost("return")]
+        public async Task<IActionResult> ReturnBook([FromQuery] string readerId, [FromQuery] string bookId)
+        {
+            var response = await _borrowingService.ReturnBookAsync(readerId, bookId);
+
+            if (response.Success)
+            {
+                // 成功返回200 OK
+                return Ok(response);
+            }
+            else if (response.Message == "记录不存在")
+            {
+                // 记录不存在返回400 Bad Request
+                return BadRequest(response);
+            }
+            else if (response.Message == "重复归还")
+            {
+                // 重复归还返回400 Bad Request
+                return BadRequest(response);
+            }
+            else
+            {
+                // 其他错误返回400 Bad Request
+                return BadRequest(response);
+            }
+        }
+
+        /**
+         * 借阅图书接口
+         * @param readerId 读者ID
+         * @param bookId 图书ID
+         * @return 借阅操作结果
+         */
+        [HttpPost("borrow")]  // 与前端请求路径匹配，使用POST方法
+        public async Task<IActionResult> BorrowBook([FromQuery] string readerId, [FromQuery] string bookId)
+        {
+            // 调用服务层的借阅方法
+            var response = await _borrowingService.BorrowBookAsync(readerId, bookId);
+
+            if (response.Success)
+            {
+                // 成功返回200 OK
+                return Ok(response);
+            }
+            else
+            {
+                // 失败返回400 Bad Request并包含错误信息
+                return BadRequest(response);
+            }
+        }
+
         /**
          * 通过借阅记录ID删除借阅记录
          * @param id 借阅记录ID
@@ -154,6 +206,22 @@ namespace backend.Controllers
             {
                 return StatusCode(500, $"服务器错误: {ex.Message}");
             }
+        }
+        
+        /**
+         * 通过读者ID查询所有借阅记录(读者自己查询)
+         * @param readerid 当前读者ID
+         * @return 业务处理结果
+         */
+        [HttpGet("reader/MyBorrowRecords/{readerId}")]
+        public async Task<ActionResult> GetByReaderIdAsDto(string readerId)
+        {
+            var response = await _borrowingService.GetMyBorrowRecordDtosByReaderIdAsync(readerId);
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            return Ok(response.Data);
         }
     }
 }
