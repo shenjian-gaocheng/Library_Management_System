@@ -6,7 +6,7 @@
 -- 存储读者的基本信息。
 CREATE TABLE Reader (
     ReaderID VARCHAR2(20),
-    Password VARCHAR2(20) NOT NULL,
+    Password VARCHAR2(120) NOT NULL,
     Name VARCHAR2(40) NOT NULL,
     CreditScore INT,
     ReaderType VARCHAR2(10) NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE BookInfo (
 -- 存储管理员的账户信息。
 CREATE TABLE Librarian (
     LibrarianID VARCHAR2(20),
-    Password VARCHAR2(20) NOT NULL,
+    Password VARCHAR2(120) NOT NULL,
     Name VARCHAR2(40) NOT NULL,
     Permission VARCHAR2(10) NOT NULL,
     CONSTRAINT pk_librarian PRIMARY KEY (LibrarianID),
