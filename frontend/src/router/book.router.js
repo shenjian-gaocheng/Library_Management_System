@@ -1,5 +1,5 @@
 ﻿import BookBooklistPage from '@/modules/book/pages/BooklistPage.vue'
-import BookshelfManagePage from '@/modules/book/pages/BookshelfManagePage.vue' // 新增的书架管理组件
+
 export default [
   // 图书搜索结果页
   {
@@ -23,11 +23,15 @@ export default [
       title: '我的书单'
     }
   },
-   // 新增书架管理（与我的书单并列）
+   //书架管理
   {
-    path: '/user/bookshelf',
+    path: '/bookshelf',
     name: 'BookshelfManage',
-    component: BookshelfManagePage,
+    component: () =>
+    import(
+        /* webpackChunkName: "book-search" */
+        '@/modules/book/pages/BookshelfManagePage.vue'
+    ),
     meta: {
       requiresAuth: true,
       title: '书架管理',
