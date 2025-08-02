@@ -54,16 +54,16 @@ COMMENT ON COLUMN Librarian.Permission  IS '权限等级：普通 / 高级';
 * 3. Category – 图书分类表 (树形)
 ************************************/
 CREATE TABLE Category (
-    CategoryID        INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, -- 分类主键，自增 ID
-    CategoryName      VARCHAR2(40) NOT NULL,                        -- 分类名称
-    ParentCategoryID  INT,                                          -- 父级分类 ID，可空
+    CategoryID        VARCHAR2(20) PRIMARY KEY,           -- 分类主键，管理员手动输入
+    CategoryName      VARCHAR2(40) NOT NULL,              -- 分类名称
+    ParentCategoryID  VARCHAR2(20),                       -- 父级分类 ID，可空
     CONSTRAINT fk_category_parent FOREIGN KEY (ParentCategoryID)
         REFERENCES Category(CategoryID)
 );
-COMMENT ON TABLE Category IS '图书分类表 (支持多级树)';
-COMMENT ON COLUMN Category.CategoryID       IS '分类主键，自增 ID';
+COMMENT ON TABLE Category IS '图书分类表 (支持多级树结构)';
+COMMENT ON COLUMN Category.CategoryID       IS '分类主键，管理员手动输入';
 COMMENT ON COLUMN Category.CategoryName     IS '分类名称';
-COMMENT ON COLUMN Category.ParentCategoryID IS '父级分类 ID (顶级为空)';
+COMMENT ON COLUMN Category.ParentCategoryID IS '父级分类 ID（顶级为空）';
 
 /************************************
 * 4. BookInfo – 图书信息 (ISBN 维度)

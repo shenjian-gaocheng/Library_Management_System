@@ -41,7 +41,7 @@
             <router-link to="bookshelf">书架管理</router-link>
           </div>
         </div>
-
+        <router-link to="/admin/category" class="nav-item">分类管理</router-link>
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>
 

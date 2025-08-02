@@ -10,6 +10,10 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
     });
 
+// 添加 Swagger 支持
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 
 // 添加 CORS 支持（便于前端访问）
 builder.Services.AddCors(options =>
@@ -33,10 +37,22 @@ var connectionString = builder.Configuration.GetConnectionString("OracleDB")
 
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
+builder.Services.AddSingleton(new CommentRepository(connectionString));
+builder.Services.AddSingleton(new BookCategoryTreeOperation(connectionString));
+builder.Services.AddSingleton(new LogService(connectionString));
 builder.Services.AddTransient<BookService>();
+builder.Services.AddTransient<CommentService>();
+builder.Services.AddTransient<BookCategoryService>();
 
 
 var app = builder.Build();
+
+// 启用 Swagger（开发环境）
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // 使用 CORS（顺序要在 MapControllers 之前）
 app.UseCors();
