@@ -76,6 +76,20 @@ services.AddSingleton(sp =>
 });
 services.AddTransient<ReaderService>();
 
+  // 6. 注册 BorrowRecordRepository 和 BorrowingService
+services.AddSingleton(ocr =>
+{                
+// 读取连接字符串
+     var connectionString = _configuration.GetConnectionString("OracleDB");
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new ArgumentException("未配置 Oracle 数据库连接字符串");
+        }
+        return new BorrowRecordRepository(connectionString);
+});
+services.AddTransient<BorrowingService>();
+            
+
 // 构建应用
 var app = builder.Build();
 
