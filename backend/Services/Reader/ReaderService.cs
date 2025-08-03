@@ -6,16 +6,16 @@ using backend.Repositories.ReaderRepository;
 namespace backend.Services.ReaderService
 {
     /**
-     * ReaderService Ìá¹©¶Ô ReaderRepository µÄÒµÎñÂß¼­·â×°
+     * ReaderService ï¿½á¹©ï¿½ï¿½ ReaderRepository ï¿½ï¿½Òµï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½×°
      */
     public class ReaderService
     {
         private readonly ReaderRepository _readerRepository;
 
         /**
-         * ¹¹Ôìº¯Êý
-         * @param readerRepository Reader ²Ö´¢ÒÀÀµ
-         * @return ÎÞ
+         * ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
+         * @param readerRepository Reader ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½
+         * @return ï¿½ï¿½
          */
         public ReaderService(ReaderRepository readerRepository)
         {
@@ -23,9 +23,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ¸ù¾Ý ReaderID »ñÈ¡ Reader ¶ÔÏó
-         * @param readerID ¶ÁÕß ID
-         * @return Reader ¶ÔÏó»ò null
+         * ï¿½ï¿½ï¿½ï¿½ ReaderID ï¿½ï¿½È¡ Reader ï¿½ï¿½ï¿½ï¿½
+         * @param readerID ï¿½ï¿½ï¿½ï¿½ ID
+         * @return Reader ï¿½ï¿½ï¿½ï¿½ï¿½ null
          */
         public async Task<Reader> GetReaderByReaderIDAsync(long readerID)
         {
@@ -43,8 +43,8 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * »ñÈ¡ËùÓÐ Reader ¶ÔÏó
-         * @return Reader ¶ÔÏóÁÐ±í
+         * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ Reader ï¿½ï¿½ï¿½ï¿½
+         * @return Reader ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
          */
         public async Task<IEnumerable<Reader>> GetAllReadersAsync()
         {
@@ -52,9 +52,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * Ìí¼ÓÒ»¸öÐÂµÄ Reader
-         * @param reader Reader ÊµÌå
-         * @return ÊÜÓ°ÏìµÄÐÐÊý
+         * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½ Reader
+         * @param reader Reader Êµï¿½ï¿½
+         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          */
         public async Task<int> InsertReaderAsync(Reader reader)
         {
@@ -62,9 +62,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ¸üÐÂÒ»¸ö Reader
-         * @param reader Reader ÊµÌå
-         * @return ÊÜÓ°ÏìµÄÐÐÊý
+         * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Reader
+         * @param reader Reader Êµï¿½ï¿½
+         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          */
         public async Task<int> UpdateReaderAsync(Reader reader)
         {
@@ -72,9 +72,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * É¾³ýÒ»¸ö Reader
+         * É¾ï¿½ï¿½Ò»ï¿½ï¿½ Reader
          * @param readerID ReaderID
-         * @return ÊÜÓ°ÏìµÄÐÐÊý
+         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          */
         public async Task<int> DeleteReaderAsync(long readerID)
         {

@@ -11,16 +11,15 @@ namespace backend.Repositories.ReaderRepository;
 public class ReaderRepository
 {
     /**
-     * Êı¾İ¿âÁ¬½Ó×Ö·û´®
-     * 
+     * æ•°æ®åº“è¿æ¥å­—ç¬¦ä¸²
      */
     private readonly string _connectionString;
 
 
     /**
-     * ¹¹Ôìº¯Êı
-     * @param connectionString Êı¾İ¿âÁ¬½Ó×Ö·û´®
-     * @return ÎŞ
+     * æ„é€ å‡½æ•°
+     * @param connectionString æ•°æ®åº“è¿æ¥å­—ç¬¦ä¸²
+     * @return æ— 
      */
     public ReaderRepository(string connectionString)
     {
@@ -28,9 +27,9 @@ public class ReaderRepository
     }
 
     /**
-     * ¸ù¾İ ReaderID »ñÈ¡ Reader ¶ÔÏó
-     * @param connectionString Êı¾İ¿âÁ¬½Ó×Ö·û´®
-     * @return ·µ»ØÒ»¸ö Reader ¶ÔÏó
+     * æ ¹æ® ReaderID è·å– Reader ä¿¡æ¯
+     * @param readerID è¯»è€… ID
+     * @return è¿”å› Reader å¯¹è±¡
      */
     public async Task<Reader> GetByReaderIDAsync(long readerID)
     {
@@ -41,9 +40,9 @@ public class ReaderRepository
     }
 
     /**
-     * ¸ù¾İ UserName »ñÈ¡ Reader ¶ÔÏó
-     * @param connectionString Êı¾İ¿âÁ¬½Ó×Ö·û´®
-     * @return ·µ»ØÒ»¸ö Reader ¶ÔÏó
+     * æ ¹æ® UserName è·å– Reader ä¿¡æ¯
+     * @param userName ç”¨æˆ·å
+     * @return è¿”å› Reader å¯¹è±¡
      */
     public async Task<Reader> GetByUserNameAsync(string userName)
     {
@@ -54,8 +53,8 @@ public class ReaderRepository
     }
 
     /**
-     * »ñÈ¡ËùÓĞ Reader ¶ÔÏó
-     * @return ·µ»ØÒ»¸ö Reader ¶ÔÏóÁĞ±í
+     * è·å–æ‰€æœ‰ Reader ä¿¡æ¯
+     * @return è¿”å› Reader å¯¹è±¡åˆ—è¡¨
      */
     public async Task<IEnumerable<Reader>> GetAllReadersAsync()
     {
@@ -66,16 +65,16 @@ public class ReaderRepository
     }
 
     /**
-     * ²åÈëÒ»¸ö Reader ¶ÔÏó
-     * @param reader Reader ¶ÔÏó
-     * @return ·µ»ØÊÜÓ°ÏìµÄĞĞÊı
+     * æ–°å¢ä¸€ä¸ª Reader
+     * @param reader Reader å¯¹è±¡
+     * @return æ–°å¢æˆåŠŸè¿”å› 1ï¼Œå¦åˆ™è¿”å› 0
      */
     public async Task<int> InsertReaderAsync(Reader reader)
     {
         using var connection = new OracleConnection(_connectionString);
         await connection.OpenAsync();
 
-        reader.Password = PasswordUtils.HashPassword(reader.Password); // È·±£ÃÜÂë±»¹şÏ£´¦Àí
+        reader.Password = PasswordUtils.HashPassword(reader.Password); // È·ï¿½ï¿½ï¿½ï¿½ï¿½ë±»ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½
 
         var sql = @"
             INSERT INTO Reader (Username, Password, Fullname,Nickname,Avatar, CreditScore, AccountStatus, Permission)
@@ -85,16 +84,16 @@ public class ReaderRepository
     }
 
     /**
-     * ¸üĞÂÒ»¸ö Reader ¶ÔÏó
-     * @param reader Reader ¶ÔÏó
-     * @return ·µ»ØÊÜÓ°ÏìµÄĞĞÊı
+     * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Reader ï¿½ï¿½ï¿½ï¿½
+     * @param reader Reader ï¿½ï¿½ï¿½ï¿½
+     * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      */
     public async Task<int> UpdateReaderAsync(Reader reader)
     {
         using var connection = new OracleConnection(_connectionString);
         await connection.OpenAsync();
 
-        reader.Password = PasswordUtils.HashPassword(reader.Password); // È·±£ÃÜÂë±»¹şÏ£´¦Àí
+        reader.Password = PasswordUtils.HashPassword(reader.Password); // È·ï¿½ï¿½ï¿½ï¿½ï¿½ë±»ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½
 
         var sql = @"
             UPDATE Reader
@@ -113,9 +112,9 @@ public class ReaderRepository
 
 
     /**
-     * ¸ù¾İ ReaderID É¾³ıÒ»¸ö Reader ¶ÔÏó
+     * ï¿½ï¿½ï¿½ï¿½ ReaderID É¾ï¿½ï¿½Ò»ï¿½ï¿½ Reader ï¿½ï¿½ï¿½ï¿½
      * @param readerID ReaderID
-     * @return ·µ»ØÊÜÓ°ÏìµÄĞĞÊı
+     * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      */
     public async Task<int> DeleteReaderAsync(long readerID)
     {
@@ -126,9 +125,9 @@ public class ReaderRepository
     }
 
     /**
-     * ¼ì²éÓÃ»§ÃûÊÇ·ñ´æÔÚ
-     * @param userName ÓÃ»§Ãû
-     * @return ·µ»Ø true Èç¹û´æÔÚ£¬·ñÔò·µ»Ø false
+     * ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
+     * @param userName ï¿½Ã»ï¿½ï¿½ï¿½
+     * @return ï¿½ï¿½ï¿½ï¿½ true ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½ false
      */
     public async Task<bool> IsUserNameExistsAsync(string userName)
     {
@@ -141,7 +140,7 @@ public class ReaderRepository
 
 
     /**
-        * ÖØÖÃÃÜÂë
+        * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         */
     public async Task<int> ResetPasswordAsync(string userName, string newPassword)
     {
@@ -157,7 +156,7 @@ public class ReaderRepository
     }
 
     /**
-     * ¸üĞÂÍ·Ïñ
+     * ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½
      */
     public async Task<int> UpdateAvatarAsync(long readerID, string newAvatar)
     {
@@ -173,9 +172,9 @@ public class ReaderRepository
     }
 
     /**
- * ¸üĞÂÒ»¸ö ReaderµÄProfile×Ö¶Î 
- * @param reader Reader ¶ÔÏó
- * @return ·µ»ØÊÜÓ°ÏìµÄĞĞÊı
+ * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Readerï¿½ï¿½Profileï¿½Ö¶ï¿½
+ * @param reader Reader ï¿½ï¿½ï¿½ï¿½
+ * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  */
     public async Task<int> UpdateProfileAsync(Reader reader)
     {
