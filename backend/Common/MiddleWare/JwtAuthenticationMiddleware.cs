@@ -19,7 +19,6 @@ namespace backend.Common.MiddleWare
         "/api/docs",              //swagger UI 的根路径
         "/api/docs/index.html",   //swagger UI 的入口文件
         "/favicon.ico",           // 网站图标
-       // "/api"      //测试阶段全部放行
     };
 
 

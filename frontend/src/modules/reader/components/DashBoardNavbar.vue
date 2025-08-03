@@ -43,7 +43,7 @@ const router = useRouter()
 
 const baseAvatarUrl = 'http://localhost:5000/avatars/'
 
-const nickname = computed(() => userStore.nickname)
+const nickname = computed(() => userStore.nickName)
 const avatar = computed(() => baseAvatarUrl + userStore.avatar)
 
 const showDropdown = ref(false)
@@ -64,10 +64,10 @@ const toggleProfileCard = () => {
 
 // 资料编辑初始值
 const initialProfileData = computed(() => ({
-  userName: userStore.username,
-  fullName: userStore.fullname,
-  nickName: userStore.nickname,
-  password: '暂时无法修改，其他信息也请勿随意修改'
+  userName: userStore.userName,
+  fullName: userStore.fullName,
+  nickName: userStore.nickName,
+  //password: ''
 }))
 
 // 保存资料信息
@@ -77,15 +77,17 @@ const handleSaveProfile = async (formData) => {
 
   // 示例更新 store（根据你实际的字段来）：
   if(formData.userName) {
-    user.username = formData.userName
+    user.userName = formData.userName
   }
   if(formData.fullName) {
-    user.fullname = formData.fullName
+    user.fullName = formData.fullName
   }
   if(formData.nickName) {
-    user.nickname = formData.nickName
+    user.nickName = formData.nickName
   }
   const saveProfileRes = await updateMyProfile(user)
+
+  userStore.setUser(user)
 
   alert(saveProfileRes.data)
   // 关闭弹窗

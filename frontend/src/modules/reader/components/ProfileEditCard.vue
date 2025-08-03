@@ -114,7 +114,7 @@ const props = defineProps({
       userName: '',
       fullName: '',
       nickName: '',
-      password: ''
+      //password: ''
     })
   }
 });
@@ -125,7 +125,7 @@ const formData = reactive({
   userName: '',
   fullName: '',
   nickName: '',
-  password: ''
+  //password: ''
 });
 
 // 初始化/监听更新
@@ -135,7 +135,7 @@ watch(
     formData.userName = newVal.userName || '';
     formData.fullName = newVal.fullName || '';
     formData.nickName = newVal.nickName || '';
-    formData.password = '';
+    //formData.password = '';
   },
   { immediate: true }
 );

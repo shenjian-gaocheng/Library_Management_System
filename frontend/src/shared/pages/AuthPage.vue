@@ -75,8 +75,8 @@ const loading = ref(false)
 const rememberMe = ref(false)
 
 const form = reactive({
-  username: 'admin',
-  password: 'admin123',
+  username: '1234567',
+  password: '1234567',
   confirmPassword: '',
 })
 
@@ -132,8 +132,9 @@ async function onSubmit() {
   try {
     if (isLogin.value) {
       const res = await login({ username: form.username, password: form.password })
+      console.log(res)
       // 这里根据你的API返回结构调整
-      if (res!=null) {
+      if (res.status === 200) {
         if (rememberMe.value) {
           localStorage.setItem('rememberedUser', JSON.stringify({ username: form.username }))
         } else {
@@ -152,11 +153,10 @@ async function onSubmit() {
       }
     } else {
       const res = await register({ username: form.username, password: form.password })
-      if (res!=null) {
+      console.log(res)
+      if (res.status === 200) {
         alert('注册成功，请登录')
         toggleMode()
-      } else {
-        alert(res.msg || '注册失败')
       }
     }
   } catch (e) {

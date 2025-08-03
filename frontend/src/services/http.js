@@ -1,7 +1,4 @@
 import axios from 'axios'
-import {useRouter} from 'vue-router'
-
-const router = useRouter()
 
 // 创建 axios 实例，统一使用环境变量中的 API 地址
 const http = axios.create({
@@ -27,25 +24,25 @@ http.interceptors.request.use((config) => {
 http.interceptors.response.use(
   response => response,
   error => {
-    // 如果后端返回的是 401（未认证）
-    if (error.response?.status === 401) {
-      // 清除本地 Token
-      localStorage.removeItem('token')
 
+    console.log(error.response)
+    const status = error.response?.status
+    const message = error.response?.data
+
+    if (status === 401) {
+      localStorage.removeItem('token')
       localStorage.removeItem('user')
-      //给出提示
       alert('登录已过期，请重新登录。')
 
-      // 跳转到登录页，并带上当前页地址用于回跳
-      const currentPath = router.currentRoute.value.fullPath
-      router.push({ path: '/login', query: { redirect: currentPath } })
+      // 可选跳转
+      // router.push({ path: '/login' })
+    } else if (status === 400) {
+      // 可选：这里也可以不 alert，而是交给业务层抛出更明确的错误信息
+      alert(message || '请求有误')
+    } else if (!error.response) {
+      alert('无法连接服务器，请检查网络')
     }
-    else if(error.response?.status === 400)
-    {
-      //400BadRequest错误给出提示
-      alert(error.response.message)
-    }
-    // 其他错误照常抛出
+
     return Promise.reject(error)
   }
 )

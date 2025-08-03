@@ -57,9 +57,9 @@ const userStore = useUserStore()
 const baseAvatarUrl = 'http://localhost:5000/avatars/'
 const avatar = computed(() => baseAvatarUrl + userStore.avatar)
 
-const userName = computed(() => userStore.username)
-const fullName = computed(() => userStore.fullname)
-const nickName = computed(() => userStore.nickname)
+const userName = computed(() => userStore.userName)
+const fullName = computed(() => userStore.fullName)
+const nickName = computed(() => userStore.nickName)
 const creditScore = computed(() => userStore.creditScore)
 const accountStatus = computed(() => userStore.accountStatus)
 const permission = computed(() => userStore.permission)

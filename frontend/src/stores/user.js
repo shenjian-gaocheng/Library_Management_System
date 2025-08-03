@@ -23,9 +23,9 @@ export const useUserStore = defineStore('user', {
   },
   getters: {
     isLoggedIn: (state) => !!state.token,
-    username: (state) => state.user?.userName || '用户',
-    nickname: (state) => state.user?.nickName || '用户',
-    fullname: (state) => state.user?.fullName || '',
+    userName: (state) => state.user?.userName || '用户',
+    nickName: (state) => state.user?.nickName || '用户',
+    fullName: (state) => state.user?.fullName || '',
     avatar: state => state.user?.avatar || 'system_0.png',
     creditScore: state => state.user?.creditScore || 100,
     accountStatus: state => state.user?.accountStatus || '正常',

@@ -9,11 +9,6 @@ export const getCaptcha = () => http.get('/captcha')
 
 export const register = (data) => http.post('/register', data)
 
-export const testquery = () => http.get('/reader/22',{withToken:true})
-
-
-export const getInfo = () => http.get('/test/getInfo',{withToken:true})
-
 
 // ——————————————————Reader相关接口————————————————
 export const getReaders = (params) => http.get('/reader/list', { withToken:true,params })//params为可选参数，一般用于分页查询等

@@ -171,4 +171,26 @@ public class ReaderRepository
 
         return await connection.ExecuteAsync(sql, new { readerID, newAvatar });
     }
+
+    /**
+ * 更新一个 Reader的Profile字段 
+ * @param reader Reader 对象
+ * @return 返回受影响的行数
+ */
+    public async Task<int> UpdateProfileAsync(Reader reader)
+    {
+        using var connection = new OracleConnection(_connectionString);
+        await connection.OpenAsync();
+
+        var sql = @"
+            UPDATE Reader
+            SET Username = :UserName,
+                Fullname = :FullName,
+                Nickname = :NickName
+            WHERE ReaderID = :ReaderID";
+
+        return await connection.ExecuteAsync(sql, reader);
+    }
+
+
 }

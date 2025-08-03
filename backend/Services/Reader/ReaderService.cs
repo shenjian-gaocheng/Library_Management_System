@@ -151,5 +151,16 @@ namespace backend.Services.ReaderService
         {
             return await _readerRepository.UpdateAvatarAsync(readerID, avatarUrl) > 0;
         }
+
+        /**
+         * 
+         * ¸üÐÂReaderµÄProfile×Ö¶Î
+         * 
+         */
+        public async Task<bool> UpdateProfileAsync(Reader reader)
+        {
+            return await _readerRepository.UpdateProfileAsync(reader) > 0;
+        }
+
     }
 }

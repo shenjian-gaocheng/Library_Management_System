@@ -34,7 +34,7 @@ namespace backend.Services.Web
 
             if (reader.Result == null)
             {
-                throw new UnauthorizedAccessException("用户名或密码错误");//和密码错误使用同一个状态码
+                throw new KeyNotFoundException("用户名或密码错误");//和密码错误使用同一个状态码
             }
             else if (reader.Result.AccountStatus == UserConstants.AccuntStatusFrozen)
             {
@@ -44,7 +44,7 @@ namespace backend.Services.Web
             //检查密码是否匹配
             if (!PasswordUtils.VerifyPassword(password, reader.Result.Password))//密码不匹配
             {
-                throw new UnauthorizedAccessException("用户名或密码错误");//和用户名不存在使用同一个状态码
+                throw new KeyNotFoundException("用户名或密码错误");//和用户名不存在使用同一个状态码
             }
 
 

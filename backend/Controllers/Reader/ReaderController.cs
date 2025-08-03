@@ -317,7 +317,7 @@ namespace backend.Controllers
                 // 更新登录用户信息
                 await _tokenService.SetLoginUserAsync(loginUser);
 
-                return await _readerService.UpdateReaderAsync(reader) > 0
+                return await _readerService.UpdateProfileAsync(reader)
                     ? Ok("个人信息更新成功")
                     : BadRequest("更新个人信息失败");
             }
