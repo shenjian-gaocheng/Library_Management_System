@@ -1,17 +1,17 @@
-﻿// router/index.js
+// router/index.js
 
 import { createRouter, createWebHistory } from 'vue-router';
 import readerRoutes from './reader.routes.js';
 import {jwtDecode} from 'jwt-decode';
 // import adminRoutes from './admin.routes.js';
-// import bookRoutes from './book.routes.js';
+
+import HomeView from '@/modules/home/pages/HomeView.vue'
+
+import bookRoutes   from '@/router/book.router.js'
 
 const routes = [
-  {
-    path: '/',
-    name: 'HomeView',
-    component: () => import('@/shared/pages/HomeView.vue')
-  },
+  { path: '/', name: 'HomeView', component: HomeView },
+  ...bookRoutes,
   {
     path: '/auth',
     name: 'AuthPage',
@@ -19,8 +19,7 @@ const routes = [
   },
   ...readerRoutes,
   //...adminRoutes,
- // ...bookRoutes,
-];
+]
 
 const router = createRouter({
   history: createWebHistory(),
@@ -48,5 +47,4 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-
-export default router;
+export default router

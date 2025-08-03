@@ -10,6 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 // 输出当前环境
 Console.WriteLine($"当前运行环境: {builder.Environment.EnvironmentName}");
 
+// 添加控制器服务
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
+
 // 日志配置
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -17,16 +24,13 @@ builder.Logging.AddConsole();
 // 添加服务
 var services = builder.Services;
 
-// 添加控制器支持
-services.AddControllers();
-
-// 添加 CORS 支持
-services.AddCors(options =>
+// 添加 CORS 支持（便于前端访问）
+builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
         policy
-            .AllowAnyOrigin()
+            .AllowAnyOrigin()      // 生产环境可替换为具体域名
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -47,6 +51,12 @@ services.AddSwaggerGen(options =>
 // 注册 IHttpContextAccessor
 services.AddHttpContextAccessor();
 
+// 读取连接字符串（根据环境自动读取 appsettings.Development.json 或 appsettings.Production.json）
+var connectionString = builder.Configuration.GetConnectionString("OracleDB")
+                      ?? throw new InvalidOperationException("缺少 OracleDB 连接字符串配置");
+
+var redisConnStr = builder.Configuration.GetConnectionString("Redis")
+                      ?? throw new InvalidOperationException("缺少 Redis 连接字符串配置");
 // 注册 Redis
 services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
@@ -76,21 +86,13 @@ services.AddSingleton(sp =>
 });
 services.AddTransient<ReaderService>();
 
-  // 6. 注册 BorrowRecordRepository 和 BorrowingService
-services.AddSingleton(ocr =>
-{                
-// 读取连接字符串
-     var connectionString = _configuration.GetConnectionString("OracleDB");
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new ArgumentException("未配置 Oracle 数据库连接字符串");
-        }
-        return new BorrowRecordRepository(connectionString);
-});
-services.AddTransient<BorrowingService>();
-            
+// 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
+builder.Services.AddSingleton(new BookRepository(connectionString));
+builder.Services.AddTransient<BookService>();
 
-// 构建应用
+// 注册 Redis 服务（使用连接字符串）
+builder.Services.AddSingleton(new RedisService(redisConnStr));
+
 var app = builder.Build();
 
 // 获取 logger
