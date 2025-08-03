@@ -7,15 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Oracle ADO.NET 驱动（用于 Dapper） -->
+    <!-- Oracle 相关驱动 -->
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
-
+    <PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.0" />
+    
     <!-- Dapper ORM -->
-    <PackageReference Include="Dapper" Version="2.0.123" />
-
-    <!-- 可选：用于从 .env 文件加载环境变量 -->
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    
+    <!-- 环境变量管理 -->
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    
+    <!-- Redis 支持 -->
     <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
+    
+    <!-- JWT 认证相关 -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
 
     <!-- Swagger 用于 API 文档 -->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
