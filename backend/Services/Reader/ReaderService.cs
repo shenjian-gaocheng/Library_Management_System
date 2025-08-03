@@ -25,7 +25,7 @@ namespace backend.Services.ReaderService
         /**
          * ���� ReaderID ��ȡ Reader ����
          * @param readerID ���� ID
-         * @return Reader ����� null
+         * @return Reader �����?null
          */
         public async Task<Reader> GetReaderByReaderIDAsync(long readerID)
         {
@@ -54,7 +54,7 @@ namespace backend.Services.ReaderService
         /**
          * ����һ���µ� Reader
          * @param reader Reader ʵ��
-         * @return ��Ӱ�������
+         * @return ��Ӱ�������?
          */
         public async Task<int> InsertReaderAsync(Reader reader)
         {
@@ -64,7 +64,7 @@ namespace backend.Services.ReaderService
         /**
          * ����һ�� Reader
          * @param reader Reader ʵ��
-         * @return ��Ӱ�������
+         * @return ��Ӱ�������?
          */
         public async Task<int> UpdateReaderAsync(Reader reader)
         {
@@ -74,7 +74,7 @@ namespace backend.Services.ReaderService
         /**
          * ɾ��һ�� Reader
          * @param readerID ReaderID
-         * @return ��Ӱ�������
+         * @return ��Ӱ�������?
          */
         public async Task<int> DeleteReaderAsync(long readerID)
         {

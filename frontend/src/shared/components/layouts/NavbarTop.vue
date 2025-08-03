@@ -43,7 +43,7 @@
       </nav>
 
       <div class="auth-btn">
-        <router-link to="/login" class="login">登录</router-link>
+        <router-link to="/auth" class="login">登录</router-link>
       </div>
     </div>
   </header>

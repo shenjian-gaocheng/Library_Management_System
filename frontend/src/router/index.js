@@ -7,7 +7,7 @@ import {jwtDecode} from 'jwt-decode';
 
 import HomeView from '@/modules/home/pages/HomeView.vue'
 
-import bookRoutes   from '@/router/book.router.js'
+import bookRoutes   from '@/router/book.routes.js'
 
 const routes = [
   { path: '/', name: 'HomeView', component: HomeView },

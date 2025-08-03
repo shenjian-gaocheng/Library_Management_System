@@ -4,7 +4,6 @@ using backend.DTOs.Reader;
 using backend.Models;
 using backend.Services.ReaderService;
 using backend.Services.Web;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers

@@ -4,7 +4,6 @@
 
     <!-- 当前头像 -->
     <div class="section">
-
       <!-- 关闭按钮 -->
       <button class="close-button" @click="emit('close')">×</button>
 
@@ -47,10 +46,8 @@ import { useUserStore } from '@/stores/user.js'
 
 const userStore = useUserStore()
 
-
 //关闭键状态
 const emit = defineEmits(['close'])
-
 
 // 系统默认头像
 const presetAvatars = [
@@ -113,23 +110,19 @@ const handleUpload = (event) => {
 
 // 模拟保存
 const handleSave = async () => {
-    // 情况 1：系统内置头像，直接传 URL
-    if (presetAvatars.includes(selectedAvatarUrl.value)) {
-      await updateAvatar(selectedAvatarUrl.value)
-    }
-    else {
-      // 情况 2：上传的 base64 图片，需要转成 Blob
-      const blob = dataURLtoBlob(selectedAvatar.value)
-      const file = new File([blob], 'avatar.png', { type: blob.type })
-      // 上传图片
-      selectedAvatarUrl.value = (await uploadAvatar(file)).data
-    }
+  // 情况 1：系统内置头像，直接传 URL
+  if (presetAvatars.includes(selectedAvatarUrl.value)) {
+    await updateAvatar(selectedAvatarUrl.value)
+  } else {
+    // 情况 2：上传的 base64 图片，需要转成 Blob
+    const blob = dataURLtoBlob(selectedAvatar.value)
+    const file = new File([blob], 'avatar.png', { type: blob.type })
+    // 上传图片
+    selectedAvatarUrl.value = (await uploadAvatar(file)).data
+  }
 
-    const user = userStore.user
-    user.avatar = selectedAvatarUrl
-    userStore.setUser(user)
-    alert('头像已更新')
-
+  userStore.setUser({avatar: selectedAvatarUrl.value })
+  alert('头像已更新')
 }
 
 function dataURLtoBlob(dataurl) {
@@ -143,8 +136,6 @@ function dataURLtoBlob(dataurl) {
   }
   return new Blob([u8arr], { type: mime })
 }
-
-
 </script>
 
 <style scoped>
@@ -229,6 +220,4 @@ button:disabled {
 .close-button:hover {
   color: #000;
 }
-
-
 </style>

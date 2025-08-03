@@ -1,5 +1,4 @@
-﻿
-namespace backend.Common.MiddleWare
+﻿namespace backend.Common.MiddleWare
 {
     public class JwtAuthenticationMiddleware
     {

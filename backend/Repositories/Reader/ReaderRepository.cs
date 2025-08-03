@@ -1,7 +1,5 @@
 using Dapper;
 using Oracle.ManagedDataAccess.Client;
-
-
 using backend.Models;
 using backend.Common.Utils;
 

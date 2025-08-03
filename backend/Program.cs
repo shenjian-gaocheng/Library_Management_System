@@ -1,5 +1,7 @@
 ﻿using backend.Common.MiddleWare;
+using backend.Repositories.BorrowRecordRepository;
 using backend.Repositories.ReaderRepository;
+using backend.Services.BorrowingService;
 using backend.Services.ReaderService;
 using backend.Services.Web;
 using Microsoft.OpenApi.Models;
@@ -55,8 +57,7 @@ services.AddHttpContextAccessor();
 var connectionString = builder.Configuration.GetConnectionString("OracleDB")
                       ?? throw new InvalidOperationException("缺少 OracleDB 连接字符串配置");
 
-var redisConnStr = builder.Configuration.GetConnectionString("Redis")
-                      ?? throw new InvalidOperationException("缺少 Redis 连接字符串配置");
+
 // 注册 Redis
 services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
@@ -75,23 +76,17 @@ services.AddScoped<SecurityService>();
 services.AddScoped<LoginService>();
 
 // 注册 ReaderRepository 和 ReaderService
-services.AddSingleton(sp =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("OracleDB");
-    if (string.IsNullOrEmpty(connectionString))
-    {
-        throw new ArgumentException("未配置 Oracle 数据库连接字符串");
-    }
-    return new ReaderRepository(connectionString);
-});
+services.AddSingleton(new ReaderRepository(connectionString));
 services.AddTransient<ReaderService>();
+
+//注册 BorrowingService 和 BorrowingRepository
+services.AddSingleton(new BorrowRecordRepository(connectionString));
+services.AddTransient<BorrowingService>();
 
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
 builder.Services.AddTransient<BookService>();
 
-// 注册 Redis 服务（使用连接字符串）
-builder.Services.AddSingleton(new RedisService(redisConnStr));
 
 var app = builder.Build();
 

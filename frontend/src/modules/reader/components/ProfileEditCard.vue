@@ -240,6 +240,7 @@ const handleSave = () => {
 }
 
 .form-control {
+  color: black;
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #ddd;
