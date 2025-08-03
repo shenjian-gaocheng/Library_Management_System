@@ -747,3 +747,5 @@ backend/Controllers/Profile
 backend/Properties
 backend/Repositories/BaseRepository
 Note
+
+.idea
