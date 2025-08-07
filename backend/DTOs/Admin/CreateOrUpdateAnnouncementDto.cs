@@ -1,19 +1,18 @@
-using System.ComponentModel.DataAnnotations;
+// using System.ComponentModel.DataAnnotations; // 这行也可以注释掉
+
 namespace library_system.DTOs.Admin
 {
     public class CreateOrUpdateAnnouncementDto
     {
-        [Required]
+        // [Required] <-- 暂时注释掉
         public string Title { get; set; } = string.Empty;
-        [Required]
+        // [Required] <-- 暂时注释掉
         public string Content { get; set; } = string.Empty;
-        [Required]
-        public string TargetGroup { get; set; } = string.Empty; // "所有人", "读者"
-        [Required]
-        public string Status { get; set; } = string.Empty; // "发布中", "已撤回"
-        
-        // 创建时，LibrarianID 应从当前登录用户的 Token 中获取，这里暂时简化
-        [Required]
-        public string LibrarianID { get; set; } = string.Empty;
+        // [Required] <-- 暂时注释掉
+        public string TargetGroup { get; set; } = string.Empty;
+        // [Required] <-- 暂时注释掉
+        public string Status { get; set; } = string.Empty;
+        // [Required] <-- 暂时注释掉
+        public int LibrarianID { get; set; } // 注意，这个应该是 int
     }
 }
