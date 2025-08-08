@@ -18,19 +18,25 @@
     node -v
     npm -v
     ```
- -
-    ```
-    npm install
-    ```
+
  - .net8.0
     下载地址
     https://dotnet.microsoft.com/en-us/download/dotnet/8.0
     
     Windows → Installers → x64下载并运行exe
- - 
+
+ - 下载redis,/backend运行
    ```
+   dotnet add package StackExchange.Redis
+   ```
+
+ - /frontend运行
+   ```
+   npm install
    npm install axios
    npm install swiper@^10
+   npm install -D tailwindcss postcss autoprefixer
+   npx tailwindcss init -p
    ```
 
 #### 2.开发环境启动方式 前端后端都运行在本地+数据库运行在远程服务器（大家在window上这样启动）
