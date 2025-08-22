@@ -1,4 +1,5 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");/////////
+var builder = WebApplication.CreateBuilder(args);
 
 // 输出当前环境（Development / Production）
 Console.WriteLine($"当前运行环境: {builder.Environment.EnvironmentName}");
