@@ -72,3 +72,7 @@ npm run build     # 读取 .env.production
 export ASPNETCORE_ENVIRONMENT=Production
 dotnet backend.dll
 ```
+
+## 答辩要点：业务逻辑
+- 不能只有表增删改
+- 触发器 表之间联动

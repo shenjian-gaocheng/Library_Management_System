@@ -202,7 +202,7 @@ export ASPNETCORE_ENVIRONMENT=Production
 dotnet run
 ```
 ### 7.测试方法
-    http://localhost:5000/api/book/search?keyword=操作系统原理
+    http://localhost:5000/api/book/search?keyword=q
 
 ## 4.前端层(   无需重复 npm install axios)
 ### 1.api.js
