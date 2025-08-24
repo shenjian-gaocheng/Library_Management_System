@@ -50,5 +50,12 @@ export default [
       title: '书架管理',
       //role: 'librarian' // 添加权限控制，仅管理员可见
     }
-  }
+  },
+  //用条码借还图书
+  {
+  path: '/books/circulation',
+  name: 'BookCirculation',
+  component: () => import('@/modules/book/pages/BookCirculationPage.vue'),
+  meta: { title: '借还服务（条码）' }
+  },
 ]

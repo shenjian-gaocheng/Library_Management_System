@@ -1,5 +1,4 @@
-﻿// frontend/src/modules/book/api.js
-
+﻿
 import http from '@/services/http.js'
 
 export function getBooks(keyword) {
@@ -89,4 +88,47 @@ export function findShelfId(buildingId, shelfCode, floor, zone) {
 
 export function borrowBook(bookId) {
   return http.post('/bookshelf/borrow-book', { bookId })
+}
+
+// ---------- 查询单册 ----------
+export function getBookById(bookId) {
+  return http.get(`/Book/${bookId}`)
+}
+
+export function getBookByBarcode(barcode) {
+  return http.get(`/Book/by-barcode/${encodeURIComponent(barcode)}`)
+}
+
+// ---------- 状态流转：按 BookID ----------
+export function borrowBookById(bookId) {
+  return http.patch(`/Book/${bookId}/borrow`)
+}
+
+export function offShelfBookById(bookId) {
+  return http.patch(`/Book/${bookId}/off-shelf`)
+}
+
+export function returnBookById(bookId) {
+  return http.patch(`/Book/${bookId}/return`)
+}
+
+export function onShelfBookById(bookId) {
+  return http.patch(`/Book/${bookId}/on-shelf`)
+}
+
+// ---------- 状态流转：按条码 ----------
+export function borrowBookByBarcode(barcode) {
+  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/borrow`)
+}
+
+export function offShelfBookByBarcode(barcode) {
+  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/off-shelf`)
+}
+
+export function returnBookByBarcode(barcode) {
+  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/return`)
+}
+
+export function onShelfBookByBarcode(barcode) {
+  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/on-shelf`)
 }
