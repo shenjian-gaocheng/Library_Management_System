@@ -191,7 +191,7 @@ onUnmounted(() => {
   display: none;
   position: absolute;
   top: calc(100% + 0.1rem);
-  left: 50%;
+  left: 0%;
   transform: translateX(-50%);
   background: #deeaff;
   border: 1px solid #dce6f1;
