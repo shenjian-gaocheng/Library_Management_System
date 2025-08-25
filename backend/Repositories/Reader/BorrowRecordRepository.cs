@@ -151,15 +151,30 @@ public class BorrowRecordRepository
             return existingRecord != null ? 0 : -1; // 0-重复归还，-1-无此记录
         }
 
-        // 3. 执行归还操作（更新归还时间为当前时间）
+         // 3. 计算超期费用
+        // 假设借阅记录中有借阅时间字段BorrowTime
+        var returnTime = DateTime.Now; // 获取当前时间
+        var borrowDuration = returnTime - borrowRecord.BorrowTime;
+        var allowedDays = 61; // 两个月（按60天计算）
+        decimal overdueFine = 0;
+
+        // 如果超期，计算罚款
+        if (borrowDuration.TotalDays > allowedDays)
+        {
+            var overdueDays = (int)Math.Ceiling(borrowDuration.TotalDays - allowedDays);
+            overdueFine = overdueDays * 0.1m; // 每天0.1元
+        }
+
+        // 4. 执行归还操作（更新归还时间和超期费用）
         var sqlUpdate = @"
             UPDATE BorrowRecord 
             SET ReturnTime = SYSDATE  -- 使用Oracle数据库的当前时间
+            , OverdueFine = :OverdueFine
             WHERE BorrowRecordID = :BorrowRecordID";
 
         await connection.ExecuteAsync(
             sqlUpdate,
-            new { BorrowRecordID = borrowRecord.BorrowRecordId }
+            new { BorrowRecordID = borrowRecord.BorrowRecordId, OverdueFine = overdueFine }
         );
 
         return 1; // 归还成功

@@ -15,7 +15,6 @@ export const getCaptcha = () => http.get('/captcha')
 
 export const register = (data) => http.post('/register', data)
 
-
 export const getBorrowingRecords = (params) => http.get('/borrowing', { params });
 export const getBorrowingRecordById = (id) => http.get(`/borrowing/${id}`);
 export const addBorrowingRecord = (data) => http.post('/borrowing', data);

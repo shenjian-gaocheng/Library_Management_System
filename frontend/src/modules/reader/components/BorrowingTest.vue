@@ -336,7 +336,6 @@
               <tr>
                 <th>图书ISBN</th>
                 <th>图书名字</th>
-                <th>读者名字</th>
                 <th>借阅时间</th>
                 <th>归还时间</th>
                 <th>逾期费用</th>
@@ -349,7 +348,6 @@
               >
                 <td>{{ item.isbn }}</td>
                 <td>{{ item.title }}</td>
-                <td>{{ item.author }}</td>
                 <td>{{ formatDate(item.borrowTime) }}</td>
                 <td>{{ item.returnTime ? formatDate(item.returnTime) : '未归还' }}</td>
                 <td>{{ item.overdueFine }}</td>
