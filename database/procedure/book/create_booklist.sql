@@ -27,10 +27,8 @@ BEGIN
     RETURNING BooklistID INTO p_BooklistID;
     
     p_Success := 1;
-    COMMIT;
 EXCEPTION
     WHEN OTHERS THEN
-        ROLLBACK;
         p_Success := 0;
         RAISE;
 END;

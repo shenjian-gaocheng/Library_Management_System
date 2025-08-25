@@ -32,11 +32,9 @@ BEGIN
         VALUES (p_BooklistID, p_ISBN, SYSTIMESTAMP, p_Notes);
         
         p_Success := 1;
-        COMMIT;
     END IF;
 EXCEPTION
     WHEN OTHERS THEN
-        ROLLBACK;
         RAISE;
 END;
 /

@@ -1,5 +1,5 @@
 -- 根据用户书单推荐其他书单（基于Jaccard相似度）
-CREATE OR REPLACE PROCEDURE RecommendBooklistsEnhanced(
+CREATE OR REPLACE PROCEDURE RecommendBooklists(
     p_BooklistID IN Booklist.BooklistID%TYPE,
     p_Limit IN NUMBER DEFAULT 10,
     p_RecommendedBooklists OUT SYS_REFCURSOR

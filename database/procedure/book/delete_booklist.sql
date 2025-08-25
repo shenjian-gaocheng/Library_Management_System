@@ -23,13 +23,11 @@ BEGIN
         DELETE FROM Booklist WHERE BooklistID = p_BooklistID;
         
         p_Success := 1;
-        COMMIT;
     END IF;
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         p_Success := 0;
     WHEN OTHERS THEN
-        ROLLBACK;
         RAISE;
 END;
 /

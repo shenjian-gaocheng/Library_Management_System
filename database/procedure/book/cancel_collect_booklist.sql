@@ -13,11 +13,9 @@ BEGIN
     
     IF SQL%ROWCOUNT > 0 THEN
         p_Success := 1;
-        COMMIT;
     END IF;
 EXCEPTION
     WHEN OTHERS THEN
-        ROLLBACK;
         RAISE;
 END;
 /
