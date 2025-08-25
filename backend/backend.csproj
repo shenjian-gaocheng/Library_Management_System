@@ -9,7 +9,6 @@
   <ItemGroup>
     <!-- Oracle ADO.NET 驱动（用于 Dapper） -->
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
 
     <!-- Dapper ORM -->
@@ -22,6 +21,10 @@
     <!-- Swagger 用于 API 文档 -->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\avatars\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using backend.DTOs.Web;
+using backend.Services.Web;
 
 public class TokenService
 {
@@ -10,12 +11,12 @@ public class TokenService
     {
         _config = config;
         _redisService = redisService;
-        _expireMinutes = _config.GetValue<int>("JwtSettings:ExpireMinutes", 30); // 默认30分钟
+        _expireMinutes = _config.GetValue<int>("Jwt:ExpireMinutes", 30); // 默认30分钟
     }
 
     public async Task<LoginUser?> GetLoginUserAsync(HttpContext httpContext)
     {
-        //var request = _httpContextAccessor.HttpContext?.Request;
+
         var token = httpContext.Request.Headers["Authorization"].ToString();
         if (!string.IsNullOrEmpty(token))
         {
@@ -23,16 +24,8 @@ public class TokenService
             {
                 token = token.Trim().Substring("Bearer ".Length).Trim();
             }
-            try
-            {
-                return await GetLoginUserAsync(token);
-            }
-            catch (Exception ex)
-            {
-                // 记录日志，或者处理异常
-                // logger.LogError(ex, "获取登录用户失败");
-                return null;
-            }
+
+            return await GetLoginUserAsync(token);
         }
         return null;
     }
@@ -63,4 +56,37 @@ public class TokenService
         loginUser.ExpireTime = loginUser.LoginTime + _expireMinutes * 60;
         await _redisService.SetCacheAsync($"LOGIN_TOKEN:{loginUser.Token}", loginUser, TimeSpan.FromMinutes(_expireMinutes));
     }
+
+    /**
+ * 验证令牌有效期，相差不足30分钟，自动刷新缓存
+ * 
+ * @param loginUser 登录信息
+ * @return 令牌
+ */
+    public async Task VerifyToken(LoginUser loginUser)
+    {
+        long expireTime = loginUser.ExpireTime;
+        long currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+
+        if (expireTime - currentTime <= _expireMinutes * 60)
+        {
+            await RefreshTokenAsync(loginUser);
+        }
+        await Task.CompletedTask; // 确保方法返回 Task
+    }
+
+    /**
+     * 
+     * 设置用户身份信息
+     */
+    public async Task SetLoginUserAsync(LoginUser loginUser)
+    {
+        if(loginUser == null)
+        {
+            throw new ArgumentException("登录用户不能为空");
+        }
+        await RefreshTokenAsync(loginUser);
+    }
+
 }

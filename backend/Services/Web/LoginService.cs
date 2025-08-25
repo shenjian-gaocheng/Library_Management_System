@@ -1,6 +1,6 @@
 ﻿using backend.Common.Constants;
+using backend.Common.Utils;
 using backend.DTOs.Web;
-using backend.Models;
 using backend.Repositories.ReaderRepository;
 
 namespace backend.Services.Web
@@ -10,6 +10,7 @@ namespace backend.Services.Web
         private readonly ReaderRepository _readerRepository;
         private readonly TokenService _tokenService;
         private readonly SecurityService _securityService;
+
         public LoginService(ReaderRepository readerRepository, TokenService tokenService, SecurityService securityService)
         {
             _readerRepository = readerRepository;
@@ -28,24 +29,27 @@ namespace backend.Services.Web
             PreCheck(userName, password);
 
             //尝试从数据库中获取用户信息
-            //var reader = _readerRepository.GetByUserNameAsync(userName);
-            //
-            var reader = _readerRepository.GetByIDAsync(userName);// 这里假设用户名即为ReaderID
+            var reader = _readerRepository.GetByUserNameAsync(userName);
+            
 
             if (reader.Result == null)
             {
-                throw new ArgumentException("用户名不存在");
+                throw new KeyNotFoundException("用户名或密码错误");//和密码错误使用同一个状态码
             }
-            else if (reader.Result.AccountStatus == "冻结")
+            else if (reader.Result.AccountStatus == UserConstants.AccuntStatusFrozen)
             {
-                throw new ArgumentException("账户已被冻结，请联系管理员");
+                throw new InvalidOperationException("账户已被冻结，禁止登录。");
             }
 
             //检查密码是否匹配
-            _securityService.VerifyPassword(password, reader.Result.Password);
+            if (!PasswordUtils.VerifyPassword(password, reader.Result.Password))//密码不匹配
+            {
+                throw new KeyNotFoundException("用户名或密码错误");//和用户名不存在使用同一个状态码
+            }
+
 
             //创建LoginUser对象
-            LoginUser loginUser = new LoginUser(reader.Result);
+            LoginUser loginUser = new LoginUser(reader.Result,UserConstants.UserTypeReader);
 
             //生成token并存入到Redis中
             return await _tokenService.CreateTokenAsync(loginUser);
@@ -62,17 +66,35 @@ namespace backend.Services.Web
         {
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("用户名或密码不能为空");
+                throw new ArgumentNullException("用户名或密码不能为空");
             }
-            if (userName.Length < UserConstants.USERNAME_MIN_LENGTH || userName.Length > UserConstants.USERNAME_MAX_LENGTH)
+            if (userName.Length < UserConstants.UsernameMinLength || userName.Length > UserConstants.UsernameMaxLength)
             {
                 throw new ArgumentException("用户名长度必须在2到20个字符之间");
             }
-            if (password.Length < UserConstants.PASSWORD_MIN_LENGTH || password.Length > UserConstants.PASSWORD_MAX_LENGTH)
+            if (password.Length < UserConstants.PasswordMinLength || password.Length > UserConstants.PasswordMaxLength)
             {
                 throw new ArgumentException("密码长度必须在5到20个字符之间");
             }
         }
+
+        //退出登录
+        public async Task<bool> LogoutAsync()
+        {
+            var loginUser = _securityService.GetLoginUser();
+            if (loginUser == null || string.IsNullOrEmpty(loginUser.Token))
+            {
+                throw new UnauthorizedAccessException("未认证，请先登录。");
+            }
+            //删除Redis中的token
+            var result = await _tokenService.DeleteTokenAsync(loginUser.Token);
+            if (!result)
+            {
+                throw new InvalidOperationException("退出登录失败，请稍后再试。");
+            }
+            return result;
+        }
+
     }
 }
 

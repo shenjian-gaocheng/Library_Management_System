@@ -1,4 +1,5 @@
 ﻿using backend.Models;
+using System.Text.Json.Serialization;
 
 namespace backend.DTOs.Web
 {
@@ -6,7 +7,7 @@ namespace backend.DTOs.Web
     {
         public User User { get; set; }
 
-        public string UserType { get; set; } 
+        public string? UserType { get; set; } 
 
         public string UserName
         {
@@ -24,7 +25,7 @@ namespace backend.DTOs.Web
 
 
         //唯一标识
-        public string Token { get; set; }
+        public string? Token { get; set; }
 
         //登陆时间
         public long LoginTime { get; set; }
@@ -32,11 +33,17 @@ namespace backend.DTOs.Web
         //过期时间
         public long ExpireTime { get; set; }
 
+        [JsonConstructor]
         public LoginUser(User user)
         {
             this.User= user;
         }
 
+        public LoginUser(User user, string userType)
+        {
+            this.User = user;
+            this.UserType = userType;
+        }
 
     }
 }
