@@ -36,6 +36,9 @@ builder.Logging.AddConsole();
 var connectionString = builder.Configuration.GetConnectionString("OracleDB")
                       ?? throw new InvalidOperationException("缺少 OracleDB 连接字符串配置");
 
+var redisConnStr = builder.Configuration.GetConnectionString("Redis")
+                      ?? throw new InvalidOperationException("缺少 Redis 连接字符串配置");
+
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
 builder.Services.AddSingleton(new CommentRepository(connectionString));
@@ -46,6 +49,8 @@ builder.Services.AddTransient<BookService>();
 builder.Services.AddTransient<CommentService>();
 builder.Services.AddTransient<BookCategoryService>();
 builder.Services.AddTransient<BookShelfService>();
+// 注册 Redis 服务（使用连接字符串）
+builder.Services.AddSingleton(new RedisService(redisConnStr));
 
 var app = builder.Build();
 
