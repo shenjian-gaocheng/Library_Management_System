@@ -9,6 +9,8 @@
 @procedure/book/search_booklist_by_reader.sql
 @procedure/book/recommend_booklist.sql
 @procedure/book/get_booklist_details.sql
+@procedure/book/update_booklist_info.sql
+@procedure/book/update_collect_notes.sql
 
 @function/book/generate_booklistcode.sql
 
