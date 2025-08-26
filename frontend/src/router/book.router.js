@@ -36,21 +36,7 @@ export default [
     }
   },
 
-   //书架管理
-  {
-    path: '/bookshelf',
-    name: 'BookshelfManage',
-    component: () =>
-    import(
-        /* webpackChunkName: "book-search" */
-        '@/modules/book/pages/BookshelfManagePage.vue'
-    ),
-    meta: {
-      requiresAuth: true,
-      title: '书架管理',
-      //role: 'librarian' // 添加权限控制，仅管理员可见
-    }
-  },
+
   //用条码借还图书
   {
   path: '/books/circulation',
