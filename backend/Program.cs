@@ -1,4 +1,7 @@
 ﻿
+using backend.Repositories.Admin;
+using backend.Services.Admin;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 输出当前环境（Development / Production）
@@ -19,6 +22,7 @@ builder.Services.AddSwaggerGen();
 // 添加 CORS 支持（便于前端访问）
 builder.Services.AddCors(options =>
 {
+    
     options.AddDefaultPolicy(policy =>
     {
         policy
@@ -49,6 +53,12 @@ builder.Services.AddTransient<BookService>();
 builder.Services.AddTransient<CommentService>();
 builder.Services.AddTransient<BookCategoryService>();
 builder.Services.AddTransient<BookShelfService>();
+builder.Services.AddSingleton(new PurchaseAnalysisRepository(connectionString));
+builder.Services.AddTransient<PurchaseAnalysisService>();
+builder.Services.AddSingleton(new ReportRepository(connectionString));
+builder.Services.AddTransient<ReportService>();
+builder.Services.AddSingleton(new AnnouncementRepository(connectionString));
+builder.Services.AddTransient<AnnouncementService>();
 // 注册 Redis 服务（使用连接字符串）
 builder.Services.AddSingleton(new RedisService(redisConnStr));
 
