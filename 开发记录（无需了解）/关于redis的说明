@@ -4,6 +4,7 @@
 - backend\appsettings.Development.json
 - backend\appsettings.Production.json
 1. 新引入的依赖在readme
+
 ```
 dotnet add package StackExchange.Redis
 ```
