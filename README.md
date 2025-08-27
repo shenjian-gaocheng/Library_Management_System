@@ -37,6 +37,7 @@
    npm install swiper@^10
    npm install -D tailwindcss postcss autoprefixer
    npx tailwindcss init -p
+   npm install jwt-decode
    ```
 
 #### 2.开发环境启动方式 前端后端都运行在本地+数据库运行在远程服务器（大家在window上这样启动）
