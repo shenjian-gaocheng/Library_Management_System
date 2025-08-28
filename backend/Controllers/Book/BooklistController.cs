@@ -10,101 +10,104 @@ namespace Backend.Controllers.Book
     public class BooklistsController : ControllerBase
     {
         private readonly IBooklistService _service;
+
         public BooklistsController(IBooklistService service)
         {
             _service = service;
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreateBooklistResponse>> Create([FromBody] CreateBooklistRequest req)
+        public async Task<IActionResult> CreateBooklist([FromBody] CreateBooklistRequest request)
         {
-            var result = await _service.CreateBooklistAsync(req);
-            if (result.Success == 1) return Ok(result);
-            return BadRequest(result);
+            int creatorId = 1; // TODO: 从 token 中获取
+            var result = await _service.CreateBooklistAsync(request, creatorId);
+            return Ok(result);
         }
 
         [HttpDelete("{booklistId}")]
-        public async Task<ActionResult<BooklistSuccessResponse>> Delete(int booklistId, [FromQuery] int readerId)
+        public async Task<IActionResult> DeleteBooklist(int booklistId)
         {
+            int readerId = 1; // TODO: 从 token 中获取
             var result = await _service.DeleteBooklistAsync(booklistId, readerId);
-            if (result.Success == 1) return Ok(result);
-            return Forbid();
-        }
-
-        [HttpPost("{booklistId}/books")]
-        public async Task<ActionResult<BooklistSuccessResponse>> AddBook(int booklistId, [FromBody] AddBookToBooklistRequest req)
-        {
-            req.BooklistId = booklistId;
-            var result = await _service.AddBookAsync(req);
-            return result.Success == 1 ? Ok(result) : BadRequest(result);
-        }
-
-        [HttpDelete("{booklistId}/books/{isbn}")]
-        public async Task<ActionResult<BooklistSuccessResponse>> RemoveBook(int booklistId, string isbn)
-        {
-            var result = await _service.RemoveBookAsync(new RemoveBookFromBooklistRequest { BooklistId = booklistId, ISBN = isbn });
-            return result.Success == 1 ? Ok(result) : NotFound(result);
-        }
-
-        [HttpPost("{booklistId}/collect")]
-        public async Task<ActionResult<BooklistSuccessResponse>> Collect(int booklistId, [FromBody] CollectBooklistRequest req)
-        {
-            req.BooklistId = booklistId;
-            var result = await _service.CollectAsync(req);
-            return result.Success == 1 ? Ok(result) : BadRequest(result);
-        }
-        
-        [HttpDelete("{booklistId}/collect/{readerId}")]
-        public async Task<ActionResult<BooklistSuccessResponse>> CancelCollect(int booklistId, int readerId)
-        {
-            var result = await _service.CancelCollectAsync(new CancelCollectBooklistRequest { BooklistId = booklistId, ReaderId = readerId });
-            return result.Success == 1 ? Ok(result) : NotFound(result);
+            return Ok(result);
         }
 
         [HttpGet("{booklistId}")]
-        public async Task<ActionResult<GetBooklistDetailsResponse>> Details(int booklistId)
+        public async Task<IActionResult> GetBooklistDetails(int booklistId)
         {
-            var result = await _service.GetDetailsAsync(booklistId);
-            if (result.BooklistInfo == null) return NotFound();
+            var result = await _service.GetBooklistDetailsAsync(booklistId);
+            if (result == null) return NotFound();
             return Ok(result);
         }
 
-        [HttpGet("{booklistId}/recommendations")]
-        public async Task<ActionResult<RecommendBooklistsResponse>> Recommend(int booklistId, [FromQuery] int limit = 10)
+        [HttpGet("{booklistId}/recommend")]
+        public async Task<IActionResult> RecommendBooklists(int booklistId, [FromQuery] int limit = 10)
         {
-            var result = await _service.RecommendAsync(booklistId, limit);
+            var result = await _service.RecommendBooklistsAsync(booklistId, limit);
             return Ok(result);
         }
 
-        [HttpGet("readers/{readerId}/booklists")]
-        public async Task<ActionResult<SearchBooklistsByReaderResponse>> ByReader(int readerId)
+        [HttpPost("{booklistId}/books")]
+        public async Task<IActionResult> AddBookToBooklist(int booklistId, [FromBody] AddBookToBooklistRequest request)
         {
-            var result = await _service.GetByReaderAsync(readerId);
+            int readerId = 1; // TODO: 从 token 中获取
+            var result = await _service.AddBookToBooklistAsync(booklistId, request, readerId);
             return Ok(result);
         }
 
-        [HttpPatch("{booklistId}/name")]
-        public async Task<ActionResult<BooklistSuccessResponse>> UpdateName(int booklistId, [FromBody] UpdateBooklistNameRequest req)
+        [HttpDelete("{booklistId}/books/{isbn}")]
+        public async Task<IActionResult> RemoveBookFromBooklist(int booklistId, string isbn)
         {
-            req.BooklistId = booklistId;
-            var result = await _service.UpdateBooklistNameAsync(req);
-            return result.Success == 1 ? Ok(result) : Forbid();
+            int readerId = 1; // TODO: 从 token 中获取
+            var result = await _service.RemoveBookFromBooklistAsync(booklistId, isbn, readerId);
+            return Ok(result);
         }
 
-        [HttpPatch("{booklistId}/intro")]
-        public async Task<ActionResult<BooklistSuccessResponse>> UpdateIntro(int booklistId, [FromBody] UpdateBooklistIntroRequest req)
+        [HttpPost("{booklistId}/collect")]
+        public async Task<IActionResult> CollectBooklist(int booklistId, [FromBody] CollectBooklistRequest request)
         {
-            req.BooklistId = booklistId;
-            var result = await _service.UpdateBooklistIntroAsync(req);
-            return result.Success == 1 ? Ok(result) : Forbid();
+            int readerId = 1; // TODO: 从 token 中获取
+            var result = await _service.CollectBooklistAsync(booklistId, readerId, request);
+            return Ok(result);
         }
 
-        [HttpPatch("{booklistId}/collect-notes")]
-        public async Task<ActionResult<BooklistSuccessResponse>> UpdateCollectNotes(int booklistId, [FromBody] UpdateCollectNotesRequest req)
+        [HttpDelete("{booklistId}/collect")]
+        public async Task<IActionResult> CancelCollectBooklist(int booklistId)
         {
-            req.BooklistId = booklistId;
-            var result = await _service.UpdateCollectNotesAsync(req);
-            return result.Success == 1 ? Ok(result) : Forbid();
+            int readerId = 1; // TODO: 从 token 中获取
+            var result = await _service.CancelCollectBooklistAsync(booklistId, readerId);
+            return Ok(result);
+        }
+
+        [HttpPut("{booklistId}/collect/notes")]
+        public async Task<IActionResult> UpdateCollectNotes(int booklistId, [FromBody] UpdateCollectNotesRequest request)
+        {
+            int readerId = 1; // TODO: 从 token 中获取
+            var result = await _service.UpdateCollectNotesAsync(booklistId, readerId, request);
+            return Ok(result);
+        }
+
+        [HttpGet("reader/{readerId}")]
+        public async Task<IActionResult> SearchBooklistsByReader(int readerId)
+        {
+            var result = await _service.SearchBooklistsByReaderAsync(readerId);
+            return Ok(result);
+        }
+
+        [HttpPut("{booklistId}/name")]
+        public async Task<IActionResult> UpdateBooklistName(int booklistId, [FromBody] UpdateBooklistNameRequest request)
+        {
+            int readerId = 1; // TODO: 从 token 中获取
+            var result = await _service.UpdateBooklistNameAsync(booklistId, readerId, request);
+            return Ok(result);
+        }
+
+        [HttpPut("{booklistId}/intro")]
+        public async Task<IActionResult> UpdateBooklistIntro(int booklistId, [FromBody] UpdateBooklistIntroRequest request)
+        {
+            int readerId = 1; // TODO: 从 token 中获取
+            var result = await _service.UpdateBooklistIntroAsync(booklistId, readerId, request);
+            return Ok(result);
         }
     }
 }

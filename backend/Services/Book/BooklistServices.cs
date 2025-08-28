@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using Backend.DTOs.Book;
 using Backend.Repositories.Book;
@@ -7,70 +6,72 @@ namespace Backend.Services.Book
 {
     public class BooklistService : IBooklistService
     {
-        private readonly IBooklistRepository _repo;
-        public BooklistService(IBooklistRepository repo)
+        private readonly IBooklistRepository _repository;
+
+        public BooklistService(IBooklistRepository repository)
         {
-            _repo = repo;
+            _repository = repository;
         }
 
-        public async Task<CreateBooklistResponse> CreateBooklistAsync(CreateBooklistRequest req)
+        public Task<BooklistSuccessResponse> AddBookToBooklistAsync(int booklistId, AddBookToBooklistRequest request, int readerId)
         {
-            return await _repo.CreateBooklistAsync(req.BooklistName, req.BooklistIntroduction, req.CreatorId);
+            return _repository.AddBookToBooklistAsync(booklistId, request);
+
         }
 
-        public async Task<BooklistSuccessResponse> DeleteBooklistAsync(int booklistId, int readerId)
+        public Task<BooklistSuccessResponse> RemoveBookFromBooklistAsync(int booklistId, string isbn, int readerId)
         {
-            return await _repo.DeleteBooklistAsync(booklistId, readerId);
+            return _repository.RemoveBookFromBooklistAsync(booklistId, isbn);
         }
 
-        public async Task<BooklistSuccessResponse> AddBookAsync(AddBookToBooklistRequest req)
+        public Task<BooklistSuccessResponse> CollectBooklistAsync(int booklistId, int readerId, CollectBooklistRequest request)
         {
-            return await _repo.AddBookToBooklistAsync(req.BooklistId, req.ISBN, req.Notes);
+            return _repository.CollectBooklistAsync(booklistId, readerId, request);
         }
 
-        public async Task<BooklistSuccessResponse> RemoveBookAsync(RemoveBookFromBooklistRequest req)
+        public Task<BooklistSuccessResponse> CancelCollectBooklistAsync(int booklistId, int readerId)
         {
-            return await _repo.RemoveBookFromBooklistAsync(req.BooklistId, req.ISBN);
+            return _repository.CancelCollectBooklistAsync(booklistId, readerId);
         }
 
-        public async Task<BooklistSuccessResponse> CollectAsync(CollectBooklistRequest req)
+        public Task<BooklistSuccessResponse> UpdateCollectNotesAsync(int booklistId, int readerId, UpdateCollectNotesRequest request)
         {
-            return await _repo.CollectBooklistAsync(req.BooklistId, req.ReaderId, req.Notes);
+            return _repository.UpdateCollectNotesAsync(booklistId, readerId, request);
         }
 
-        public async Task<BooklistSuccessResponse> CancelCollectAsync(CancelCollectBooklistRequest req)
+        public Task<CreateBooklistResponse> CreateBooklistAsync(CreateBooklistRequest request, int creatorId)
         {
-            return await _repo.CancelCollectBooklistAsync(req.BooklistId, req.ReaderId);
+            return _repository.CreateBooklistAsync(request, creatorId);
         }
 
-        public async Task<GetBooklistDetailsResponse> GetDetailsAsync(int booklistId)
+        public Task<BooklistSuccessResponse> DeleteBooklistAsync(int booklistId, int readerId)
         {
-            return await _repo.GetBooklistDetailsAsync(booklistId);
+            return _repository.DeleteBooklistAsync(booklistId, readerId);
         }
 
-        public async Task<RecommendBooklistsResponse> RecommendAsync(int booklistId, int limit = 10)
+        public Task<GetBooklistDetailsResponse?> GetBooklistDetailsAsync(int booklistId)
         {
-            return await _repo.RecommendBooklistsAsync(booklistId, limit);
+            return _repository.GetBooklistDetailsAsync(booklistId);
         }
 
-        public async Task<SearchBooklistsByReaderResponse> GetByReaderAsync(int readerId)
+        public Task<RecommendBooklistsResponse> RecommendBooklistsAsync(int booklistId, int limit = 10)
         {
-            return await _repo.SearchBooklistsByReaderAsync(readerId);
+            return _repository.RecommendBooklistsAsync(booklistId, limit);
         }
 
-        public async Task<BooklistSuccessResponse> UpdateBooklistNameAsync(UpdateBooklistNameRequest req)
+        public Task<SearchBooklistsByReaderResponse> SearchBooklistsByReaderAsync(int readerId)
         {
-            return await _repo.UpdateBooklistNameAsync(req.BooklistId, req.ReaderId, req.NewName);
+            return _repository.SearchBooklistsByReaderAsync(readerId);
         }
 
-        public async Task<BooklistSuccessResponse> UpdateBooklistIntroAsync(UpdateBooklistIntroRequest req)
+        public Task<BooklistSuccessResponse> UpdateBooklistNameAsync(int booklistId, int readerId, UpdateBooklistNameRequest request)
         {
-            return await _repo.UpdateBooklistIntroAsync(req.BooklistId, req.ReaderId, req.NewIntro);
+            return _repository.UpdateBooklistNameAsync(booklistId, readerId, request);
         }
 
-        public async Task<BooklistSuccessResponse> UpdateCollectNotesAsync(UpdateCollectNotesRequest req)
+        public Task<BooklistSuccessResponse> UpdateBooklistIntroAsync(int booklistId, int readerId, UpdateBooklistIntroRequest request)
         {
-            return await _repo.UpdateCollectNotesAsync(req.BooklistId, req.ReaderId, req.NewNotes);
+            return _repository.UpdateBooklistIntroAsync(booklistId, readerId, request);
         }
     }
 }

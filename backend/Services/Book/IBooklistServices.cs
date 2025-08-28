@@ -5,18 +5,22 @@ namespace Backend.Services.Book
 {
     public interface IBooklistService
     {
-        Task<CreateBooklistResponse> CreateBooklistAsync(CreateBooklistRequest req);
-        Task<BooklistSuccessResponse> DeleteBooklistAsync(int booklistId, int readerId);
-        Task<BooklistSuccessResponse> AddBookAsync(AddBookToBooklistRequest req);
-        Task<BooklistSuccessResponse> RemoveBookAsync(RemoveBookFromBooklistRequest req);
-        Task<BooklistSuccessResponse> CollectAsync(CollectBooklistRequest req);
-        Task<BooklistSuccessResponse> CancelCollectAsync(CancelCollectBooklistRequest req);
-        Task<GetBooklistDetailsResponse> GetDetailsAsync(int booklistId);
-        Task<RecommendBooklistsResponse> RecommendAsync(int booklistId, int limit = 10);
-        Task<SearchBooklistsByReaderResponse> GetByReaderAsync(int readerId);
+        Task<BooklistSuccessResponse> AddBookToBooklistAsync(int booklistId, AddBookToBooklistRequest request, int readerId);
+        Task<BooklistSuccessResponse> RemoveBookFromBooklistAsync(int booklistId, string isbn, int readerId);
 
-        Task<BooklistSuccessResponse> UpdateBooklistNameAsync(UpdateBooklistNameRequest req);
-        Task<BooklistSuccessResponse> UpdateBooklistIntroAsync(UpdateBooklistIntroRequest req);
-        Task<BooklistSuccessResponse> UpdateCollectNotesAsync(UpdateCollectNotesRequest req);
+        Task<BooklistSuccessResponse> CollectBooklistAsync(int booklistId, int readerId, CollectBooklistRequest request);
+        Task<BooklistSuccessResponse> CancelCollectBooklistAsync(int booklistId, int readerId);
+        Task<BooklistSuccessResponse> UpdateCollectNotesAsync(int booklistId, int readerId, UpdateCollectNotesRequest request);
+
+        Task<CreateBooklistResponse> CreateBooklistAsync(CreateBooklistRequest request, int creatorId);
+        Task<BooklistSuccessResponse> DeleteBooklistAsync(int booklistId, int readerId);
+
+        Task<GetBooklistDetailsResponse?> GetBooklistDetailsAsync(int booklistId);
+        Task<RecommendBooklistsResponse> RecommendBooklistsAsync(int booklistId, int limit = 10);
+
+        Task<SearchBooklistsByReaderResponse> SearchBooklistsByReaderAsync(int readerId);
+
+        Task<BooklistSuccessResponse> UpdateBooklistNameAsync(int booklistId, int readerId, UpdateBooklistNameRequest request);
+        Task<BooklistSuccessResponse> UpdateBooklistIntroAsync(int booklistId, int readerId, UpdateBooklistIntroRequest request);
     }
 }
