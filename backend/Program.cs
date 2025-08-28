@@ -63,6 +63,12 @@ builder.Services.AddSingleton(new AnnouncementRepository(connString));
 builder.Services.AddTransient<AnnouncementService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(/*...*/);
 
+//书单部分
+builder.Services.AddScoped<Backend.Repositories.Book.IBooklistRepository, Backend.Repositories.Book.BooklistRepository>();
+builder.Services.AddScoped<Backend.Services.Book.IBooklistService, Backend.Services.Book.BooklistService>();
+builder.Services.AddSingleton<IOracleConnectionFactory, OracleConnectionFactory>();
+
+
 
 // ===================================================================
 // 4. 构建 WebApplication 实例

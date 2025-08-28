@@ -1,5 +1,8 @@
 @views/book/book_detail_view.sql
 
+
+@function/book/generate_booklistcode.sql
+
 @procedure/book/add_book_to_booklist.sql
 @procedure/book/cancel_collect_booklist.sql
 @procedure/book/collect_booklist.sql
@@ -12,7 +15,6 @@
 @procedure/book/update_booklist_info.sql
 @procedure/book/update_collect_notes.sql
 
-@function/book/generate_booklistcode.sql
 
 @index/book/index_booklist_book_booklistid.sql
 @index/book/index_booklist_book_isbn.sql

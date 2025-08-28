@@ -18,7 +18,7 @@ BEGIN
     -- 返回书单中的图书信息
     OPEN p_BooksInfo FOR
     SELECT bb.ISBN, bb.AddTime, bb.Notes,
-           bi.Title, bi.Author, bi.Stock
+           bi.Title, bi.Author
     FROM Booklist_Book bb
     JOIN BookInfo bi ON bb.ISBN = bi.ISBN
     WHERE bb.BooklistID = p_BooklistID
