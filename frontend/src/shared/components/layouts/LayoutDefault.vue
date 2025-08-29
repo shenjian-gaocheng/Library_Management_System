@@ -32,7 +32,7 @@ import UrgentAnnouncements from '@/shared/components/layouts/UrgentAnnouncements
 .layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100vh; 
 }
 
 /* ② 主内容区域样式调整 */
