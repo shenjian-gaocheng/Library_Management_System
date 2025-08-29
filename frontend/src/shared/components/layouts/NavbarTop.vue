@@ -16,19 +16,7 @@
           </div>
         </div>
 
-        <div class="nav-item dropdown">
-          <span>我的图书馆</span>
-          <div class="dropdown-menu">
-            <router-link to="/user/borrowed">当前借阅</router-link>
-            <router-link to="/user/favorites">收藏图书</router-link>
-
-            <!-- 添加我的书单 -->
-            <router-link to="/user/booklist">我的书单</router-link>
-
-
-            <router-link to="/user/history">借阅历史</router-link>
-          </div>
-        </div>
+        <router-link to="/my/home/dashboard" class="nav-item">读者控制台</router-link>
 
         <div class="nav-item dropdown">
           <span>管理员操作</span>
@@ -44,6 +32,7 @@
             <router-link to="/admin/category">分类管理</router-link>
           </div>
         </div>
+        
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>
 
