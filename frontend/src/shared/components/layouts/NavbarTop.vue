@@ -16,19 +16,7 @@
           </div>
         </div>
 
-        <div class="nav-item dropdown">
-          <span>我的图书馆</span>
-          <div class="dropdown-menu">
-            <router-link to="/user/borrowed">当前借阅</router-link>
-            <router-link to="/user/favorites">收藏图书</router-link>
-
-            <!-- 添加我的书单 -->
-            <router-link to="/user/booklist">我的书单</router-link>
-
-
-            <router-link to="/user/history">借阅历史</router-link>
-          </div>
-        </div>
+        <router-link to="/my/home/dashboard" class="nav-item">读者控制台</router-link>
 
         <div class="nav-item dropdown">
           <span>管理员操作</span>
@@ -37,25 +25,35 @@
             <router-link to="/admin/dashboard">管理中心</router-link>
           </div>
         </div>
-
-        
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>
 
-      <div class="auth-btn">
-        <router-link to="/login" class="login">登录</router-link>
+      <!-- 登录按钮 / 欢迎语 -->
+      <div class="auth-btn" v-if="!isLoggedIn">
+        <router-link to="/auth" class="login">登录</router-link>
       </div>
+      <div class="nav-item" v-else>
+        <span class="welcome-text">Hi，{{ displayName }}~</span>
+        <button class="logout-inline" @click="handleLogout">退出</button>
+      </div>
+
+
     </div>
   </header>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { getMyProfile, logout } from '@/modules/reader/api.js'
 
 const showServices = ref(false)
 const showLibrary = ref(false)
 const isScrolled = ref(false)
 let   scrollEl     = null   // 实际滚动的容器（#app）
+
+const isLoggedIn = ref(false)
+const displayName = ref('')
+
 
 function handleScroll () {
   if (scrollEl) {
@@ -74,6 +72,36 @@ onMounted(() => {
 onUnmounted(() => {
   scrollEl && scrollEl.removeEventListener('scroll', handleScroll)
 })
+
+// === 登录状态检测 ===
+onMounted(async () => {
+  try {
+    const res = await getMyProfile()               // 要求 http 拦截器自动带 token
+    const u = res?.data ?? res
+    isLoggedIn.value = true
+    displayName.value = u.fullName || u.nickName || u.userName || ''
+    // 可选：缓存
+    localStorage.setItem('user', JSON.stringify(u))
+  } catch (e) {
+    // 未登录或 token 失效
+    isLoggedIn.value = false
+  }
+})
+
+// === 退出登录 ===
+async function handleLogout() {
+  try {
+    await logout()   // 通知后端作废 token（可选）
+  } catch (e) {
+    console.warn('后端登出失败，前端仍会清理本地状态', e)
+  } finally {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    isLoggedIn.value = false
+    displayName.value = ''
+    router.push('/') // 跳转到主页
+  }
+}
 </script>
 
 
@@ -227,4 +255,26 @@ onUnmounted(() => {
 }
 
 .auth-btn .login:hover { background: #f0f0f0; }
+
+/* ---------- 欢迎语+退出样式 ---------- */
+/* 欢迎语样式 */
+.welcome-text {
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-shadow: 0 0 4px rgba(0,0,0,0.6);
+}
+
+/* 退出按钮样式：小胶囊蓝色 */
+.logout-inline {
+  border: none;
+  color: hsl(221, 98%, 79%);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
 </style>
