@@ -1,6 +1,4 @@
-﻿import BookBooklistPage from '@/modules/book/pages/BooklistPage.vue'
-
-export default [
+﻿export default [
   // 图书搜索结果页
   {
     path: '/search',
@@ -16,11 +14,13 @@ export default [
   // 添加首页头部导航栏 "我的图书馆" 中 "我的书单" 路由
   {
     path: '/user/booklist',
-    name: 'BookBooklist',
-    component: BookBooklistPage,
+    name: 'Booklist',
+    component: () =>
+      import(
+        /* webpackChunkName: "book-booklist" */
+        '@/modules/book/pages/BooklistPage.vue'
+      ),
     meta: {
-      requiresAuth: true,
-      title: '我的书单'
-    }
+      requiresAuth: true, title: '我的书单' }
   }
 ]
