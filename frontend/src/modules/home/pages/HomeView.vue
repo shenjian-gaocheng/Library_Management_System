@@ -17,7 +17,6 @@
 </template>
 
 <script setup>
-import LayoutDefault from '@/shared/components/layouts/LayoutDefault.vue'
 import Banner from '@/modules/home/components/Banner.vue'
 import QuickEntry from '@/modules/home/components/QuickEntry.vue'
 import BookRecommend from '@/modules/home/components/BookRecommend.vue'
