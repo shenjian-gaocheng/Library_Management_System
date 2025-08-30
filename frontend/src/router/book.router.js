@@ -58,4 +58,15 @@ export default [
   component: () => import('@/modules/book/pages/BookCirculationPage.vue'),
   meta: { title: '借还服务（条码）' }
   },
+  
+  // 举报评论页面
+  {
+    path: '/report-comment',
+    name: 'ReportComment',
+    component: () => import('@/modules/book/pages/ReportPage.vue'),
+    meta: { 
+      requiresAuth: false,
+      title: '举报评论'
+    }
+  },
 ]

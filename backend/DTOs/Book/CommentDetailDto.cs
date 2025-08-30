@@ -1,10 +1,27 @@
 public class CommentDetailDto
 {
-    public string? CommentID { get; set; }
-    public string? ReaderID { get; set; }
+    public decimal? CommentID { get; set; }
+    public decimal? ReaderID { get; set; }
     public string? ISBN { get; set; }
     public int? RATING { get; set; }
     public required string ReviewContent { get; set; }
     public DateTime CreateTime { get; set; }
     public string Status { get; set; } = "正常";
+}
+
+public class ReportDto
+{
+    public decimal? ReportID { get; set; }
+    public required decimal CommentID { get; set; }
+    public required decimal READERID { get; set; }
+    public string ReportReason { get; set; }
+    public DateTime ReportTime{ get; set; }
+    public string Status { get; set; }
+    public decimal LibrarianID { get; set; }
+}
+
+public class ReportStatusDto
+{
+    public decimal ReportID { get; set; }
+    public string Status { get; set; }
 }

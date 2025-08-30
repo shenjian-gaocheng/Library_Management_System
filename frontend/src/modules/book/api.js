@@ -16,8 +16,32 @@ export function getCommentsByISBN(ISBN) {
   })
 }
 
+export function getCommentsByID(id) {
+  return http.get('/comment/search-id', {
+    params: { id }
+  })
+}
 export function addComment(commentData) {
   return http.post('/comment/add', commentData)
+}
+
+
+export function getReportsByReaderId(readerId) {
+  return http.get(`/report/by-reader/${readerId}`)
+}
+
+export function getReportsByLibrarianId(librarianId) {
+  return http.get(`/report/by-librarian/${librarianId}`)
+}
+
+export function addReport(reportData) {
+  return http.post('/report/add', reportData)
+}
+
+
+
+export function changeReportStatus(statusData) {
+  return http.post('/report/change-status', statusData)
 }
 
 export function getCategoryTree() {
