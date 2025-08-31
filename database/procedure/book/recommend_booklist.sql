@@ -1,4 +1,3 @@
--- 根据用户书单推荐其他书单（基于Jaccard相似度）
 CREATE OR REPLACE PROCEDURE RecommendBooklists(
     p_BooklistID IN Booklist.BooklistID%TYPE,
     p_Limit IN NUMBER DEFAULT 10,
@@ -27,6 +26,19 @@ BEGIN
         WHERE b.BooklistID != p_BooklistID
         GROUP BY b.BooklistID, b.ListCode, b.BooklistName, 
                  b.BooklistIntroduction, b.CreatorID, r.Nickname
+    ),
+    RankedBooklists AS (
+        SELECT BooklistID,
+               ListCode,
+               BooklistName,
+               BooklistIntroduction,
+               CreatorID,
+               CreatorNickname,
+               CommonBooks AS MatchingBooksCount,
+               ROUND(CommonBooks / (TotalBooks + (SELECT COUNT(*) FROM CurrentBooklist) - CommonBooks), 3) AS SimilarityScore,
+               ROW_NUMBER() OVER (ORDER BY CommonBooks / (TotalBooks + (SELECT COUNT(*) FROM CurrentBooklist) - CommonBooks) DESC, CommonBooks DESC) AS rn
+        FROM OtherBooklists
+        WHERE CommonBooks > 0
     )
     SELECT BooklistID,
            ListCode,
@@ -34,11 +46,9 @@ BEGIN
            BooklistIntroduction,
            CreatorID,
            CreatorNickname,
-           CommonBooks AS MatchingBooksCount,
-           ROUND(CommonBooks / (TotalBooks + (SELECT COUNT(*) FROM CurrentBooklist) - CommonBooks), 3) AS SimilarityScore
-    FROM OtherBooklists
-    WHERE CommonBooks > 0
-    ORDER BY SimilarityScore DESC, CommonBooks DESC
-    FETCH FIRST p_Limit ROWS ONLY;
+           MatchingBooksCount,
+           SimilarityScore
+    FROM RankedBooklists
+    WHERE rn <= p_Limit;
 END;
 /
