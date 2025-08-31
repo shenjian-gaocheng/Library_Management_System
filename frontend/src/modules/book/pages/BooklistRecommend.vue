@@ -29,10 +29,10 @@ import { useBooklistStore } from '@/stores/bookliststore'
 const store = useBooklistStore()
 
 onMounted(() => {
-  store.fetchRecommended(1) // TODO: 默认传入一个书单Id，也可以改成随机取 created 中的一个
+  store.fetchRecommended(1, {withToken:true}) // TODO: 默认传入一个书单Id，也可以改成随机取 created 中的一个
 })
 
 function collect(booklistId) {
-  store.collect(booklistId, { notes: '' })
+  store.collect(booklistId, { notes: '' }, {withToken:true})
 }
 </script>

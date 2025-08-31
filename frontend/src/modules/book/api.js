@@ -9,64 +9,64 @@ export function getBooks(keyword) {
 
 //创建书单
 export function createBooklist(data) {
-  return http.post('/book/booklists', data)
+  return http.post('/book/booklists', data, { withToken: true })
 }
 
 //删除书单
 export function deleteBooklist(booklistId) {
-  return http.delete(`/book/booklists/${booklistId}`)
+  return http.delete(`/book/booklists/${booklistId}`, { withToken: true })
 }
 
 //获取书单详情
 export function getBooklistDetails(booklistId) {
-  return http.get(`/book/booklists/${booklistId}`)
+  return http.get(`/book/booklists/${booklistId}`, { withToken: true })
 }
 
 //推荐书单
 export function recommendBooklists(booklistId, limit = 10) {
   return http.get(`/book/booklists/${booklistId}/recommend`, {
-    params: { limit }
+    params: { limit }, withToken: true
   })
 }
 
 //添加图书到书单
 export function addBookToBooklist(booklistId, data) {
-  return http.post(`/book/booklists/${booklistId}/books`, data)
+  return http.post(`/book/booklists/${booklistId}/books`, data, { withToken: true })
 }
 
 //从书单移除图书
 export function removeBookFromBooklist(booklistId, isbn) {
-  return http.delete(`/book/booklists/${booklistId}/books/${isbn}`)
+  return http.delete(`/book/booklists/${booklistId}/books/${isbn}`, { withToken: true })
 }
 
 //收藏书单
 export function collectBooklist(booklistId, data) {
-  return http.post(`/book/booklists/${booklistId}/collect`, data)
+  return http.post(`/book/booklists/${booklistId}/collect`, data, { withToken: true })
 }
 
 //取消收藏书单
 export function cancelCollectBooklist(booklistId) {
-  return http.delete(`/book/booklists/${booklistId}/collect`)
+  return http.delete(`/book/booklists/${booklistId}/collect`, { withToken: true })
 }
 
 //更新收藏备注
 export function updateCollectNotes(booklistId, data) {
-  return http.put(`/book/booklists/${booklistId}/collect/notes`, data)
+  return http.put(`/book/booklists/${booklistId}/collect/notes`, data, { withToken: true })
 }
 
 //查询某个用户的书单（创建 + 收藏）
 export function searchBooklistsByReader(readerId) {
-  return http.get(`/book/booklists/reader/${readerId}`)
+  return http.get(`/book/booklists/reader/${readerId}`, { withToken: true })
 }
 
 //修改书单名称
 export function updateBooklistName(booklistId, data) {
-  return http.put(`/book/booklists/${booklistId}/name`, data)
+  return http.put(`/book/booklists/${booklistId}/name`, data, { withToken: true })
 }
 
 //修改书单简介
 export function updateBooklistIntro(booklistId, data) {
-  return http.put(`/book/booklists/${booklistId}/intro`, data)
+  return http.put(`/book/booklists/${booklistId}/intro`, data, { withToken: true })
 }
 
 

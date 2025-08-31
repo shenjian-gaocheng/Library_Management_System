@@ -44,6 +44,6 @@ import BooklistCard from '../components/BooklistCard.vue'
 const store = useBooklistStore()
 
 onMounted(() => {
-  store.fetchBooklistsByReader(1) // TODO: 改成登录用户的 readerId
+  store.fetchBooklistsByReader(1, {withToken:true}) // TODO: 改成登录用户的 readerId
 })
 </script>

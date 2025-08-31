@@ -42,17 +42,17 @@ const router = useRouter()
 const booklistId = route.params.id
 
 onMounted(() => {
-  store.fetchBooklistDetails(booklistId)
+  store.fetchBooklistDetails(booklistId, {withToken:true})
 })
 
 function editNotes() {
   const newNotes = prompt('请输入新的收藏备注')
-  if (newNotes) store.updateCollectNotes(booklistId, { newNotes })
+  if (newNotes) store.updateCollectNotes(booklistId, { newNotes }, {withToken:true})
 }
 
 function cancelCollect() {
   if (confirm('确定要取消收藏吗？')) {
-    store.cancelCollect(booklistId)
+    store.cancelCollect(booklistId, {withToken:true})
     router.push({ name: 'Booklist' })
   }
 }

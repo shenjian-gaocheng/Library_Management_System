@@ -44,21 +44,21 @@ const booklistId = route.params.id
 const isbn = ref('')
 
 onMounted(() => {
-  store.fetchBooklistDetails(booklistId)
+  store.fetchBooklistDetails(booklistId, {withToken:true})
 })
 
 function addBook() {
   if (!isbn.value) return
-  store.addBook(booklistId, { isbn: isbn.value })
+  store.addBook(booklistId, { isbn: isbn.value }, {withToken:true})
   isbn.value = ''
 }
 
 function editName() {
   const newName = prompt('请输入新书单名称')
-  if (newName) store.updateName(booklistId, { newName })
+  if (newName) store.updateName(booklistId, { newName }, {withToken:true})
 }
 function editIntro() {
   const newIntro = prompt('请输入新简介')
-  if (newIntro) store.updateIntro(booklistId, { newIntro })
+  if (newIntro) store.updateIntro(booklistId, { newIntro }, {withToken:true})
 }
 </script>
