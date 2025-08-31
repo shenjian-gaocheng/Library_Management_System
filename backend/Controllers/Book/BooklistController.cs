@@ -110,6 +110,7 @@ namespace Backend.Controllers.Book
         [HttpGet("reader/{readerId}")]
         public async Task<IActionResult> SearchBooklistsByReader(int readerId)
         {
+            readerId = GetCurrentReaderId();
             var result = await _service.SearchBooklistsByReaderAsync(readerId);
             return Ok(result);
         }
