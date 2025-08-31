@@ -132,3 +132,8 @@ export function returnBookByBarcode(barcode) {
 export function onShelfBookByBarcode(barcode) {
   return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/on-shelf`)
 }
+
+// 获取书架上的书籍
+export function getShelfBooks(shelfId) {
+  return http.get(`/bookshelf/shelf-books/${shelfId}`);
+}

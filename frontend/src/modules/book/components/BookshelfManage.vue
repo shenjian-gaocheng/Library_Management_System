@@ -52,7 +52,7 @@
                   <!-- 楼宇ID -->
                   <td>
                     <template v-if="book.BUILDINGID">
-                      {{ book.BUILDINGID === 1 ? '总图书馆' : '德文图书馆' }}
+                      {{ book.BUILDINGID == 21 ? '总图书馆' : '德文图书馆' }}
                     </template>
                     <template v-else>
                       无信息
@@ -106,7 +106,7 @@
 
 
                     <template v-if="book.STATUS === '正常'">
-                      <button class="borrow-btn" @click="handleBorrow(book)">借出</button>
+                      <button class="borrow-btn" @click="handleDele(book)">下架</button>
                       <button class="edit-btn" @click="openEditDialog(book)">修改</button>
                     </template>
                     <template v-else-if="book.STATUS === '借出'">
@@ -132,8 +132,8 @@
         <label>所属楼宇：</label>
         <select v-model="editLocation.buildingId">
           <option :value="null">请选择楼宇</option>
-          <option :value="1">总图书馆</option>
-          <option :value="2">德文图书馆</option>
+          <option :value="21">总图书馆</option>
+          <option :value="22">德文图书馆</option>
         </select>
       </div>
       
@@ -182,8 +182,8 @@
       <label>所属楼宇：</label>
       <select v-model="returnLocation.buildingId">
         <option :value="null">请选择楼宇</option>
-        <option :value="1">总图书馆</option>
-        <option :value="2">德文图书馆</option>
+        <option :value="21">总图书馆</option>
+        <option :value="22">德文图书馆</option>
       </select>
     </div>
     
@@ -248,9 +248,9 @@ const editLocation = reactive({
 })
 // 根据选择的楼宇计算可用楼层
 const availableFloors = computed(() => {
-  if (editLocation.buildingId === 1) {
+  if (editLocation.buildingId === 21) {
     return Array.from({length: 14}, (_, i) => i + 1)
-  } else if (editLocation.buildingId === 2) {
+  } else if (editLocation.buildingId === 22) {
     return Array.from({length: 2}, (_, i) => i + 1)
   }
   return []
@@ -258,19 +258,19 @@ const availableFloors = computed(() => {
 
 // 根据选择的楼宇计算可用区域
 const availableZones = computed(() => {
-  if (editLocation.buildingId === 1) {
-    return ['1', '2', '3', '4']
-  } else if (editLocation.buildingId === 2) {
-    return ['1', '2']
+  if (editLocation.buildingId === 21) {
+    return ['A', 'B', 'C', 'D']
+  } else if (editLocation.buildingId === 22) {
+    return ['A', 'B']
   }
   return []
 })
 
 // 根据选择的楼宇计算可用书架
 const availableShelves = computed(() => {
-  if (editLocation.buildingId === 1) {
+  if (editLocation.buildingId === 21) {
     return Array.from({length: 10}, (_, i) => i + 1)
-  } else if (editLocation.buildingId === 2) {
+  } else if (editLocation.buildingId === 22) {
     return Array.from({length: 5}, (_, i) => i + 1)
   }
   return []
@@ -390,18 +390,32 @@ const resetEditForm = () => {
   editLocation.shelfCode = ''
 }
 
+// 格式化书架编码
+const formatShelfCode = (shelfNumber) => {
+  if (!shelfNumber) return null;
+  
+  const buildingId = editLocation.buildingId || returnLocation.buildingId;
+  const floor = (editLocation.floor || returnLocation.floor).toString().padStart(2, '0');
+  const zone = editLocation.zone || returnLocation.zone;
+  
+
+  const shelfNum = shelfNumber.toString().padStart(3, '0');
+  
+  return `${floor}${zone}-${shelfNum}`;
+};
+
 const saveLocation = async () => {
   if (!editLocation.buildingId || !editLocation.floor || 
       !editLocation.zone || !editLocation.shelfCode) {
     alert('请填写完整的位置信息');
     return;
   }
-  
+  const formattedShelfCode = formatShelfCode(editLocation.shelfCode);
   try {
     // 1. 检查书架是否存在
     const { data: shelfExists } = await checkShelfExists(
       editLocation.buildingId,
-      editLocation.shelfCode,
+      formattedShelfCode,
       editLocation.floor,
       editLocation.zone
     );
@@ -414,7 +428,7 @@ const saveLocation = async () => {
     // 2. 获取书架ID
     const { data: shelfId } = await findShelfId(
       editLocation.buildingId,
-      editLocation.shelfCode,
+      formattedShelfCode,
       editLocation.floor,
       editLocation.zone
     );
@@ -434,20 +448,20 @@ const saveLocation = async () => {
 
 
 // 在BookshelfManage.vue中添加借出处理
-const handleBorrow = async (book) => {
+const handleDele = async (book) => {
   try {
-    if (!confirm(`确定要借出《${book.TITLE}》吗？`)) {
+    if (!confirm(`确定要下架《${book.TITLE}》吗？`)) {
       return
     }
     
     await borrowBook(book.BOOKID)
-    alert('借出成功')
+    alert('下架成功')
     
     // 刷新当前搜索结果
     await handleSearch()
   } catch (error) {
-    console.error('借出失败:', error)
-    alert('借出失败: ' + (error.response?.data || error.message))
+    console.error('下架失败:', error)
+    alert('下架失败: ' + (error.response?.data || error.message))
   }
 }
 
@@ -468,27 +482,27 @@ const returnLocation = reactive({
 
 // 计算属性（与编辑弹窗相同，但使用returnLocation作为依赖）
 const availableReturnFloors = computed(() => {
-  if (returnLocation.buildingId === 1) {
+  if (returnLocation.buildingId === 21) {
     return Array.from({length: 14}, (_, i) => i + 1)
-  } else if (returnLocation.buildingId === 2) {
+  } else if (returnLocation.buildingId === 22) {
     return Array.from({length: 2}, (_, i) => i + 1)
   }
   return []
 })
 
 const availableReturnZones = computed(() => {
-  if (returnLocation.buildingId === 1) {
-    return ['1', '2', '3', '4']
-  } else if (returnLocation.buildingId === 2) {
-    return ['1', '2']
+  if (returnLocation.buildingId === 21) {
+    return ['A', 'B', 'C', 'D']
+  } else if (returnLocation.buildingId === 22) {
+    return ['A', 'B']
   }
   return []
 })
 
 const availableReturnShelves = computed(() => {
-  if (returnLocation.buildingId === 1) {
+  if (returnLocation.buildingId === 21) {
     return Array.from({length: 10}, (_, i) => i + 1)
-  } else if (returnLocation.buildingId === 2) {
+  } else if (returnLocation.buildingId === 22) {
     return Array.from({length: 5}, (_, i) => i + 1)
   }
   return []
@@ -533,9 +547,10 @@ const saveReturnLocation = async () => {
   
   try {
     // 1. 检查书架是否存在
+    const formattedShelfCode = formatShelfCode(returnLocation.shelfCode);
     const { data: shelfExists } = await checkShelfExists(
       returnLocation.buildingId,
-      returnLocation.shelfCode,
+      formattedShelfCode,
       returnLocation.floor,
       returnLocation.zone
     );
@@ -548,7 +563,7 @@ const saveReturnLocation = async () => {
     // 2. 获取书架ID
     const { data: shelfId } = await findShelfId(
       returnLocation.buildingId,
-      returnLocation.shelfCode,
+      formattedShelfCode,
       returnLocation.floor,
       returnLocation.zone
     );
