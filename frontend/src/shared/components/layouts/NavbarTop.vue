@@ -25,6 +25,7 @@
             <!-- 添加我的书单 -->
             <router-link to="/user/booklist">我的书单</router-link>
 
+
             <router-link to="/user/history">借阅历史</router-link>
           </div>
         </div>
@@ -32,14 +33,16 @@
         <div class="nav-item dropdown">
           <span>管理员操作</span>
           <div class="dropdown-menu">
-
+            
             <router-link to="example-route">example-title</router-link>
             <!-- 管理员操作临时入口，以后需要改到管理员主页里 -->
             <!-- 在下面新增：路由，功能名称 -->
             <router-link to="/admin/announcements">公告管理</router-link>
+            <!-- 添加书架管理 -->
+            <router-link to="bookshelf">书架管理</router-link>
           </div>
         </div>
-
+        <router-link to="/admin/category" class="nav-item">分类管理</router-link>
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>
 
@@ -189,7 +192,7 @@ onUnmounted(() => {
   display: none;
   position: absolute;
   top: calc(100% + 0.1rem);
-  left: 50%;
+  left: 0%;
   transform: translateX(-50%);
   background: #deeaff;
   border: 1px solid #dce6f1;

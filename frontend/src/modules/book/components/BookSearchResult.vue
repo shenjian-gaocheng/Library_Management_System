@@ -24,6 +24,14 @@
               <div class="text-sm text-gray-600 mt-1">
                 作者：{{ book.Author }}
               </div>
+              <div class="mt-2">
+                <button 
+                  @click="viewComments(book.ISBN)"
+                  class="comments-button"
+                >
+                  查看评论
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -34,10 +42,11 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { getBooks } from '@/modules/book/api.js'
 
 const route = useRoute()
+const router = useRouter()
 const keyword = ref(route.query.q || '')
 const books = ref([])
 const loading = ref(false)
@@ -58,6 +67,14 @@ async function fetchBooks() {
   } finally {
     loading.value = false
   }
+}
+
+// 查看评论功能
+function viewComments(isbn) {
+  router.push({
+    path: '/comments',
+    query: { isbn: isbn }
+  })
 }
 
 // 初次加载
@@ -108,29 +125,20 @@ watch(
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05); /* 轻微阴影 */
 }
 
-.wr_suggestion_card_wrapper:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-.wr_suggestion_card_content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-}
-
-.fixed-cover-size {
-  width: 120px;    
-  height: 170px;     
-  object-fit: contain;
+.comments-button {
+  background-color: #409eff;
+  color: white;
+  border: none;
   border-radius: 4px;
-  margin-bottom: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.comments-button:hover {
+  background-color: #337ecc;
 }
 </style>

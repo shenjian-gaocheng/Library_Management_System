@@ -30,6 +30,8 @@
    dotnet add package StackExchange.Redis
    ```
 
+    下载并运行exe
+    https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.412/dotnet-sdk-8.0.412-win-x64.exe
  - /frontend运行
    ```
    npm install

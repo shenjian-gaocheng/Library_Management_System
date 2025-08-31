@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 // 文件: backend/Program.cs
 // 这是最终的、使用了最强化的 CORS 命名策略的版本
+=======
+﻿
+var builder = WebApplication.CreateBuilder(args);
+>>>>>>> 014afcf09c38411109abbe41eecd557c4c72d13b
 
 // ===================================================================
 // 1. using 声明区域
@@ -19,8 +24,15 @@ using library_system.Services.Admin;
 // ===================================================================
 var builder = WebApplication.CreateBuilder(args);
 
+<<<<<<< HEAD
 // --- 定义一个 CORS 策略的名称，方便后面使用 ---
 var MyCorsPolicy = "_MyCorsPolicy";
+=======
+// 添加 Swagger 支持
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+>>>>>>> 014afcf09c38411109abbe41eecd557c4c72d13b
 
 // --- 加载 .env 文件 ---
 Env.Load();
@@ -63,11 +75,26 @@ builder.Services.AddSingleton(new AnnouncementRepository(connString));
 builder.Services.AddTransient<AnnouncementService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(/*...*/);
 
+<<<<<<< HEAD
 //书单部分
 builder.Services.AddScoped<Backend.Repositories.Book.IBooklistRepository, Backend.Repositories.Book.BooklistRepository>();
 builder.Services.AddScoped<Backend.Services.Book.IBooklistService, Backend.Services.Book.BooklistService>();
 builder.Services.AddSingleton<IOracleConnectionFactory, OracleConnectionFactory>();
 
+=======
+// 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
+builder.Services.AddSingleton(new BookRepository(connectionString));
+builder.Services.AddSingleton(new CommentRepository(connectionString));
+builder.Services.AddSingleton(new ReportRepository(connectionString));
+builder.Services.AddSingleton(new BookCategoryTreeOperation(connectionString));
+builder.Services.AddSingleton(new LogService(connectionString));
+builder.Services.AddSingleton(new BookShelfRepository(connectionString));
+builder.Services.AddTransient<BookService>();
+builder.Services.AddTransient<CommentService>();
+builder.Services.AddTransient<ReportService>();
+builder.Services.AddTransient<BookCategoryService>();
+builder.Services.AddTransient<BookShelfService>();
+>>>>>>> 014afcf09c38411109abbe41eecd557c4c72d13b
 
 
 // ===================================================================
@@ -75,6 +102,18 @@ builder.Services.AddSingleton<IOracleConnectionFactory, OracleConnectionFactory>
 // ===================================================================
 var app = builder.Build();
 
+<<<<<<< HEAD
+=======
+// 启用 Swagger（开发环境）
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+// 使用 CORS（顺序要在 MapControllers 之前）
+app.UseCors();
+>>>>>>> 014afcf09c38411109abbe41eecd557c4c72d13b
 
 // 【终极诊断：请求侦测中间件】
 // 将这个中间件放在所有其他 app.Use... 的最前面！
