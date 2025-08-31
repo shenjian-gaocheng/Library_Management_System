@@ -21,16 +21,19 @@ export function addComment(commentData) {
 }
 
 export function getCategoryTree() {
-  return http.get('/api/Category/tree')
+  return http.get('/Category/tree', {
+    withToken: true // 确保每个请求都带上 Token
+  });
 }
+
 export function addCategory(data) {
-  return http.post('/api/Category', data)
+  return http.post('/Category', data)
 }
 export function updateCategory(data) {
-  return http.put('/api/Category', data)
+  return http.put('/Category', data)
 }
 export function deleteCategory(id, operatorId) {
-  return http.delete(`/api/Category/${id}?operatorId=${operatorId}`)
+  return http.delete(`/Category/${id}?operatorId=${operatorId}`)
 }
 
 export function getBooksBookShelf(keyword) {
