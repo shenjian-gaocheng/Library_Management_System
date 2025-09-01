@@ -25,6 +25,7 @@
             <router-link to="example-route">example-title</router-link>
             <!-- 管理员操作临时入口，以后需要改到管理员主页里 -->
             <!-- 在下面新增：路由，功能名称 -->
+            <router-link to="/admin/announcements">公告管理</router-link>
             <!-- 添加书架管理 -->
             <router-link to="bookshelf">书架管理</router-link>
 
