@@ -2,7 +2,7 @@
   <div class="layout">
     <!-- 1. 顶部导航条 -->
     <NavbarTop />
-    
+
     <!-- 2. 插槽：可插入任意组件 -->
     <div class="slot">
       <slot />
@@ -22,7 +22,7 @@ import Footer from '@/shared/components/layouts/Footer.vue'
 .layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; 
+  min-height: 100vh;
 }
 
 /* ② 主内容自动拉伸，占据剩余空间 */
