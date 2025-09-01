@@ -16,7 +16,7 @@ namespace Backend.Data
         private readonly string _connStr;
         public OracleConnectionFactory(IConfiguration configuration)
         {
-            _connStr = configuration.GetConnectionString("Oracle")
+            _connStr = configuration.GetConnectionString("OracleDB")
                        ?? throw new InvalidOperationException("ConnectionStrings:Oracle 未配置");
         }
         
