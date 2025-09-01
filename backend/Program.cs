@@ -2,9 +2,11 @@
 using backend.Common.MiddleWare;
 using backend.Repositories.BorrowRecordRepository;
 using backend.Repositories.ReaderRepository;
+using backend.Repositories.Book;
 using backend.Services.BorrowingService;
 using backend.Services.ReaderService;
 using backend.Services.Web;
+using backend.Services.Book;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
@@ -92,6 +94,7 @@ services.AddTransient<BorrowingService>();
 builder.Services.AddSingleton(new BookRepository(connectionString));
 builder.Services.AddSingleton(new CommentRepository(connectionString));
 builder.Services.AddSingleton(new BookCategoryTreeOperation(connectionString));
+builder.Services.AddSingleton(new BookCategoryRepository(connectionString));
 builder.Services.AddSingleton(new LogService(connectionString));
 builder.Services.AddSingleton(new BookShelfRepository(connectionString));
 builder.Services.AddTransient<BookService>();
@@ -144,10 +147,7 @@ app.UseMiddleware<JwtAuthenticationMiddleware>(); // JWT 认证中间件
 
 app.UseAuthorization(); // 授权中间件（如果有）
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
+app.MapControllers();
 
 // 启动应用
 app.Run();

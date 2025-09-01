@@ -32,7 +32,7 @@ namespace backend.Services.Web
          */
         public string GetLoginUserType()
         {
-            return GetLoginUser().UserType;
+            return GetLoginUser()?.UserType ?? string.Empty;
         }
 
         /**

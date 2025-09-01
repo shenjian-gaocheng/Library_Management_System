@@ -25,7 +25,7 @@ namespace backend.Services.ReaderService
         /**
          * ï¿½ï¿½ï¿½ï¿½ ReaderID ï¿½ï¿½È¡ Reader ï¿½ï¿½ï¿½ï¿½
          * @param readerID ï¿½ï¿½ï¿½ï¿½ ID
-         * @return Reader ï¿½ï¿½ï¿½ï¿½ï¿?null
+         * @return Reader ï¿½ï¿½ï¿½ï¿½ï¿½?null
          */
         public async Task<Reader> GetReaderByReaderIDAsync(long readerID)
         {
@@ -33,9 +33,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ¸ù¾İ UserName »ñÈ¡ Reader ¶ÔÏó
-         * @param UserName ÓÃ»§Ãû,Í¨³£ÊÇÑ§ºÅ
-         * @return Reader ¶ÔÏó»ò null
+         * ï¿½ï¿½ï¿½ï¿½ UserName ï¿½ï¿½È¡ Reader ï¿½ï¿½ï¿½ï¿½
+         * @param UserName ï¿½Ã»ï¿½ï¿½ï¿½,Í¨ï¿½ï¿½ï¿½ï¿½Ñ§ï¿½ï¿½
+         * @return Reader ï¿½ï¿½ï¿½ï¿½ï¿½ null
          */
         public async Task<Reader> GetReaderByUserNameAsync(string userName)
         {
@@ -54,7 +54,7 @@ namespace backend.Services.ReaderService
         /**
          * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½ Reader
          * @param reader Reader Êµï¿½ï¿½
-         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
          */
         public async Task<int> InsertReaderAsync(Reader reader)
         {
@@ -64,7 +64,7 @@ namespace backend.Services.ReaderService
         /**
          * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Reader
          * @param reader Reader Êµï¿½ï¿½
-         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
          */
         public async Task<int> UpdateReaderAsync(Reader reader)
         {
@@ -74,7 +74,7 @@ namespace backend.Services.ReaderService
         /**
          * É¾ï¿½ï¿½Ò»ï¿½ï¿½ Reader
          * @param readerID ReaderID
-         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?
          */
         public async Task<int> DeleteReaderAsync(long readerID)
         {
@@ -87,23 +87,23 @@ namespace backend.Services.ReaderService
             string userName = registerDto.UserName;
             string password = registerDto.Password;
 
-            string msg;
+            // string msg; // æœªä½¿ç”¨çš„å˜é‡ï¼Œå·²æ³¨é‡Š
 
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("ÓÃ»§ÃûºÍÃÜÂë²»ÄÜÎª¿Õ¡£");
+                throw new ArgumentException("ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë²»ï¿½ï¿½Îªï¿½Õ¡ï¿½");
             }
             else if (userName.Length < UserConstants.UsernameMinLength || userName.Length > UserConstants.UsernameMaxLength)
             {
-                throw new ArgumentException($"ÓÃ»§Ãû³¤¶È±ØĞëÔÚ{UserConstants.UsernameMinLength}µ½{UserConstants.UsernameMaxLength}Ö®¼ä¡£");
+                throw new ArgumentException($"ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È±ï¿½ï¿½ï¿½ï¿½ï¿½{UserConstants.UsernameMinLength}ï¿½ï¿½{UserConstants.UsernameMaxLength}Ö®ï¿½ä¡£");
             }
             else if (password.Length < UserConstants.PasswordMinLength || password.Length > UserConstants.PasswordMaxLength)
             {
-                throw new ArgumentException($"ÃÜÂë³¤¶È±ØĞëÔÚ{UserConstants.PasswordMinLength}µ½{UserConstants.PasswordMaxLength}Ö®¼ä¡£");
+                throw new ArgumentException($"ï¿½ï¿½ï¿½ë³¤ï¿½È±ï¿½ï¿½ï¿½ï¿½ï¿½{UserConstants.PasswordMinLength}ï¿½ï¿½{UserConstants.PasswordMaxLength}Ö®ï¿½ä¡£");
             }
             else if (IsUserNameExistsAsync(userName).Result)
             {
-                throw new ArgumentException("ÓÃ»§ÃûÒÑ´æÔÚ£¬ÇëÑ¡ÔñÆäËûÓÃ»§Ãû¡£");
+                throw new ArgumentException("ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Ú£ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½");
             }
 
             Reader reader = new Reader
@@ -115,16 +115,16 @@ namespace backend.Services.ReaderService
             bool res = await _readerRepository.InsertReaderAsync(reader) > 0;
             if (!res)
             {
-                throw new Exception("×¢²áÊ§°Ü£¬ÇëÉÔºóÔÙÊÔ¡£");
+                throw new Exception("×¢ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½ï¿½Ôºï¿½ï¿½ï¿½ï¿½Ô¡ï¿½");
             }
 
             return res;
         }
 
         /**
-         * ¼ì²éÓÃ»§ÃûÊÇ·ñÒÑ´æÔÚ
-         * @param userName ÓÃ»§Ãû
-         * @return true Èç¹ûÓÃ»§ÃûÒÑ´æÔÚ£¬·ñÔò false
+         * ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ñ´ï¿½ï¿½ï¿½
+         * @param userName ï¿½Ã»ï¿½ï¿½ï¿½
+         * @return true ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ false
          */
         public async Task<bool> IsUserNameExistsAsync(string userName)
         {
@@ -133,7 +133,7 @@ namespace backend.Services.ReaderService
 
         /**
          * 
-         * ÖØÖÃÃÜÂë
+         * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
          * 
          */
         public async Task<bool> ResetPasswordAsync(string userName, string newPassword)
@@ -144,7 +144,7 @@ namespace backend.Services.ReaderService
 
         /**
          * 
-         * ¸üĞÂÍ·Ïñ
+         * ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½
          * 
          */
         public async Task<bool> UpdateAvatarAsync(long readerID, string avatarUrl)
@@ -154,7 +154,7 @@ namespace backend.Services.ReaderService
 
         /**
          * 
-         * ¸üĞÂReaderµÄProfile×Ö¶Î
+         * ï¿½ï¿½ï¿½ï¿½Readerï¿½ï¿½Profileï¿½Ö¶ï¿½
          * 
          */
         public async Task<bool> UpdateProfileAsync(Reader reader)

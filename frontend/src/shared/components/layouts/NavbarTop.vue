@@ -30,6 +30,9 @@
 
             <!-- 添加分类管理 -->
             <router-link to="/admin/category">分类管理</router-link>
+            
+            <!-- 添加图书分类管理 -->
+            <router-link to="/books/category-manage">图书分类管理</router-link>
           </div>
         </div>
         

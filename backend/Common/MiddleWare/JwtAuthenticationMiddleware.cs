@@ -34,7 +34,7 @@
             }
 
             // 判断是否跳过认证
-            if (_excludedPaths.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+            if (_excludedPaths.Any(p => path?.StartsWith(p, StringComparison.OrdinalIgnoreCase) == true))
             {
                 await _next(context); // 直接放行
                 return;

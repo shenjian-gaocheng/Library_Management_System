@@ -58,4 +58,16 @@ export default [
   component: () => import('@/modules/book/pages/BookCirculationPage.vue'),
   meta: { title: '借还服务（条码）' }
   },
+
+  // 图书分类管理
+  {
+    path: '/books/category-manage',
+    name: 'BookCategoryManage',
+    component: () => import('@/modules/book/pages/BookCategoryManagePage.vue'),
+    meta: { 
+      requiresAuth: true,
+      title: '图书分类管理',
+      role: 'librarian' // 仅管理员可见
+    }
+  },
 ]
