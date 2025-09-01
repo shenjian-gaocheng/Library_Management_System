@@ -55,10 +55,20 @@ function addBook() {
 
 function editName() {
   const newName = prompt('请输入新书单名称')
-  if (newName) store.updateName(booklistId, { newName }, {withToken:true})
+  if (newName){
+    store.updateName(booklistId, { newName }, {withToken:true}).then(() => {
+      // 更新成功后重新获取数据
+      store.fetchBooklistDetails(booklistId, {withToken:true})
+    })
+  }
 }
 function editIntro() {
   const newIntro = prompt('请输入新简介')
-  if (newIntro) store.updateIntro(booklistId, { newIntro }, {withToken:true})
+  if (newIntro){
+    store.updateIntro(booklistId, { newIntro }, {withToken:true}).then(() => {
+      // 更新成功后重新获取数据
+      store.fetchBooklistDetails(booklistId, {withToken:true})
+    })
+  }
 }
 </script>

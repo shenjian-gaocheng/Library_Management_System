@@ -8,7 +8,7 @@
       <button
         v-if="booklist._source === 'created'"
         class="text-red-500 hover:underline"
-        @click="$emit('delete', booklist.booklistId)"
+        @click.stop="$emit('delete', booklist.booklistId)"
       >
         删除
       </button>

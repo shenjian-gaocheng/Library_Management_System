@@ -12,6 +12,7 @@
           :booklist="{ ...b, _source: 'created' }"
           @delete="store.deleteBooklist"
           @click="$router.push({ name: 'BooklistCreated', params: { id: b.booklistId } })"
+          style="cursor: pointer"
         />
       </div>
 
@@ -24,6 +25,7 @@
           :booklist="{ ...b, _source: 'collected' }"
           @cancel-collect="store.cancelCollect"
           @click="$router.push({ name: 'BooklistCollected', params: { id: b.booklistId } })"
+          style="cursor: pointer"
         />
       </div>
     </div>
