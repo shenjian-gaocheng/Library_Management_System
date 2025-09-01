@@ -24,6 +24,12 @@
               <div class="text-sm text-gray-600 mt-1">
                 作者：{{ book.Author }}
               </div>
+              <div class="text-sm text-gray-600 mt-1">
+                ISBN：{{ book.ISBN }}
+              </div>
+              <div class="text-sm text-gray-600 mt-1">
+                分类：{{ book.Categories || '暂无分类' }}
+              </div>
               <div class="mt-2">
                 <button 
                   @click="viewComments(book.ISBN)"
@@ -60,9 +66,43 @@ async function fetchBooks() {
   loading.value = true
   error.value = ''
   try {
+    console.log('开始搜索，关键词:', keyword.value)
     const res = await getBooks(keyword.value)
+    console.log('API响应:', res)
+    console.log('响应数据:', res.data)
     books.value = res.data || []
+    console.log('处理后的图书列表:', books.value)
+    console.log('图书数量:', books.value.length)
+    
+    // 详细检查每本书的数据结构
+    if (books.value.length > 0) {
+      console.log('第一本书的详细信息:')
+      console.log('原始数据:', books.value[0])
+      console.log('字段列表:', Object.keys(books.value[0]))
+      console.log('Title字段:', books.value[0].Title)
+      console.log('Author字段:', books.value[0].Author)
+      console.log('ISBN字段:', books.value[0].ISBN)
+      console.log('Categories字段:', books.value[0].Categories)
+      
+      // 检查所有可能的字段名变体
+      const book = books.value[0]
+      console.log('所有字段值:')
+      console.log('  title:', book.title)
+      console.log('  Title:', book.Title)
+      console.log('  author:', book.author)
+      console.log('  Author:', book.Author)
+      console.log('  isbn:', book.isbn)
+      console.log('  ISBN:', book.ISBN)
+      console.log('  categories:', book.categories)
+      console.log('  Categories:', book.Categories)
+    }
   } catch (e) {
+    console.error('搜索错误:', e)
+    console.error('错误详情:', {
+      message: e.message,
+      status: e.response?.status,
+      data: e.response?.data
+    })
     error.value = '搜索失败，请稍后重试'
   } finally {
     loading.value = false

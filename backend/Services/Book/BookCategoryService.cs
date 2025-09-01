@@ -145,14 +145,22 @@ namespace backend.Services.Book
         {
             try
             {
+                Console.WriteLine($"开始移除图书分类关联: ISBN='{isbn}', CategoryID='{categoryId}', OperatorID='{operatorId}'");
+                
                 // 检查关联是否存在
-                if (!await _bookCategoryRepository.ExistsBookCategoryAsync(isbn, categoryId))
+                var exists = await _bookCategoryRepository.ExistsBookCategoryAsync(isbn, categoryId);
+                Console.WriteLine($"检查关联存在性: {exists}");
+                
+                if (!exists)
                 {
+                    Console.WriteLine($"关联不存在: ISBN='{isbn}', CategoryID='{categoryId}'");
                     throw new InvalidOperationException("该图书分类关联不存在");
                 }
 
                 // 移除关联
+                Console.WriteLine("开始移除关联");
                 await _bookCategoryRepository.RemoveBookCategoryAsync(isbn, categoryId);
+                Console.WriteLine("关联移除成功");
 
                 // 记录操作日志
                 var bookTitle = await GetBookTitleAsync(isbn);
@@ -160,10 +168,13 @@ namespace backend.Services.Book
                 var operationContent = $"将图书《{bookTitle}》从分类 {categoryPath} 中移除";
                 await _logService.LogOperationSuccessAsync(operationContent, "Librarian", operatorId);
 
+                Console.WriteLine("移除操作完成");
                 return true;
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"移除操作失败: {ex.Message}");
+                Console.WriteLine($"异常堆栈: {ex.StackTrace}");
                 await _logService.LogOperationFailureAsync("移除图书分类关联", "Librarian", operatorId, ex.Message);
                 throw;
             }

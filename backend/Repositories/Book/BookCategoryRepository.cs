@@ -96,6 +96,7 @@ namespace backend.Repositories.Book
             using var connection = new OracleConnection(_connectionString);
             await connection.OpenAsync();
             var count = await connection.ExecuteScalarAsync<int>(sql, new { ISBN = isbn, CategoryID = categoryId });
+            
             return count > 0;
         }
 
@@ -125,7 +126,15 @@ namespace backend.Repositories.Book
             // 为每个结果添加分类路径
             foreach (var result in results)
             {
-                result.CategoryPath = await GetCategoryPathAsync(result.CategoryID);
+                try
+                {
+                    result.CategoryPath = await GetCategoryPathAsync(result.CategoryID);
+                }
+                catch (Exception ex)
+                {
+                    // 如果获取分类路径失败，使用分类名称作为备选
+                    result.CategoryPath = result.CategoryName;
+                }
             }
 
             return results;
@@ -157,7 +166,16 @@ namespace backend.Repositories.Book
             // 为每个结果添加分类路径
             foreach (var result in results)
             {
-                result.CategoryPath = await GetCategoryPathAsync(result.CategoryID);
+                try
+                {
+                    result.CategoryPath = await GetCategoryPathAsync(result.CategoryID);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"获取分类路径失败: {ex.Message}");
+                    // 如果获取分类路径失败，使用分类名称作为备选
+                    result.CategoryPath = result.CategoryName;
+                }
             }
 
             return results;
@@ -217,6 +235,9 @@ namespace backend.Repositories.Book
             var path = new List<string>();
             var currentId = categoryId;
 
+            using var connection = new OracleConnection(_connectionString);
+            await connection.OpenAsync();
+
             while (!string.IsNullOrEmpty(currentId))
             {
                 var sql = @"
@@ -224,8 +245,6 @@ namespace backend.Repositories.Book
                     FROM Category
                     WHERE CategoryID = :CategoryID";
 
-                using var connection = new OracleConnection(_connectionString);
-                await connection.OpenAsync();
                 var result = await connection.QueryFirstOrDefaultAsync<dynamic>(sql, new { CategoryID = currentId });
                 
                 if (result == null) break;
@@ -242,20 +261,37 @@ namespace backend.Repositories.Book
         /// </summary>
         public async Task<Dictionary<string, int>> GetBookCategoryStatsAsync()
         {
-            var sql = @"
-                SELECT 
-                    c.CategoryName,
-                    COUNT(bc.ISBN) as BookCount
-                FROM Category c
-                LEFT JOIN Book_Classify bc ON c.CategoryID = bc.CategoryID
-                GROUP BY c.CategoryID, c.CategoryName
-                ORDER BY BookCount DESC, c.CategoryName";
-
-            using var connection = new OracleConnection(_connectionString);
-            await connection.OpenAsync();
-            var results = await connection.QueryAsync<dynamic>(sql);
-            
-            return results.ToDictionary(r => (string)r.CategoryName, r => (int)r.BookCount);
+            try
+            {
+                // 使用更简单的方法查询数据
+                using var connection = new OracleConnection(_connectionString);
+                await connection.OpenAsync();
+                
+                // 直接查询所有分类和对应的图书数量
+                var sql = @"
+                    SELECT 
+                        c.CategoryName,
+                        COUNT(bc.ISBN) as BookCount
+                    FROM Category c
+                    LEFT JOIN Book_Classify bc ON c.CategoryID = bc.CategoryID
+                    GROUP BY c.CategoryID, c.CategoryName
+                    ORDER BY BookCount DESC, c.CategoryName";
+                
+                // 使用强类型查询而不是dynamic
+                var results = await connection.QueryAsync<(string CategoryName, int BookCount)>(sql);
+                
+                var stats = new Dictionary<string, int>();
+                foreach (var (categoryName, bookCount) in results)
+                {
+                    stats[categoryName] = bookCount;
+                }
+                return stats;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"获取分类统计时发生异常: {ex.Message}");
+                return new Dictionary<string, int>();
+            }
         }
     }
 }

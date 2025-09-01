@@ -95,19 +95,19 @@
         <div v-else class="results-list">
           <div 
             v-for="item in searchResults" 
-            :key="`${item.isbn}-${item.categoryID}`"
+            :key="`${item.ISBN}-${item.CategoryID}`"
             class="result-item"
           >
             <div class="item-info">
-              <h3 class="book-title">{{ item.title }}</h3>
-              <p class="book-author">作者：{{ item.author }}</p>
-              <p class="book-isbn">ISBN：{{ item.isbn }}</p>
-              <p class="category-path">分类：{{ item.categoryPath }}</p>
-              <p v-if="item.relationNote" class="relation-note">备注：{{ item.relationNote }}</p>
+              <h3 class="book-title">{{ item.Title }}</h3>
+              <p class="book-author">作者：{{ item.Author }}</p>
+              <p class="book-isbn">ISBN：{{ item.ISBN }}</p>
+              <p class="category-path">分类：{{ item.CategoryPath || item.CategoryName || '暂无分类' }}</p>
+              <p v-if="item.RelationNote" class="relation-note">备注：{{ item.RelationNote }}</p>
             </div>
             <div class="item-actions">
               <button 
-                @click="handleRemove(item.isbn, item.categoryID)"
+                @click="handleRemove(item.ISBN, item.CategoryID)"
                 class="btn btn-danger btn-sm"
               >
                 移除关联
@@ -121,6 +121,9 @@
       <div class="stats-section">
         <h2>分类统计</h2>
         <div v-if="statsLoading" class="loading">加载中...</div>
+        <div v-else-if="Object.keys(categoryStats).length === 0" class="no-stats">
+          暂无分类数据
+        </div>
         <div v-else class="stats-grid">
           <div 
             v-for="(count, categoryName) in categoryStats" 
@@ -194,9 +197,11 @@ const loadCategoryStats = async () => {
   try {
     statsLoading.value = true
     const response = await getBookCategoryStats()
-    categoryStats.value = response.data
+    categoryStats.value = response.data || {}
   } catch (error) {
     console.error('加载统计失败:', error)
+    categoryStats.value = {}
+    alert('加载分类统计失败，请检查数据库连接')
   } finally {
     statsLoading.value = false
   }
@@ -420,6 +425,8 @@ onMounted(() => {
   font-size: 12px;
 }
 
+
+
 .bind-form {
   display: flex;
   flex-direction: column;
@@ -540,5 +547,12 @@ onMounted(() => {
   text-align: center;
   color: #6b7280;
   padding: 32px;
+}
+
+.no-stats {
+  text-align: center;
+  color: #6b7280;
+  padding: 32px;
+  font-style: italic;
 }
 </style>
