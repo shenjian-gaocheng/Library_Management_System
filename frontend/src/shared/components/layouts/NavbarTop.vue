@@ -16,6 +16,13 @@
           </div>
         </div>
 
+        <div class="nav-item dropdown">
+          <span>我的图书馆</span>
+          <div class="dropdown-menu">
+            <router-link to="/user/booklist">我的书单</router-link>
+          </div>
+        </div>
+
         <router-link to="/my/home/dashboard" class="nav-item">读者控制台</router-link>
 
         <div class="nav-item dropdown">
