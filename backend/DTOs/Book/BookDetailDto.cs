@@ -3,6 +3,7 @@
     public string? ISBN { get; set; }
     public string? Title { get; set; }
     public string? Author { get; set; }
+    public string? Categories { get; set; } // 分类信息，多个分类用逗号分隔
 }
 
 public class table_Book_Dto
