@@ -57,4 +57,10 @@
         var affectedRows = await _repository.BorrowBookAsync(bookId);
         if (affectedRows == 0) throw new Exception("借出失败");
     }
+
+    // BookShelfService.cs 中添加获取书架书籍方法
+    public async Task<IEnumerable<ShelfBookDto>> GetShelfBooksAsync(int shelfId)
+    {
+        return await _repository.GetShelfBooksAsync(shelfId);
+    }
 }

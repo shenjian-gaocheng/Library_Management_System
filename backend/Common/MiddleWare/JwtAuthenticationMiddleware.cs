@@ -19,6 +19,12 @@
         "/api/docs/index.html",   //swagger UI 的入口文件
         "/favicon.ico",           // 网站图标
         "/api/Book/search",       // search book
+        "/api/bookshelf/search_book_which_shelf",//bookshelf
+        "/api/bookshelf/has-books",
+        "/api/bookshelf/check-shelf-exists",
+        "/api/bookshelf/find-shelf-id",
+        "/api/bookshelf/search_bookshelf",
+        "/api/bookshelf/shelf-books",//
     };
 
 

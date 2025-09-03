@@ -16,7 +16,7 @@
         <select v-model="filterBuildingId" class="filter-select" @change="handleFilter">
           <option value="">全部建筑</option>
           <option v-for="building in buildingOptions" :key="building" :value="building">
-            {{ building === 1 ? '总图书馆' : '德文图书馆' }}
+            {{ building === 21 ? '总图书馆' : '德文图书馆' }}
           </option>
         </select>
         
@@ -59,7 +59,7 @@
 
             <td>
               <template v-if="shelf.BUILDINGID">
-                {{ shelf.BUILDINGID === 1 ? '总图书馆' : '德文图书馆' }}
+                {{ shelf.BUILDINGID == 21 ? '总图书馆' : '德文图书馆' }}
               </template>
               <template v-else>
                 无信息
@@ -98,7 +98,7 @@
             
             <!-- 操作 -->
             <td>
-              
+               <button class="view-btn" @click="handleView(shelf)">查看</button>
                <button class="delete-btn" @click="handleDelete(shelf.SHELFID)">删除</button>
             </td>
           </tr>
@@ -122,8 +122,8 @@
     <label>建筑:</label>
     <select v-model="newShelfForm.BUILDINGID" @change="updateShelfCode; updateOptions()">
       <option value="">请选择建筑</option>
-      <option value="1">总图书馆</option>
-      <option value="2">德文图书馆</option>
+      <option value="21">总图书馆</option>
+      <option value="22">德文图书馆</option>
     </select>
   </div>
 
@@ -168,18 +168,57 @@
         </div>
       </div>
     </div>
+
+<!-- 查看书架书籍弹窗 -->
+<div v-if="showViewDialog" class="modal-mask">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>书架书籍详情 - {{ currentShelf.SHELFCODE }}</h3>
+      <button class="close-btn" @click="showViewDialog = false">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="shelf-info">
+        <p><strong>书架编码：</strong>{{ currentShelf.SHELFCODE }}</p>
+        <p><strong>位置：</strong>{{ currentShelf.BUILDINGID == 21 ? '总图书馆' : '德文图书馆' }} {{ currentShelf.FLOOR }}层 {{ currentShelf.ZONE }}</p>
+      </div>
+      
+      <div class="books-list">
+        <h4>书籍列表</h4>
+        <div v-if="loadingBooks" class="loading-books">加载中...</div>
+        <div v-else-if="shelfBooks.length === 0" class="no-books">
+          该书架暂无书籍
+        </div>
+        <div v-else class="books-container">
+          <div v-for="book in shelfBooks" :key="book.BOOKID" class="book-item">
+            <p class="book-title">《{{ book.TITLE }}》</p>
+            <p class="book-author">作者：{{ book.AUTHOR }}</p>
+            <p class="book-status">状态：{{ book.STATUS || '正常' }}</p>
+            <p class="book-barcode">馆藏条码：{{ book.BARCODE}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="confirm-btn" @click="showViewDialog = false">关闭</button>
+    </div>
+  </div>
+</div>
 </template>
 
 <script setup>
 import { ref, reactive,onMounted } from 'vue'
-import { getShelf,addShelf,deleteShelf,checkShelfHasBooks } from '@/modules/book/api.js'
+import { getShelf,addShelf,deleteShelf,checkShelfHasBooks,getShelfBooks } from '@/modules/book/api.js'
 
 // 添加筛选相关的响应式变量
 const filterBuildingId = ref('')
 const filterFloor = ref('')
 
+const showViewDialog = ref(false)
+const currentShelf = ref({})
+const shelfBooks = ref([]) // 书架上的书籍列表
+const loadingBooks = ref(false);
 // 添加建筑和楼层选项
-const buildingOptions = [1, 2] // 根据实际情况调整
+const buildingOptions = [21, 22] // 根据实际情况调整
 const floorOptions = Array.from({length: 14}, (_, i) => i + 1) // 1-14层
 
 // 添加筛选处理函数
@@ -234,12 +273,12 @@ const availableSequences = ref([])
 
 // 根据选择的建筑更新选项
 const updateOptions = () => {
-  if (newShelfForm.BUILDINGID === '1') {
+  if (newShelfForm.BUILDINGID === '21') {
     // 总图书馆：14层，每层4区(A~D)，每区10个书架
     availableFloors.value = Array.from({length: 14}, (_, i) => i + 1)
     availableZones.value = ['A', 'B', 'C', 'D']
     availableSequences.value = Array.from({length: 10}, (_, i) => i + 1)
-  } else if (newShelfForm.BUILDINGID === '2') {
+  } else if (newShelfForm.BUILDINGID === '22') {
     // 德文图书馆：2层，每层2区(A~B)，每区5个书架
     availableFloors.value = Array.from({length: 2}, (_, i) => i + 1)
     availableZones.value = ['A', 'B']
@@ -345,6 +384,25 @@ const handleDelete = async (shelfId) => {
 onMounted(() => {
   fetchShelves()
 })
+
+
+// 查看书架书籍方法
+const handleView = async (shelf) => {
+  currentShelf.value = shelf;
+  showViewDialog.value = true;
+  loadingBooks.value = true;
+  
+  try {
+    const response = await getShelfBooks(Number(shelf.SHELFID));
+    shelfBooks.value = response.data || [];
+  } catch (error) {
+    console.error('获取书架书籍失败:', error);
+    alert('获取书籍失败，请稍后重试');
+    shelfBooks.value = [];
+  } finally {
+    loadingBooks.value = false;
+  }
+};
 </script>
 
 <style scoped>
@@ -587,5 +645,73 @@ h2 {
   padding: 25px;
   background-color: #f8fafc;
   min-height: 100vh;
+}
+
+.view-btn {
+  padding: 6px 12px;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background-color 0.3s;
+}
+
+.view-btn:hover {
+  background-color: #40a9ff;
+}
+
+.loading-books {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.shelf-info {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.shelf-info p {
+  margin: 5px 0;
+}
+
+.books-list h4 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.no-books {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+}
+
+.books-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.book-item {
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  background-color: #fff;
+}
+
+.book-title {
+  font-weight: bold;
+  margin: 0 0 5px 0;
+  color: #333;
+}
+
+.book-author, .book-status {
+  margin: 3px 0;
+  color: #666;
+  font-size: 14px;
 }
 </style>

@@ -119,4 +119,22 @@ export default [
       role: 'librarian' // 仅管理员可见
     }
   },
+
+
+    //搜索的实体书页面
+  {
+    path: '/booklocation',
+    name: 'BookSearchLocation',
+    component: () =>
+    import(
+        /* webpackChunkName: "book-search" */
+        '@/modules/book/pages/BookLocationPage.vue'
+    ),
+    meta: {
+      requiresAuth: true,
+      title: '实体书位置',
+    }
+  }
 ]
+
+

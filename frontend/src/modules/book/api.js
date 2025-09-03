@@ -263,3 +263,8 @@ export function getBookCategoryStats() {
 export function checkBookCategoryExists(isbn, categoryId) {
   return http.get(`/BookCategory/exists/${encodeURIComponent(isbn)}/${encodeURIComponent(categoryId)}`, { withToken: true })
 }
+
+// 获取书架上的书籍
+export function getShelfBooks(shelfId) {
+  return http.get(`/bookshelf/shelf-books/${shelfId}`);
+}
