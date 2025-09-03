@@ -19,7 +19,8 @@
                s.FLOOR,
                s.ZONE,
                b.STATUS,
-               b.BOOKID
+               b.BOOKID,
+               b.BARCODE
         FROM Book b
         JOIN BookInfo i ON b.ISBN = i.ISBN LEFT JOIN BookShelf s ON (b.SHELFID = s.SHELFID )
         WHERE LOWER(i.TITLE) LIKE :keyword";

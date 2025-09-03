@@ -58,4 +58,19 @@ export default [
   component: () => import('@/modules/book/pages/BookCirculationPage.vue'),
   meta: { title: '借还服务（条码）' }
   },
+  //搜索的实体书页面
+  {
+    path: '/booklocation',
+    name: 'BookSearchLocation',
+    component: () =>
+    import(
+        /* webpackChunkName: "book-search" */
+        '@/modules/book/pages/BookLocationPage.vue'
+    ),
+    meta: {
+      requiresAuth: true,
+      title: '实体书位置',
+      
+    }
+  },
 ]

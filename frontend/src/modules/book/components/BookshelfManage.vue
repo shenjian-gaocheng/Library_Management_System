@@ -36,6 +36,7 @@
           <thead>
             <tr>
               <th>书名</th>
+              <th>馆藏条码</th>
               <th>楼宇</th>
               <th>书架编码</th>
               <th>楼层</th>
@@ -49,6 +50,15 @@
             <!-- 书名 -->
                   <td>《{{ book.TITLE }}》</td>
                   
+                  <!-- 馆藏条码 -->
+                  <td>
+                    <template v-if="book.BARCODE">
+                      {{ book.BARCODE }}
+                    </template>
+                    <template v-else>
+                      无信息
+                    </template>
+                  </td>
                   <!-- 楼宇ID -->
                   <td>
                     <template v-if="book.BUILDINGID">
@@ -299,21 +309,45 @@ const handleSearch = async () => {
     const shelfResponse = await getBooksBookShelf(searchText.value.trim() ? searchText.value.toLowerCase() : '%')
     
     // 合并结果
-    foundBooks.value = books.map(book => {
-      // 查找对应的书架信息
-      const shelfInfo = shelfResponse.data?.find(item => item.TITLE === book.Title)
-      
-      return {
-        TITLE: book.Title,
-        SHELFID: shelfInfo?.SHELFID || null,
-        BUILDINGID: shelfInfo?.BUILDINGID || null,
-        SHELFCODE :shelfInfo?.SHELFCODE || null,
-        FLOOR :shelfInfo?.FLOOR || null,
-        ZONE :shelfInfo?.ZONE || null,
-        STATUS:shelfInfo?.STATUS || null,
-        BOOKID:shelfInfo?.BOOKID||null
-      }
+
+
+
+    books.forEach(book => {
+  // 查找该书籍对应的所有书架信息（可能有多个实体书）
+  const shelfInfos = shelfResponse.data?.filter(item => item.TITLE === book.Title) || []
+  
+  if (shelfInfos.length === 0) {
+    // 如果没有找到对应的书架信息，至少显示一条记录
+    foundBooks.value.push({
+      TITLE: book.Title,
+      BARCODE:null,
+      SHELFID: null,
+      BUILDINGID: null,
+      SHELFCODE: null,
+      FLOOR: null,
+      ZONE: null,
+      STATUS: null,
+      BOOKID: null
     })
+  } else {
+    // 为每个书架信息（每个实体书）创建一条记录
+    shelfInfos.forEach(shelfInfo => {
+      foundBooks.value.push({
+        TITLE: book.Title,
+        BARCODE: shelfInfo.BARCODE || null,
+        SHELFID: shelfInfo.SHELFID || null,
+        BUILDINGID: shelfInfo.BUILDINGID || null,
+        SHELFCODE: shelfInfo.SHELFCODE || null,
+        FLOOR: shelfInfo.FLOOR || null,
+        ZONE: shelfInfo.ZONE || null,
+        STATUS: shelfInfo.STATUS || null,
+        BOOKID: shelfInfo.BOOKID || null
+      })
+    })
+  }
+  })
+  
+
     
   } catch (err) {
     console.error('搜索失败:', err)
@@ -345,6 +379,7 @@ const showAllBooks = async () => {
       
       return {
         TITLE: book.Title,
+        BARCODE: shelfInfo?.BARCODE || null,
         SHELFID: shelfInfo?.SHELFID || null,
         BUILDINGID: shelfInfo?.BUILDINGID || null,
         SHELFCODE: shelfInfo?.SHELFCODE || null,
@@ -656,6 +691,8 @@ const saveReturnLocation = async () => {
 .books-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+
 }
 
 .books-table th, .books-table td {
@@ -663,7 +700,26 @@ const saveReturnLocation = async () => {
   border-bottom: 1px solid #eee;
   text-align: left;
 }
-
+/* 书名列宽度较大 */
+.books-table th:nth-child(1), .books-table td:nth-child(1) { /* 书名 */
+  width: 25%;
+}
+.books-table th:nth-child(2), .books-table td:nth-child(2), /* 馆藏条码 */
+.books-table th:nth-child(3), .books-table td:nth-child(3), /* 楼宇 */
+.books-table th:nth-child(4), .books-table td:nth-child(4)/* 书架编码 */
+ { /* 状态 */
+  width: 10%;
+}
+.books-table th:nth-child(5), .books-table td:nth-child(5), /* 楼层 */
+.books-table th:nth-child(6), .books-table td:nth-child(6), /* 区域 */
+.books-table th:nth-child(7), .books-table td:nth-child(7) { /* 状态 */
+  width: 5%;
+}
+/* 操作列稍微宽一点 */
+.books-table th:nth-child(8), .books-table td:nth-child(8) { /* 操作 */
+  width: 10%;
+  min-width: 120px;
+}
 .books-table th {
   background-color: #f7f7f7;
   font-weight: 600;

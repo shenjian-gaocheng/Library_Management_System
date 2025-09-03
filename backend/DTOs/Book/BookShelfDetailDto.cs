@@ -10,6 +10,7 @@ public class BookDto
     public string? ZONE { get; set; }
     public string? STATUS { get; set; }
     public string? BOOKID { get; set; }
+    public string? BARCODE { get; set; }
 }
 
 public class BookShelf
