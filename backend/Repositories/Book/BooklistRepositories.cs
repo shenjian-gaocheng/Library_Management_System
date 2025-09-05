@@ -7,6 +7,8 @@ using Backend.DTOs.Book;
 using Dapper;
 using Oracle.ManagedDataAccess.Types;
 
+using Dapper.Oracle;                     // 关键：支持 OracleDynamicParameters
+
 namespace Backend.Repositories.Book
 {
     public class BooklistRepository : IBooklistRepository
@@ -150,20 +152,24 @@ namespace Backend.Repositories.Book
         public async Task<SearchBooklistsByReaderResponse> SearchBooklistsByReaderAsync(int readerId)
         {
             using var conn = await _connectionFactory.CreateAsync();
+
+            // 用 OracleDynamicParameters 来处理 RefCursor
+            var p = new OracleDynamicParameters();
+
+            p.Add("p_ReaderID", readerId, OracleMappingType.Int32, ParameterDirection.Input);
+            p.Add("p_CreatedBooklists", dbType: OracleMappingType.RefCursor, direction: ParameterDirection.Output);
+            p.Add("p_CollectedBooklists", dbType: OracleMappingType.RefCursor, direction: ParameterDirection.Output);
+
+            // 直接用 QueryMultipleAsync 获取两个结果集
             using var multi = await conn.QueryMultipleAsync(
                 "SearchBooklistsByReader",
-                new { p_ReaderID = readerId },
+                param: p,
                 commandType: CommandType.StoredProcedure);
 
-            // 用户创建的书单
-            var created = !multi.IsConsumed 
-                ? (await multi.ReadAsync<SimpleBooklistDto>()).AsList() 
-                : new List<SimpleBooklistDto>();
-
-            // 用户收藏的书单
-            var collected = !multi.IsConsumed 
-                ? (await multi.ReadAsync<SimpleBooklistDto>()).AsList() 
-                : new List<SimpleBooklistDto>();
+            // 先读 Created
+            var created = (await multi.ReadAsync<SimpleBooklistDto>()).AsList();
+            // 再读 Collected
+            var collected = (await multi.ReadAsync<SimpleBooklistDto>()).AsList();
 
             return new SearchBooklistsByReaderResponse
             {

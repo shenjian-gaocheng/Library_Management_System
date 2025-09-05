@@ -1,23 +1,20 @@
 <template>
   <div class="p-4">
-    <!-- <button class="text-blue-500 mb-4" @click="$router.back()">⬅ 返回</button> -->
-    <button 
-    class="text-blue-500 mb-4" 
-    @click="$router.push({ name: 'Booklist' })"
-    >
-    ⬅ 返回
+    <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
+      ⬅ 返回
     </button>
+
     <BooklistHeader
-      :name="store.currentBooklist?.booklistInfo.booklistName"
-      :intro="store.currentBooklist?.booklistInfo.booklistIntroduction"
-      :notes="store.currentBooklist?.collectNotes"
+      :name="store.currentBooklist?.BooklistInfo.BooklistName"
+      :intro="store.currentBooklist?.BooklistInfo.BooklistIntroduction"
+      :notes="store.currentBooklist?.CollectNotes"
       show-notes
       @edit-notes="editNotes"
     />
 
     <BookItem
-      v-for="b in store.currentBooklist?.books"
-      :key="b.isbn"
+      v-for="b in store.currentBooklist?.Books"
+      :key="b.ISBN"
       :book="b"
     />
 
@@ -45,15 +42,19 @@ onMounted(() => {
   store.fetchBooklistDetails(booklistId, {withToken:true})
 })
 
-function editNotes() {
+// 修改收藏备注
+async function editNotes() {
   const newNotes = prompt('请输入新的收藏备注')
-  if (newNotes) store.updateCollectNotes(booklistId, { newNotes }, {withToken:true})
+  if (newNotes) {
+    await store.updateCollectNotes(booklistId, { NewNotes: newNotes }, {withToken:true})
+    store.fetchBooklistDetails(booklistId, {withToken:true})
+  }
 }
 
-function cancelCollect() {
-  if (confirm('确定要取消收藏吗？')) {
-    store.cancelCollect(booklistId, {withToken:true})
-    router.push({ name: 'Booklist' })
-  }
+// 取消收藏
+async function cancelCollect() {
+  if (!confirm('确定要取消收藏吗？')) return
+  await store.cancelCollect(booklistId)
+  router.push({ name: 'Booklist' })
 }
 </script>

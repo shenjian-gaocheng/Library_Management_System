@@ -1,15 +1,12 @@
 <template>
   <div class="p-4">
-    <!-- <button class="text-blue-500 mb-4" @click="$router.back()">⬅ 返回</button> -->
-    <button 
-      class="text-blue-500 mb-4" 
-      @click="$router.push({ name: 'Booklist' })"
-    >
+    <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
       ⬅ 返回
     </button>
+
     <BooklistHeader
-      :name="store.currentBooklist?.booklistInfo.booklistName"
-      :intro="store.currentBooklist?.booklistInfo.booklistIntroduction"
+      :name="store.currentBooklist?.BooklistInfo.BooklistName"
+      :intro="store.currentBooklist?.BooklistInfo.BooklistIntroduction"
       editable-name
       editable-intro
       @edit-name="editName"
@@ -17,11 +14,11 @@
     />
 
     <BookItem
-      v-for="b in store.currentBooklist?.books"
-      :key="b.isbn"
+      v-for="b in store.currentBooklist?.Books"
+      :key="b.ISBN"
       :book="b"
       show-remove
-      @remove="store.removeBook(booklistId, $event)"
+      @remove="removeBook"
     />
 
     <div class="mt-4">
@@ -43,32 +40,40 @@ const route = useRoute()
 const booklistId = route.params.id
 const isbn = ref('')
 
+// 获取书单详情
 onMounted(() => {
   store.fetchBooklistDetails(booklistId, {withToken:true})
 })
 
-function addBook() {
+// 添加图书
+async function addBook() {
   if (!isbn.value) return
-  store.addBook(booklistId, { isbn: isbn.value }, {withToken:true})
+  await store.addBook(booklistId, { ISBN: isbn.value, Notes: '' }, {withToken:true })
   isbn.value = ''
+  store.fetchBooklistDetails(booklistId, {withToken:true})
 }
 
-function editName() {
+// 移除图书
+async function removeBook(isbnValue) {
+  await store.removeBook(booklistId, isbnValue)
+  store.fetchBooklistDetails(booklistId, {withToken:true})
+}
+
+// 修改书单名称
+async function editName() {
   const newName = prompt('请输入新书单名称')
-  if (newName){
-    store.updateName(booklistId, { newName }, {withToken:true}).then(() => {
-      // 更新成功后重新获取数据
-      store.fetchBooklistDetails(booklistId, {withToken:true})
-    })
+  if (newName) {
+    await store.updateName(booklistId, { NewName: newName }, {withToken:true})
+    store.fetchBooklistDetails(booklistId, {withToken:true})
   }
 }
-function editIntro() {
+
+// 修改书单简介
+async function editIntro() {
   const newIntro = prompt('请输入新简介')
-  if (newIntro){
-    store.updateIntro(booklistId, { newIntro }, {withToken:true}).then(() => {
-      // 更新成功后重新获取数据
-      store.fetchBooklistDetails(booklistId, {withToken:true})
-    })
+  if (newIntro) {
+    await store.updateIntro(booklistId, { NewIntro: newIntro }, {withToken:true})
+    store.fetchBooklistDetails(booklistId, {withToken:true})
   }
 }
 </script>
