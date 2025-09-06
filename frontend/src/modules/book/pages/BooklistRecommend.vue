@@ -25,9 +25,26 @@ import { useBooklistStore } from '@/stores/bookliststore'
 const store = useBooklistStore()
 
 // 默认随机推荐一个书单ID
-onMounted(() => {
-  const randomId = store.created.length ? store.created[0].BooklistId : 1
-  store.fetchRecommended(randomId, 10, {withToken:true})
+onMounted(async () => {
+  try {
+    // 确保已有书单数据
+    if (store.created.length === 0) {
+      await store.fetchBooklistsByReader(1, {withToken:true}) // 使用实际用户ID
+    }
+    
+    // 随机选择一个书单ID
+    let randomId = 1; // 默认值
+    if (store.created.length > 0) {
+      const randomIndex = Math.floor(Math.random() * store.created.length)
+      randomId = store.created[randomIndex].BooklistId
+    }
+    
+    await store.fetchRecommended(randomId, 10, {withToken:true})
+  } catch (error) {
+    console.error('获取推荐书单失败:', error)
+    // 可以设置一些默认推荐数据，避免页面空白
+    store.recommended = []
+  }
 })
 
 // 收藏书单

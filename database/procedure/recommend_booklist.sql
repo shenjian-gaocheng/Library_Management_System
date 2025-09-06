@@ -15,7 +15,8 @@ BEGIN
         SELECT b.BooklistID, 
                b.ListCode, 
                b.BooklistName,
-               b.BooklistIntroduction,
+               -- 使用DBMS_LOB.SUBSTR处理CLOB字段
+               DBMS_LOB.SUBSTR(b.BooklistIntroduction, 4000, 1) AS BooklistIntroduction,
                b.CreatorID,
                r.Nickname AS CreatorNickname,
                COUNT(bb.ISBN) AS TotalBooks,
@@ -25,7 +26,8 @@ BEGIN
         JOIN Reader r ON b.CreatorID = r.ReaderID
         WHERE b.BooklistID != p_BooklistID
         GROUP BY b.BooklistID, b.ListCode, b.BooklistName, 
-                 b.BooklistIntroduction, b.CreatorID, r.Nickname
+                 -- 这里也需要使用相同的处理
+                 DBMS_LOB.SUBSTR(b.BooklistIntroduction, 4000, 1), b.CreatorID, r.Nickname
     ),
     RankedBooklists AS (
         SELECT BooklistID,
@@ -35,8 +37,8 @@ BEGIN
                CreatorID,
                CreatorNickname,
                CommonBooks AS MatchingBooksCount,
-               ROUND(CommonBooks / (TotalBooks + (SELECT COUNT(*) FROM CurrentBooklist) - CommonBooks), 3) AS SimilarityScore,
-               ROW_NUMBER() OVER (ORDER BY CommonBooks / (TotalBooks + (SELECT COUNT(*) FROM CurrentBooklist) - CommonBooks) DESC, CommonBooks DESC) AS rn
+               ROUND(CommonBooks / NULLIF((TotalBooks + (SELECT COUNT(*) FROM CurrentBooklist) - CommonBooks), 0), 3) AS SimilarityScore,
+               ROW_NUMBER() OVER (ORDER BY CommonBooks / NULLIF((TotalBooks + (SELECT COUNT(*) FROM CurrentBooklist) - CommonBooks), 0) DESC, CommonBooks DESC) AS rn
         FROM OtherBooklists
         WHERE CommonBooks > 0
     )

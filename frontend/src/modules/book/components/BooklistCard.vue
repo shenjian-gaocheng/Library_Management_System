@@ -8,7 +8,7 @@
       <button
         v-if="booklist._source === 'created'"
         class="text-red-500 hover:underline"
-        @click.stop="$emit('delete', booklist.BooklistId)"
+        @click.stop="confirmDelete"
       >
         删除
       </button>
@@ -24,8 +24,15 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   booklist: { type: Object, required: true }
 })
-defineEmits(['delete', 'cancel-collect'])
+const emit = defineEmits(['delete', 'cancel-collect'])
+
+// ✅ 删除前确认
+function confirmDelete() {
+  if (confirm('确定要删除该书单吗？')) {
+    emit('delete', props.booklist.BooklistId)
+  }
+}
 </script>

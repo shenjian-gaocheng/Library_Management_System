@@ -107,7 +107,8 @@ export const useBooklistStore = defineStore('booklist', {
         this.recommended = data.Items || []
         return this.recommended
       } catch (err) {
-        this.error = pickError(err)
+        console.error('获取推荐书单失败:', err)
+        this.error = '获取推荐书单失败，请稍后再试'
         throw err
       } finally {
         this.loading = false

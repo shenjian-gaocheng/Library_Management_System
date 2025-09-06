@@ -2,20 +2,10 @@
   <div class="p-4">
     <h1 class="text-2xl font-bold mb-4">我的书单</h1>
 
-    <!-- 新建书单按钮 -->
-    <div class="mb-6">
-      <button 
-        class="px-4 py-2 bg-green-500 text-white rounded-lg" 
-        @click="createNewBooklist"
-      >
-        ➕ 新建书单
-      </button>
-    </div>
-
     <div class="grid grid-cols-2 gap-6">
       <!-- 创建的书单 -->
       <div>
-        <h2 class="text-xl font-semibold mb-2">创建书单</h2>
+        <h2 class="text-xl font-semibold mb-2">我创建的书单</h2>
         <BooklistCard
           v-for="b in store.created"
           :key="b.BooklistId"
@@ -24,11 +14,20 @@
           @click="$router.push({ name: 'BooklistCreated', params: { id: b.BooklistId } })"
           style="cursor: pointer"
         />
+        <!-- ✅ 新建书单按钮移动到这里 -->
+        <div class="mt-4">
+          <button 
+            class="px-4 py-2 bg-green-500 text-white rounded-lg" 
+            @click="createNewBooklist"
+          >
+            ➕ 新建书单
+          </button>
+        </div>
       </div>
 
       <!-- 收藏的书单 -->
       <div>
-        <h2 class="text-xl font-semibold mb-2">收藏书单</h2>
+        <h2 class="text-xl font-semibold mb-2">我收藏的书单</h2>
         <BooklistCard
           v-for="b in store.collected"
           :key="b.BooklistId"
@@ -37,16 +36,16 @@
           @click="$router.push({ name: 'BooklistCollected', params: { id: b.BooklistId } })"
           style="cursor: pointer"
         />
+        <!-- ✅ 猜你喜欢按钮移动到这里 -->
+        <div class="mt-4">
+          <button 
+            class="px-4 py-2 bg-blue-500 text-white rounded-lg" 
+            @click="$router.push({ name: 'BooklistRecommend' })"
+          >
+            猜你喜欢
+          </button>
+        </div>
       </div>
-    </div>
-
-    <div class="mt-6">
-      <button 
-        class="px-4 py-2 bg-blue-500 text-white rounded-lg" 
-        @click="$router.push({ name: 'BooklistRecommend' })"
-      >
-        猜你喜欢
-      </button>
     </div>
   </div>
 </template>
@@ -66,7 +65,7 @@ onMounted(() => {
 async function createNewBooklist() {
   const name = prompt('请输入书单名称')
   if (!name) return
-  const intro = prompt('请输入书单简介（可选）') || ''
+  const intro = prompt('请输入书单简介') || ''
 
   try {
     await store.createBooklist({
