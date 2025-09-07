@@ -4,10 +4,10 @@
       ⬅ 返回
     </button>
 
-    <!-- ✅ 确认书单详情字段名称 -->
+    <!-- ✅ 正确从 BooklistInfo 取字段 -->
     <BooklistHeader
-      :name="store.currentBooklist?.BooklistName"
-      :intro="store.currentBooklist?.BooklistIntroduction"
+      :name="store.currentBooklist?.BooklistInfo.BooklistName"
+      :intro="store.currentBooklist?.BooklistInfo.BooklistIntroduction"
       editable-name
       editable-intro
       @edit-name="editName"
@@ -53,16 +53,16 @@ const showInput = ref(false)
 
 // 获取书单详情
 onMounted(() => {
-  store.fetchBooklistDetails(booklistId, {withToken:true})
+  store.fetchBooklistDetails(booklistId, { withToken: true })
 })
 
 // 添加图书
 async function addBook() {
   if (!isbn.value) return
-  await store.addBook(booklistId, { ISBN: isbn.value, Notes: '' }, {withToken:true })
+  await store.addBook(booklistId, { ISBN: isbn.value, Notes: '' }, { withToken: true })
   isbn.value = ''
   showInput.value = false // ✅ 添加完成后隐藏
-  store.fetchBooklistDetails(booklistId, {withToken:true})
+  store.fetchBooklistDetails(booklistId, { withToken: true })
 }
 
 // 取消添加
@@ -71,18 +71,20 @@ function cancelAdd() {
   showInput.value = false
 }
 
-// 移除图书
+// 移除图书（带确认）
 async function removeBook(isbnValue) {
+  const confirmed = confirm('确定从书单中移除此图书吗？')
+  if (!confirmed) return
   await store.removeBook(booklistId, isbnValue)
-  store.fetchBooklistDetails(booklistId, {withToken:true})
+  store.fetchBooklistDetails(booklistId, { withToken: true })
 }
 
 // 修改书单名称
 async function editName() {
   const newName = prompt('请输入新书单名称')
   if (newName) {
-    await store.updateName(booklistId, { NewName: newName }, {withToken:true})
-    store.fetchBooklistDetails(booklistId, {withToken:true})
+    await store.updateName(booklistId, { NewName: newName }, { withToken: true })
+    store.fetchBooklistDetails(booklistId, { withToken: true })
   }
 }
 
@@ -90,8 +92,8 @@ async function editName() {
 async function editIntro() {
   const newIntro = prompt('请输入新简介')
   if (newIntro) {
-    await store.updateIntro(booklistId, { NewIntro: newIntro }, {withToken:true})
-    store.fetchBooklistDetails(booklistId, {withToken:true})
+    await store.updateIntro(booklistId, { NewIntro: newIntro }, { withToken: true })
+    store.fetchBooklistDetails(booklistId, { withToken: true })
   }
 }
 </script>
