@@ -33,11 +33,13 @@ namespace library_system.Repositories.Admin
             // 1. WHERE 条件包含了 "所有人" 或 "读者"，范围更广
             // 2. ORDER BY CreateTime DESC 确保按时间倒序排列
             // 3. FETCH FIRST 3 ROWS ONLY 确保只返回最多3条记录
+            Console.WriteLine("check1");
             var sql = @"
                 SELECT * FROM announcement_view 
                 WHERE Status = '发布中' AND (TargetGroup = '所有人' OR TargetGroup = '读者')
                 ORDER BY CreateTime DESC
                 FETCH FIRST 3 ROWS ONLY";
+            Console.WriteLine("check2");
                 
             using var connection = new OracleConnection(_connectionString);
             return await connection.QueryAsync<AnnouncementDto>(sql);

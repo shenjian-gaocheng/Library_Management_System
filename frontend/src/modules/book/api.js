@@ -84,7 +84,7 @@ export function getCommentsByID(id) {
   })
 }
 export function addComment(commentData) {
-  return http.post('/comment/add', commentData)
+  return http.post('/comment/add', commentData, { withToken: true })
 }
 
 

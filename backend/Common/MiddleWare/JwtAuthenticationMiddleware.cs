@@ -25,6 +25,8 @@
         "/api/bookshelf/find-shelf-id",
         "/api/bookshelf/search_bookshelf",
         "/api/bookshelf/shelf-books",//
+        "/api/announcements/public",
+        "/api/comment/search",
     };
 
 

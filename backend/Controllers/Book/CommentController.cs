@@ -9,6 +9,7 @@ public class CommentController : ControllerBase
     public CommentController(CommentService commentService)
     {
         _commentService = commentService;
+        Console.WriteLine("init comment");
     }
 
     [HttpGet("search")]

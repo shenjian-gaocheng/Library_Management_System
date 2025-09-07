@@ -11,12 +11,13 @@ namespace library_system.Controllers
     public class AnnouncementsController : ControllerBase
     {
         private readonly AnnouncementService _service;
-        public AnnouncementsController(AnnouncementService service) { _service = service; }
+        public AnnouncementsController(AnnouncementService service) { _service = service; Console.WriteLine("init announcement"); }
 
         // 公开接口: GET /api/announcements/public
         [HttpGet("public")]
         public async Task<ActionResult<IEnumerable<AnnouncementDto>>> GetPublic()
         {
+            Console.WriteLine("check controller");
             return Ok(await _service.GetPublicAnnouncementsAsync());
         }
 

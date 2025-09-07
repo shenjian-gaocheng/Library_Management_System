@@ -30,9 +30,9 @@ const displayAnnouncements = computed(() => {
   const formatted = realAnnouncements.value.map(item => ({
     id: item.announcementID,
     // 将日期格式化为 YYYY-MM-DD
-    date: new Date(item.createTime).toISOString().split('T')[0],
-    title: item.title,
-    content: item.content,
+    date: new Date(item.CreateTime).toISOString().split('T')[0],
+    title: item.Title,
+    content: item.Content,
     isPlaceholder: false // 标记为真实数据
   }));
 
