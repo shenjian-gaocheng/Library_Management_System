@@ -15,7 +15,7 @@
       <button
         v-else
         class="text-red-500 hover:underline"
-        @click="$emit('cancel-collect', booklist.BooklistId)"
+        @click.stop="confirmCancelCollect"
       >
         取消收藏
       </button>
@@ -33,6 +33,13 @@ const emit = defineEmits(['delete', 'cancel-collect'])
 function confirmDelete() {
   if (confirm('确定要删除该书单吗？')) {
     emit('delete', props.booklist.BooklistId)
+  }
+}
+
+// ✅ 取消收藏前确认
+function confirmCancelCollect() {
+  if (confirm('确定要取消收藏该书单吗？')) {
+    emit('cancel-collect', props.booklist.BooklistId)
   }
 }
 </script>

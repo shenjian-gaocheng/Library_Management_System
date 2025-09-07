@@ -7,7 +7,7 @@
     <BooklistHeader
       :name="store.currentBooklist?.BooklistInfo.BooklistName"
       :intro="store.currentBooklist?.BooklistInfo.BooklistIntroduction"
-      :notes="store.currentBooklist?.CollectNotes"
+      :notes="store.currentBooklist?.Notes"
       show-notes
       @edit-notes="editNotes"
     />
