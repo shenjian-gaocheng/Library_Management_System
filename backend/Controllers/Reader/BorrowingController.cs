@@ -26,7 +26,7 @@ namespace backend.Controllers
          * @return 借阅记录列表
          */
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BorrowRecord>>> GetAllBorrowRecords()
+        public async Task<ActionResult<IEnumerable<BorrowRecordDetailDto>>> GetAllBorrowRecords()
         {
             var borrowRecords = await _borrowingService.GetAllBorrowRecordsAsync();
             return Ok(borrowRecords);

@@ -6,16 +6,16 @@ using backend.Repositories.ReaderRepository;
 namespace backend.Services.ReaderService
 {
     /**
-     * ReaderService ï¿½á¹©ï¿½ï¿½ ReaderRepository ï¿½ï¿½Òµï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½×°
+     * ReaderService ???? ReaderRepository ???????????
      */
     public class ReaderService
     {
         private readonly ReaderRepository _readerRepository;
 
         /**
-         * ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
-         * @param readerRepository Reader ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½
-         * @return ï¿½ï¿½
+         * ??????
+         * @param readerRepository Reader ???????
+         * @return ??
          */
         public ReaderService(ReaderRepository readerRepository)
         {
@@ -23,9 +23,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ï¿½ï¿½ï¿½ï¿½ ReaderID ï¿½ï¿½È¡ Reader ï¿½ï¿½ï¿½ï¿½
-         * @param readerID ï¿½ï¿½ï¿½ï¿½ ID
-         * @return Reader ï¿½ï¿½ï¿½ï¿½ï¿?null
+         * ???? ReaderID ??? Reader ????
+         * @param readerID ???? ID
+         * @return Reader ??????null
          */
         public async Task<Reader> GetReaderByReaderIDAsync(long readerID)
         {
@@ -33,9 +33,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ¸ù¾Ý UserName »ñÈ¡ Reader ¶ÔÏó
-         * @param UserName ÓÃ»§Ãû,Í¨³£ÊÇÑ§ºÅ
-         * @return Reader ¶ÔÏó»ò null
+         * ???? UserName ??? Reader ????
+         * @param UserName ?????,????????
+         * @return Reader ????? null
          */
         public async Task<Reader> GetReaderByUserNameAsync(string userName)
         {
@@ -43,8 +43,8 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ Reader ï¿½ï¿½ï¿½ï¿½
-         * @return Reader ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
+         * ??????? Reader ????
+         * @return Reader ?????§Ò?
          */
         public async Task<IEnumerable<Reader>> GetAllReadersAsync()
         {
@@ -52,9 +52,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½ Reader
-         * @param reader Reader Êµï¿½ï¿½
-         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+         * ?????????? Reader
+         * @param reader Reader ???
+         * @return ???????????
          */
         public async Task<int> InsertReaderAsync(Reader reader)
         {
@@ -62,9 +62,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ Reader
-         * @param reader Reader Êµï¿½ï¿½
-         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+         * ??????? Reader
+         * @param reader Reader ???
+         * @return ???????????
          */
         public async Task<int> UpdateReaderAsync(Reader reader)
         {
@@ -72,9 +72,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * É¾ï¿½ï¿½Ò»ï¿½ï¿½ Reader
+         * ?????? Reader
          * @param readerID ReaderID
-         * @return ï¿½ï¿½Ó°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+         * @return ???????????
          */
         public async Task<int> DeleteReaderAsync(long readerID)
         {
@@ -91,19 +91,19 @@ namespace backend.Services.ReaderService
 
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("ÓÃ»§ÃûºÍÃÜÂë²»ÄÜÎª¿Õ¡£");
+                throw new ArgumentException("?????????????????");
             }
             else if (userName.Length < UserConstants.UsernameMinLength || userName.Length > UserConstants.UsernameMaxLength)
             {
-                throw new ArgumentException($"ÓÃ»§Ãû³¤¶È±ØÐëÔÚ{UserConstants.UsernameMinLength}µ½{UserConstants.UsernameMaxLength}Ö®¼ä¡£");
+                throw new ArgumentException($"??????????????{UserConstants.UsernameMinLength}??{UserConstants.UsernameMaxLength}???");
             }
             else if (password.Length < UserConstants.PasswordMinLength || password.Length > UserConstants.PasswordMaxLength)
             {
-                throw new ArgumentException($"ÃÜÂë³¤¶È±ØÐëÔÚ{UserConstants.PasswordMinLength}µ½{UserConstants.PasswordMaxLength}Ö®¼ä¡£");
+                throw new ArgumentException($"???????????{UserConstants.PasswordMinLength}??{UserConstants.PasswordMaxLength}???");
             }
             else if (IsUserNameExistsAsync(userName).Result)
             {
-                throw new ArgumentException("ÓÃ»§ÃûÒÑ´æÔÚ£¬ÇëÑ¡ÔñÆäËûÓÃ»§Ãû¡£");
+                throw new ArgumentException("???????????????????????????");
             }
 
             Reader reader = new Reader
@@ -115,16 +115,16 @@ namespace backend.Services.ReaderService
             bool res = await _readerRepository.InsertReaderAsync(reader) > 0;
             if (!res)
             {
-                throw new Exception("×¢²áÊ§°Ü£¬ÇëÉÔºóÔÙÊÔ¡£");
+                throw new Exception("?????????????????");
             }
 
             return res;
         }
 
         /**
-         * ¼ì²éÓÃ»§ÃûÊÇ·ñÒÑ´æÔÚ
-         * @param userName ÓÃ»§Ãû
-         * @return true Èç¹ûÓÃ»§ÃûÒÑ´æÔÚ£¬·ñÔò false
+         * ????????????????
+         * @param userName ?????
+         * @return true ?????????????????? false
          */
         public async Task<bool> IsUserNameExistsAsync(string userName)
         {
@@ -133,7 +133,7 @@ namespace backend.Services.ReaderService
 
         /**
          * 
-         * ÖØÖÃÃÜÂë
+         * ????????
          * 
          */
         public async Task<bool> ResetPasswordAsync(string userName, string newPassword)
@@ -144,7 +144,7 @@ namespace backend.Services.ReaderService
 
         /**
          * 
-         * ¸üÐÂÍ·Ïñ
+         * ???????
          * 
          */
         public async Task<bool> UpdateAvatarAsync(long readerID, string avatarUrl)
@@ -154,7 +154,7 @@ namespace backend.Services.ReaderService
 
         /**
          * 
-         * ¸üÐÂReaderµÄProfile×Ö¶Î
+         * ????Reader??Profile???
          * 
          */
         public async Task<bool> UpdateProfileAsync(Reader reader)

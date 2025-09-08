@@ -2,14 +2,45 @@
   <div class="sidebar">
     <div class="logo">我的图书馆</div>
     <ul class="nav-list">
-      <li class="nav-item active">首页</li>
-      <li class="nav-item">借阅记录</li>
-      <li class="nav-item">预约管理</li>
+      <li
+        class="nav-item"
+        :class="{ active: isActive('/my/home/dashboard') }"
+        @click="navigate('/my/home/dashboard')"
+      >
+        首页
+      </li>
+      <li
+        class="nav-item"
+        :class="{ active: isActive('/my/borrowingrecords') }"
+        @click="navigate('/my/borrowingrecords')"
+      >
+        借阅记录
+      </li>
+      <li
+        class="nav-item"
+        :class="{ active: isActive('/my/reservation') }"
+        @click="navigate('/my/reservation')"
+      >
+        预约管理
+      </li>
     </ul>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
+
+// 跳转页面
+const navigate = (path) => {
+  router.push(path)
+}
+
+// 判断当前路由是否为选中状态
+const isActive = (path) => route.path === path
+</script>
 
 <style scoped>
 .sidebar {

@@ -33,9 +33,9 @@ namespace backend.Services.BorrowingService
         }
 
         // 异步方法，获取所有的借阅记录
-        public async Task<IEnumerable<BorrowRecord>> GetAllBorrowRecordsAsync()
+        public async Task<IEnumerable<BorrowRecordDetailDto>> GetAllBorrowRecordsAsync()
         {
-            return await _borrowRecordRepository.GetAllAsync();
+            return await _borrowRecordRepository.GetAllBorrowRecordsAsync();
         }
 
         // 图书借阅功能

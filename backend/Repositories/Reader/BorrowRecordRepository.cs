@@ -61,16 +61,29 @@ public class BorrowRecordRepository
         return await connection.QueryAsync<BorrowRecord>(sql, new { BookID = bookID });
     }
 
-    /**
-     * 获取所有 BorrowRecord 信息
-     * @return 返回 BorrowRecord 对象列表
-     */
-    public async Task<IEnumerable<BorrowRecord>> GetAllAsync()
+    /** 
+    * 获取所有 BorrowRecord 信息 
+    * @return 返回 BorrowRecordDetailDto 对象列表 
+    */
+    public async Task<IEnumerable<BorrowRecordDetailDto>> GetAllBorrowRecordsAsync()
     {
         using var connection = new OracleConnection(_connectionString);
         await connection.OpenAsync();
-        var sql = "SELECT * FROM BorrowRecord";
-        return await connection.QueryAsync<BorrowRecord>(sql);
+
+        // 查询视图
+        var sql = @"SELECT 
+                        BookId,
+                        ISBN,
+                        BookTitle,
+                        BookAuthor,
+                        ReaderId,
+                        ReaderName,
+                        BorrowTime,
+                        ReturnTime,
+                        OverdueFine
+                    FROM BorrowRecordDetailView";
+
+        return await connection.QueryAsync<BorrowRecordDetailDto>(sql);
     }
 
     /**
