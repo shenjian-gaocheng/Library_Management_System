@@ -1,50 +1,44 @@
 <template>
-  <div class="layout">
-    <DashBoardSidebar />
-    <div class="main-content">
-      <DashBoardNavbar />
-
-      <div class="page-body">
-        <!-- 用户信息卡片 -->
-        <div class="user-card">
-          <div class="user-info">
-            <img :src="avatar" class="avatar" />
-            <div class="info">
-              <div><strong>用户名：</strong>{{ userName }}</div>
-              <div><strong>真实姓名：</strong>{{ fullName }}</div>
-              <div><strong>昵称：</strong>{{ nickName }}</div>
-              <div><strong>信誉分：</strong>{{ creditScore }}</div>
-              <div><strong>账户状态：</strong><span :class="statusClass">{{ accountStatus }}</span></div>
-              <div><strong>权限：</strong>{{ permission }}</div>
-            </div>
-          </div>
-          <div class="user-icons">
-            <div v-for="item in icons" :key="item.label" class="icon-item">
-              <div class="icon-circle" />
-              <div class="icon-label">{{ item.label }}</div>
-            </div>
+  <layout>
+    <div class="page-body">
+      <!-- 用户信息卡片 -->
+      <div class="user-card">
+        <div class="user-info">
+          <img :src="avatar" class="avatar" />
+          <div class="info">
+            <div><strong>用户名：</strong>{{ userName }}</div>
+            <div><strong>真实姓名：</strong>{{ fullName }}</div>
+            <div><strong>昵称：</strong>{{ nickName }}</div>
+            <div><strong>信誉分：</strong>{{ creditScore }}</div>
+            <div><strong>账户状态：</strong><span :class="statusClass">{{ accountStatus }}</span></div>
+            <div><strong>权限：</strong>{{ permission }}</div>
           </div>
         </div>
-
-
-        <!-- 信息统计卡片 -->
-        <div class="info-cards">
-          <DashBoardInfoCard title="当前借阅" count="0" className="card-red" />
-          <DashBoardInfoCard title="超期图书" count="0" className="card-orange" />
-          <DashBoardInfoCard title="委托到书" count="0" className="card-green" />
-          <DashBoardInfoCard title="预约到书" count="0" className="card-blue" />
+        <div class="user-icons">
+          <div v-for="item in icons" :key="item.label" class="icon-item">
+            <div class="icon-circle" />
+            <div class="icon-label">{{ item.label }}</div>
+          </div>
         </div>
-
-        <!-- 通知列表 -->
-        <DashBoardNotificationList />
       </div>
+
+
+      <!-- 信息统计卡片 -->
+      <div class="info-cards">
+        <DashBoardInfoCard title="当前借阅" count="0" className="card-red" />
+        <DashBoardInfoCard title="超期图书" count="0" className="card-orange" />
+        <DashBoardInfoCard title="委托到书" count="0" className="card-green" />
+        <DashBoardInfoCard title="预约到书" count="0" className="card-blue" />
+      </div>
+
+      <!-- 通知列表 -->
+      <DashBoardNotificationList />
     </div>
-  </div>
+  </layout>
 </template>
 
 <script setup>
-import DashBoardSidebar from '../components/DashBoardSidebar.vue'
-import DashBoardNavbar from '../components/DashBoardNavbar.vue'
+import layout from '@/modules/reader/reader_DashBoard_layout/layout.vue'
 import DashBoardInfoCard from '../components/DashBoardInfoCard.vue'
 import DashBoardNotificationList from '../components/DashBoardNotificationList.vue'
 

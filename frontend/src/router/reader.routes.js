@@ -5,7 +5,7 @@ export default [
   {
     path: '/my/home/dashboard',
     name: 'my-home-dashboard',
-    component: () => import('@/modules/reader/pages/DashBoardPage.vue'),
+    component: () => import('@/modules/reader/pages/DashBoardHome_Page.vue'),
     meta: { requiresAuth: true }
   },
   {

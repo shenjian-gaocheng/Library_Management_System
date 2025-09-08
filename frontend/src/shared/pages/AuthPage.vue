@@ -3,6 +3,22 @@
     <div class="login-box">
       <h2>{{ isLogin ? '欢迎登录' : '创建账户' }}</h2>
       <form @submit.prevent="onSubmit">
+        <!-- 登录身份reader/admin -->
+        <!-- 注册时身份必须为reader -->
+        <div v-if="isLogin" class="input-group">
+          <div class="role-inline flex items-center gap-4 text-sm">
+            <span class="opacity-90">登录身份：</span>
+            <label class="inline-flex items-center cursor-pointer gap-1">
+              <input type="radio" value="reader" v-model="loginType" />
+              <span>读者登录</span>
+            </label>
+            <label class="inline-flex items-center cursor-pointer gap-1">
+              <input type="radio" value="admin" v-model="loginType" />
+              <span>管理员登录</span>
+            </label>
+          </div>
+        </div>
+
         <!-- 用户名 -->
         <div class="input-group">
           <label>用户名</label>
@@ -54,6 +70,7 @@
       <!-- 切换模式按钮 -->
       <p class="toggle-text">
         {{ isLogin ? '没有账号？' : '已有账号？' }}
+        <!-- 切换模式时强制设置为读者登录 -->
         <button @click="toggleMode" class="toggle-btn">
           {{ isLogin ? '点击注册' : '返回登录' }}
         </button>
@@ -73,6 +90,8 @@ const route = useRoute()
 const isLogin = ref(true)
 const loading = ref(false)
 const rememberMe = ref(false)
+
+const loginType = ref("reader")  // 默认读者登录
 
 const form = reactive({
   username: '1234567',
@@ -130,34 +149,57 @@ async function onSubmit() {
 
   loading.value = true
   try {
+    // === 登录 ===
     if (isLogin.value) {
-      const res = await login({ username: form.username, password: form.password })
-      console.log(res)
-      // 这里根据你的API返回结构调整
-      if (res.status === 200) {
-        if (rememberMe.value) {
-          localStorage.setItem('rememberedUser', JSON.stringify({ username: form.username }))
+      if (loginType.value === 'reader') {
+        // 读者登录 —— 使用现有 API
+        const res = await login({ username: form.username, password: form.password })
+        console.log(res)
+        if (res.status === 200) {
+          if (rememberMe.value) {
+            localStorage.setItem('rememberedUser', JSON.stringify({ username: form.username }))
+          } else {
+            localStorage.removeItem('rememberedUser')
+          }
+          localStorage.setItem('token', res.data)
+
+          const user = (await getMyProfile()).data
+          localStorage.setItem('user', JSON.stringify(user))
+
+          const redirectPath = route.query.redirect || '/' //读者登录后跳转到home页面
+          await router.push(redirectPath)
         } else {
-          localStorage.removeItem('rememberedUser')
+          alert(res.msg || '登录失败')
         }
-        localStorage.setItem('token',res.data);
-        const user = (await getMyProfile()).data
-        localStorage.setItem("user",JSON.stringify(user))
-        alert('登录成功')
-        // 登录成功后跳转或操作
-        // 读取重定向地址，默认跳转到 /my-library
-        const redirectPath = route.query.redirect || '/my/home/dashboard'
-        await router.push(redirectPath);
-      } else {
-        alert(res.msg || '登录失败')
+      } 
+      else {
+        // 管理员登录 —— TODO: 填入你的管理员接口
+        // 示例占位：
+        // const res = await adminLogin({ username: form.username, password: form.password })
+        // if (res.status === 200) {
+        //   localStorage.setItem('admin_token', res.data)
+        //   const admin = (await getAdminProfile()).data
+        //   localStorage.setItem('admin_user', JSON.stringify(admin))
+        //   alert('管理员登录成功')
+        //   await router.push('fill in the admin console page's path') // 管理员登录后跳转到管理员控制台页面
+        // } else {
+        //   alert(res.msg || '登录失败')
+        // }
       }
-    } else {
-      const res = await register({ username: form.username, password: form.password })
-      console.log(res)
-      if (res.status === 200) {
-        alert('注册成功，请登录')
-        toggleMode()
-      }
+    } 
+    // === 注册 ===
+    else {
+      if (loginType.value === 'reader') {
+        const res = await register({ username: form.username, password: form.password })
+        console.log(res)
+        if (res.status === 200) {
+          alert('注册成功，请登录')
+          toggleMode()
+        } else {
+          alert(res.msg || '注册失败')
+        }
+      } 
+      // 管理员不能在公开位置注册，只能被其他管理员添加
     }
   } catch (e) {
     alert('请求失败')
@@ -173,6 +215,10 @@ function toggleMode() {
   if (!rememberMe.value) {
     form.username = ''
   }
+
+  // 切换模式时强制设置为读者登录
+  loginType.value = 'reader'
+
   clearErrors()
 }
 
@@ -283,4 +329,18 @@ button[type="submit"]:hover:not(:disabled) {
 .forgot-link:hover {
   text-decoration: underline;
 }
+
+/* 圆圈和文字在一行，并去掉点击蓝框 */
+input[type="radio"] {
+  vertical-align: middle;
+  cursor: pointer;
+  accent-color: #667eea; /* 自定义选中颜色 (可选) */
+  outline: none;         /* 去掉默认的蓝色外框 */
+}
+
+input[type="radio"]:focus {
+  outline: none;  /* 阻止浏览器默认 focus 高亮 */
+  box-shadow: none;
+}
+
 </style>
