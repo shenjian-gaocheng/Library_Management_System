@@ -1,6 +1,8 @@
 ﻿using backend.Common.Constants;
 using backend.Common.Utils;
 using backend.DTOs.Web;
+using backend.Models;
+using backend.Repositories.LibrarianRepository;
 using backend.Repositories.ReaderRepository;
 
 namespace backend.Services.Web
@@ -10,46 +12,56 @@ namespace backend.Services.Web
         private readonly ReaderRepository _readerRepository;
         private readonly TokenService _tokenService;
         private readonly SecurityService _securityService;
+        private readonly LibrarianRepository _librarianRepository;
 
-        public LoginService(ReaderRepository readerRepository, TokenService tokenService, SecurityService securityService)
+        public LoginService(ReaderRepository readerRepository, TokenService tokenService, SecurityService securityService, LibrarianRepository librarianRepository)
         {
             _readerRepository = readerRepository;
             _tokenService = tokenService;
             _securityService = securityService;
+            _librarianRepository = librarianRepository;
         }
 
         public async Task<string> LoginAsync(LoginDto loginDto)
         {
             string userName = loginDto.UserName;
             string password = loginDto.Password;
+            string userType = loginDto.UserType;
 
             //验证码校验
             ValidateCaptha();
             //前置校验，检查用户名和密码是否合法（为空或长度不符合要求）
             PreCheck(userName, password);
 
-            //尝试从数据库中获取用户信息
-            var reader = _readerRepository.GetByUserNameAsync(userName);
-            
+            User? user = null;
 
-            if (reader.Result == null)
+            if(userType == UserConstants.UserTypeLibrarian)
             {
-                throw new KeyNotFoundException("用户名或密码错误");//和密码错误使用同一个状态码
+                user = _librarianRepository.GetByStaffNoAsync(userName).Result;
             }
-            else if (reader.Result.AccountStatus == UserConstants.AccuntStatusFrozen)
+            else if (userType == UserConstants.UserTypeReader)
             {
-                throw new InvalidOperationException("账户已被冻结，禁止登录。");
+                user = _readerRepository.GetByUserNameAsync(userName).Result;
+            }
+            else
+            {
+                throw new InvalidOperationException("无效用户类型");
+            }
+
+
+            if (user == null)
+            {
+                throw new KeyNotFoundException("账号或密码错误");//和密码错误使用同一个状态码
             }
 
             //检查密码是否匹配
-            if (!PasswordUtils.VerifyPassword(password, reader.Result.Password))//密码不匹配
+            if (!PasswordUtils.VerifyPassword(password, user.Password))//密码不匹配
             {
                 throw new KeyNotFoundException("用户名或密码错误");//和用户名不存在使用同一个状态码
             }
 
-
             //创建LoginUser对象
-            LoginUser loginUser = new LoginUser(reader.Result,UserConstants.UserTypeReader);
+            LoginUser loginUser = new LoginUser(user,userType);
 
             //生成token并存入到Redis中
             return await _tokenService.CreateTokenAsync(loginUser);
