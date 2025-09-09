@@ -1,4 +1,5 @@
-﻿using backend.Common.MiddleWare;
+
+using backend.Common.MiddleWare;
 using backend.Repositories.BorrowRecordRepository;
 using backend.Repositories.ReaderRepository;
 using backend.Services.BorrowingService;
@@ -18,6 +19,10 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
     });
+
+// 添加 Swagger 支持
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // 日志配置
 builder.Logging.ClearProviders();
@@ -85,10 +90,31 @@ services.AddTransient<BorrowingService>();
 
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
+builder.Services.AddSingleton(new CommentRepository(connectionString));
+builder.Services.AddSingleton(new BookCategoryTreeOperation(connectionString));
+builder.Services.AddSingleton(new LogService(connectionString));
+builder.Services.AddSingleton(new BookShelfRepository(connectionString));
 builder.Services.AddTransient<BookService>();
-
+builder.Services.AddTransient<CommentService>();
+builder.Services.AddTransient<BookCategoryService>();
+builder.Services.AddTransient<BookShelfService>();
 
 var app = builder.Build();
+
+// 启用 Swagger（开发环境）
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+
+// 启用 Swagger（开发环境）
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // 获取 logger
 var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
