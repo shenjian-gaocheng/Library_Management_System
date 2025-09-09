@@ -20,10 +20,8 @@
     ```
 
  - .net8.0
-    下载地址
-    https://dotnet.microsoft.com/en-us/download/dotnet/8.0
-    
-    Windows → Installers → x64下载并运行exe
+    下载并运行exe
+    https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.412/dotnet-sdk-8.0.412-win-x64.exe
 
  - 下载redis,/backend运行
    ```
@@ -37,6 +35,7 @@
    npm install swiper@^10
    npm install -D tailwindcss postcss autoprefixer
    npx tailwindcss init -p
+   npm install jwt-decode
    ```
 
 #### 2.开发环境启动方式 前端后端都运行在本地+数据库运行在远程服务器（大家在window上这样启动）

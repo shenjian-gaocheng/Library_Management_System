@@ -179,9 +179,14 @@ COMMENT ON COLUMN StudyRoom.ReservationStatus IS '预约状态：空闲 / 已预
 /************************************
 * 9. Book – 馆藏实体书表
 ************************************/
+/* 插入示例
+    INSERT INTO Book (Status, ShelfID, ISBN)
+    VALUES ('正常', 101, '9781594202667');
+*/
+
 CREATE TABLE Book (
     BookID  INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY, -- 实体书主键，自增 ID
-    Barcode VARCHAR2(20) NOT NULL,                        -- 条码标签，业务唯一
+    Barcode VARCHAR2(20) NOT NULL,                        -- 条码标签，业务唯一。一个ISBN可以对应多个Barcode，即一本书可以有多个副本。作用：借出时扫描书上这个条码，可以知道借出哪本。生成方式：触发器自动生成
     Status  VARCHAR2(10) NOT NULL,                        -- 状态：正常/下架/借出
     ShelfID INT,                                          -- 所在书架 ID
     ISBN    VARCHAR2(20) NOT NULL,                        -- 关联 ISBN
@@ -413,7 +418,7 @@ COMMENT ON COLUMN Booklist_Book.Notes      IS '备注';
 ************************************/
 CREATE TABLE Book_Classify (
     ISBN       VARCHAR2(20),                                -- 图书 ISBN
-    CategoryID INT,                                        -- 分类 ID
+    CategoryID VARCHAR2(20),                               -- 分类 ID
     RelationNote CLOB,                                     -- 备注
     CONSTRAINT pk_book_classify PRIMARY KEY (ISBN, CategoryID),
     CONSTRAINT fk_bc_bookinfo FOREIGN KEY (ISBN)       REFERENCES BookInfo(ISBN),

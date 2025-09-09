@@ -1,28 +1,29 @@
 <template>
-  <!-- 这里是您项目最外层的布局 -->
   <NavbarTop />
 
-  <!-- 
-    这是最关键的改动！
-    所有子路由 (首页内容、公告管理、图书查询等) 都会被渲染到这里
-  -->
-  <main class="main-content">
-    <router-view />
-  </main>
+  <!-- 首页轮播图和图书搜索栏 -->
+  <Banner />
+
+  <!-- 快捷入口模块 -->
+  <QuickEntry />
+
+  <!-- 推荐图书模块 -->
+  <BookRecommend />
+
+  <!-- 公告栏模块 -->
+  <Announcement />
 
   <Footer />
 </template>
 
 <script setup>
-// 这个主布局文件，现在只负责引入布局组件
-import NavbarTop from '@/shared/components/layouts/NavbarTop.vue'; // 您的 NavbarTop 路径可能不同
-import Footer from '@/shared/components/layouts/Footer.vue';
+import Banner from '@/modules/home/components/Banner.vue'
+import QuickEntry from '@/modules/home/components/QuickEntry.vue'
+import BookRecommend from '@/modules/home/components/BookRecommend.vue'
+import Announcement from '@/modules/home/components/Announcement.vue'
+import NavbarTop from '@/shared/components/layouts/NavbarTop.vue'
+import Footer from '@/shared/components/layouts/Footer.vue'
 </script>
 
 <style scoped>
-.main-content {
-  /* 为主要内容区域添加一些样式，比如一个最小高度和内边距 */
-  padding-top: 4rem; /* 预留出顶部导航栏的高度 */
-  min-height: 100vh;
-}
 </style>

@@ -1,115 +1,160 @@
-// 文件: backend/Program.cs
-// 这是最终的、使用了最强化的 CORS 命名策略的版本
-
-// ===================================================================
-// 1. using 声明区域
-// ===================================================================
-using System.Text;
-using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Backend.Data;
+using backend.Common.MiddleWare;
+using backend.Repositories.BorrowRecordRepository;
+using backend.Repositories.ReaderRepository;
+using backend.Repositories.Book;
+using backend.Services.BorrowingService;
+using backend.Services.ReaderService;
+using backend.Services.Web;
+using backend.Services.Book;
 using Microsoft.OpenApi.Models;
-using library_system.Repositories.Admin;
-using library_system.Services.Admin;
+using StackExchange.Redis;
+using library_system.Repositories.Admin; // 添加这行
+using library_system.Services.Admin;    // 添加这行
 
-// ===================================================================
-// 2. WebApplication Builder 初始化和配置
-// ===================================================================
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 定义一个 CORS 策略的名称，方便后面使用 ---
-var MyCorsPolicy = "_MyCorsPolicy";
+// 输出当前环境
+Console.WriteLine($"当前运行环境: {builder.Environment.EnvironmentName}");
 
-// --- 加载 .env 文件 ---
-Env.Load();
+// 添加控制器服务
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
 
-// --- 读取环境变量 ---
-string corsOrigins = Environment.GetEnvironmentVariable("CORS_ORIGINS") ?? "http://localhost:5173";
-string connString = "User Id=final_owner;Password=Sjk202507;Data Source=115.190.151.58:1521/orclpdb1;";
-string jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET") ?? "dev-secret";
-
-// ===================================================================
-// 3. 依赖注入 (DI) 容器配置 - 服务注册区域
-// ===================================================================
-
-// --- 【核心修正】使用一个明确的、带有命名策略的 CORS 配置 ---
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyCorsPolicy,
-                      policy =>
-                      {
-                          policy.WithOrigins(corsOrigins.Split(';'))
-                                .AllowAnyHeader()
-                                // 明确地告诉服务器，允许 GET, POST, PUT, DELETE 以及预检的 OPTIONS 方法！
-                                .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
-                      });
-});
-
-// --- 注册控制器，并配置 JSON 序列化 ---
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
-});
-
-// ... (其他服务注册，如 Swagger, DbContext, AdminService 等) ...
-builder.Services.AddDbContext<OracleDbContext>(options => options.UseOracle(connString, b => b.UseOracleSQLCompatibility("11")));
+// 添加 Swagger 支持
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton(new AdminRepository(connString));
-builder.Services.AddTransient<AdminService>();
-builder.Services.AddSingleton(new AnnouncementRepository(connString));
+
+// 日志配置
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+// 添加服务
+var services = builder.Services;
+
+// 添加 CORS 支持（便于前端访问）
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy
+            .AllowAnyOrigin()      // 生产环境可替换为具体域名
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+// 添加 Swagger 服务
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "图书馆管理系统 API",
+        Version = "v1",
+        Description = "基于 ASP.NET Core 的图书馆后台接口文档"
+    });
+});
+
+// 注册 IHttpContextAccessor
+services.AddHttpContextAccessor();
+
+// 读取连接字符串（根据环境自动读取 appsettings.Development.json 或 appsettings.Production.json）
+var connectionString = builder.Configuration.GetConnectionString("OracleDB")
+                      ?? throw new InvalidOperationException("缺少 OracleDB 连接字符串配置");
+
+
+// 注册 Redis
+services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var configuration = builder.Configuration.GetConnectionString("Redis");
+    if (string.IsNullOrEmpty(configuration))
+    {
+        throw new ArgumentException("未配置 Redis 连接字符串");
+    }
+    return ConnectionMultiplexer.Connect(configuration);
+});
+services.AddSingleton<RedisService>();
+
+// 注册业务服务
+services.AddScoped<TokenService>();
+services.AddScoped<SecurityService>();
+services.AddScoped<LoginService>();
+
+// 注册 ReaderRepository 和 ReaderService
+services.AddSingleton(new ReaderRepository(connectionString));
+services.AddTransient<ReaderService>();
+
+//注册 BorrowingService 和 BorrowingRepository
+services.AddSingleton(new BorrowRecordRepository(connectionString));
+services.AddTransient<BorrowingService>();
+
+// 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
+builder.Services.AddSingleton(new BookRepository(connectionString));
+builder.Services.AddSingleton(new CommentRepository(connectionString));
+builder.Services.AddSingleton(new ReportRepository(connectionString));
+builder.Services.AddSingleton(new BookCategoryTreeOperation(connectionString));
+builder.Services.AddSingleton(new BookCategoryRepository(connectionString));
+builder.Services.AddSingleton(new LogService(connectionString));
+builder.Services.AddSingleton(new BookShelfRepository(connectionString));
+builder.Services.AddTransient<BookService>();
+builder.Services.AddTransient<CommentService>();
+builder.Services.AddTransient<ReportService>();
+builder.Services.AddTransient<BookCategoryService>();
+builder.Services.AddTransient<BookShelfService>();
+
+// 添加公告管理相关的服务
+builder.Services.AddSingleton(new AnnouncementRepository(connectionString));
 builder.Services.AddTransient<AnnouncementService>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(/*...*/);
 
-
-// ===================================================================
-// 4. 构建 WebApplication 实例
-// ===================================================================
 var app = builder.Build();
 
-
-// 【终极诊断：请求侦测中间件】
-// 将这个中间件放在所有其他 app.Use... 的最前面！
-// ===================================================================
-app.Use(async (context, next) =>
-{
-    Console.WriteLine("==========================================================");
-    Console.WriteLine($"[侦测到请求] 时间: {DateTime.Now}");
-    Console.WriteLine($"[侦-测-到-请-求] 方法 (Method): {context.Request.Method}"); // <-- 最关键的信息！
-    Console.WriteLine($"[侦测到请求] 路径 (Path): {context.Request.Path}");
-    Console.WriteLine($"[侦测到请求] 源 (Origin): {context.Request.Headers["Origin"]}");
-    Console.WriteLine("--------------------- 请求头 (Headers) ---------------------");
-    foreach (var header in context.Request.Headers)
-    {
-        Console.WriteLine($"  {header.Key}: {header.Value}");
-    }
-    Console.WriteLine("==========================================================");
-
-    // 将请求传递给管道中的下一个中间件
-    await next.Invoke();
-});
-// ===================================================================
-// 5. HTTP 请求处理管道配置 - 中间件区域
-// ===================================================================
+// 启用 Swagger（开发环境）
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+
+// 启用 Swagger（开发环境）
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+// 获取 logger
+var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+var logger = loggerFactory.CreateLogger("StartupLogger");
+logger.LogInformation($"当前运行环境: {app.Environment.EnvironmentName}");
+
+// 开发环境启用 Swagger
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "图书馆 API v1");
+        c.RoutePrefix = "api/docs";
+    });
+}
+
+app.UseStaticFiles(); // 启用 wwwroot 目录下的静态文件
+
+app.UseCors(); // 启用跨域
+
 app.UseRouting();
 
-// 【核心修正】应用我们上面定义的那个命名策略
-app.UseCors(MyCorsPolicy);
+app.UseMiddleware<ExceptionMiddleware>(); // 自定义异常中间件
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseMiddleware<JwtAuthenticationMiddleware>(); // JWT 认证中间件
+
+app.UseAuthorization(); // 授权中间件（如果有）
 
 app.MapControllers();
 
-// ===================================================================
-// 6. 运行应用
-// ===================================================================
+// 启动应用
 app.Run();
