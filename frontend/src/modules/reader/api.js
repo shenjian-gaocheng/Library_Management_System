@@ -45,3 +45,13 @@ export const updateBorrowingRecord = (data) => http.put('/borrowing', data);
 export const deleteBorrowingRecord = (id) => http.delete(`/borrowing/${id}`);
 export const returnBook = (id) => http.put(`/borrowing/${id}/return`);
 export const renewBorrowing = (id) => http.put(`/borrowing/${id}/renew`);
+
+// ——————————————————Librarian相关接口————————————————
+
+export const getLibrarians = (params) => http.get('/librarian/list', { withToken:true,params })//params为可选参数，一般用于分页查询等
+export const getLibrarianById = (id) => http.get(`/librarian/${id}`,{withToken:true})
+export const addLibrarian = (data) => http.post('/librarian', data,{withToken:true})
+export const updateLibrarian = (data) => http.put('/librarian', data,{withToken:true})
+export const deleteLibrarian = (id) => http.delete(`/librarian/${id}`,{withToken:true})
+
+export const getLibrarianProfile = () => http.get('/librarian/info',{withToken:true})
