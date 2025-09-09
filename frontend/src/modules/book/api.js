@@ -97,7 +97,7 @@ export function getReportsByLibrarianId(librarianId) {
 }
 
 export function addReport(reportData) {
-  return http.post('/report/add', reportData)
+  return http.post('/report/add', reportData, { withToken: true })
 }
 
 
