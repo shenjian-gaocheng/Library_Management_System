@@ -193,9 +193,9 @@ export function getBookById(bookId) {
   return http.get(`/Book/${bookId}`)
 }
 
-export function getBookByBarcode(barcode) {
-  return http.get(`/Book/by-barcode/${encodeURIComponent(barcode)}`)
-}
+// export function getBookByBarcode(barcode) {
+//   return http.get(`/Book/by-barcode/${encodeURIComponent(barcode)}`)
+// }
 
 // ---------- 状态流转：按 BookID ----------
 export function borrowBookById(bookId) {

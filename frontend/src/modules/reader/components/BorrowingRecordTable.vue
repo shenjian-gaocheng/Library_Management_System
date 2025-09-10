@@ -1,5 +1,14 @@
 <template>
   <div class="records-container">
+    <!-- 排序方式 -->
+    <div class="sort-container" v-if="records.length">
+      <label>排序方式：</label>
+      <select v-model="sortOrder">
+        <option value="desc">借出时间降序</option>
+        <option value="asc">借出时间升序</option>
+      </select>
+    </div>
+
     <!-- 表格 -->
     <table v-if="records.length" class="styled-table">
       <thead>
@@ -51,18 +60,22 @@ const props = defineProps({
 });
 
 const currentPage = ref(1);
+const sortOrder = ref("desc"); // 默认降序
 
 // 总页数
 const totalPages = computed(() => {
   return Math.ceil(props.records.length / props.pageSize);
 });
 
-// 当前页数据（倒序显示最新记录在前）
+// 当前页数据（根据 BorrowTime 排序）
 const paginatedRecords = computed(() => {
-  // 先拷贝并倒序
-  const reversed = [...props.records].reverse();
+  const sorted = [...props.records].sort((a, b) => {
+    const timeA = new Date(a.BorrowTime).getTime();
+    const timeB = new Date(b.BorrowTime).getTime();
+    return sortOrder.value === "desc" ? timeB - timeA : timeA - timeB;
+  });
   const start = (currentPage.value - 1) * props.pageSize;
-  return reversed.slice(start, start + props.pageSize);
+  return sorted.slice(start, start + props.pageSize);
 });
 
 // 上一页
@@ -93,6 +106,14 @@ const formatDate = (date) => {
   background-color: #f9fbfd;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sort-container {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
 }
 
 .styled-table {
