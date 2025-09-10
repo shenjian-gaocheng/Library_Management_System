@@ -87,7 +87,7 @@ namespace backend.Services.ReaderService
             string userName = registerDto.UserName;
             string password = registerDto.Password;
 
-            string msg;
+            // string msg; // 未使用的变量，已注释
 
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             {

@@ -14,7 +14,7 @@ public static class JwtUtils
         var audience = config["Jwt:Audience"];
         var expireMinutes = int.Parse(config["Jwt:ExpireMinutes"] ?? "30");
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret ?? string.Empty));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]

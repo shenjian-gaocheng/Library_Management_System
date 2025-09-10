@@ -1,4 +1,4 @@
-﻿import BookBooklistPage from '@/modules/book/pages/BooklistPage.vue'
+import BookBooklistPage from '@/modules/book/pages/BooklistPage.vue'
 import BookCommentsPage from '@/modules/book/pages/BookCommentsPage.vue'
 
 export default [
@@ -14,15 +14,53 @@ export default [
     meta: { requiresAuth: false, title: '图书搜索' }
   },
 
-  // 添加首页头部导航栏 "我的图书馆" 中 "我的书单" 路由
+  // 添加首页头部导航栏 "我的图书馆" 中 "我的书单主页面" 路由
   {
     path: '/user/booklist',
-    name: 'BookBooklist',
-    component: BookBooklistPage,
+    name: 'Booklist',
+    component: () =>
+      import(
+        /* webpackChunkName: "book-booklist" */
+        '@/modules/book/pages/BooklistPage.vue'
+      ),
     meta: {
-      requiresAuth: true,
-      title: '我的书单'
-    }
+      requiresAuth: true, title: '我的书单' }
+  },
+
+  {
+    path: '/user/booklist/created/:id',
+    name: 'BooklistCreated',
+    component: () =>
+      import(
+        /* webpackChunkName: "book-booklist" */
+        '@/modules/book/pages/BooklistDetailCreated.vue'
+      ),
+    meta: {
+      requiresAuth: true, title: '我创建的书单' }
+  },
+
+  {
+    path: '/user/booklist/collected/:id',
+    name: 'BooklistCollected',
+    component: () =>
+      import(
+        /* webpackChunkName: "book-booklist" */
+        '@/modules/book/pages/BooklistDetailCollected.vue'
+      ),
+    meta: {
+      requiresAuth: true, title: '我收藏的书单' }
+  },
+
+  {
+    path: '/user/booklist/recommend',
+    name: 'BooklistRecommend',
+    component: () =>
+      import(
+        /* webpackChunkName: "book-booklist" */
+        '@/modules/book/pages/BooklistRecommend.vue'
+      ),
+    meta: {
+      requiresAuth: true, title: '推荐书单' }
   },
   
   // 评论页面路由
@@ -58,4 +96,45 @@ export default [
   component: () => import('@/modules/book/pages/BookCirculationPage.vue'),
   meta: { title: '借还服务（条码）' }
   },
+  
+  // 举报评论页面
+  {
+    path: '/report-comment',
+    name: 'ReportComment',
+    component: () => import('@/modules/book/pages/ReportPage.vue'),
+    meta: { 
+      requiresAuth: false,
+      title: '举报评论'
+    }
+  },
+
+  // 图书分类管理
+  {
+    path: '/books/category-manage',
+    name: 'BookCategoryManage',
+    component: () => import('@/modules/book/pages/BookCategoryManagePage.vue'),
+    meta: { 
+      requiresAuth: true,
+      title: '图书分类管理',
+      role: 'librarian' // 仅管理员可见
+    }
+  },
+
+
+    //搜索的实体书页面
+  {
+    path: '/booklocation',
+    name: 'BookSearchLocation',
+    component: () =>
+    import(
+        /* webpackChunkName: "book-search" */
+        '@/modules/book/pages/BookLocationPage.vue'
+    ),
+    meta: {
+      requiresAuth: true,
+      title: '实体书位置',
+    }
+  }
 ]
+
+

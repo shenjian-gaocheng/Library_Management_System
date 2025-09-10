@@ -7,7 +7,7 @@ namespace backend.DTOs
 {
     public class MyBorrowRecordDto
     {   
-        public string ISBN  { get; set; }
+        public required string ISBN  { get; set; }
         
         public string BookTitle { get; set; }
 

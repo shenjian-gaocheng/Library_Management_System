@@ -5,20 +5,20 @@ public class Reader: User
 {
     public long ReaderID { get; set; }
 
-    public string UserName { get; set; }
-    public string Password { get; set; }
+    public required string UserName { get; set; }
+    public required string Password { get; set; }
 
     public string? FullName { get; set; } = "";
 
-    public string? NickName { get; set; } = "Ä¬ÈÏÓÃ»§êÇ³Æ";
+    public string? NickName { get; set; } = "Ä¬ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ç³ï¿½";
 
     public string? Avatar { get; set; } = "";
 
     public int CreditScore { get; set; } = 100;
 
-    public string AccountStatus { get; set; } = "Õı³£";
+    public string AccountStatus { get; set; } = "ï¿½ï¿½ï¿½ï¿½";
 
-    public string Permission { get; set; } = "ÆÕÍ¨";
+    public string Permission { get; set; } = "ï¿½ï¿½Í¨";
 
 
 }

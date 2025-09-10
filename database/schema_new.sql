@@ -418,7 +418,7 @@ COMMENT ON COLUMN Booklist_Book.Notes      IS '备注';
 ************************************/
 CREATE TABLE Book_Classify (
     ISBN       VARCHAR2(20),                                -- 图书 ISBN
-    CategoryID INT,                                        -- 分类 ID
+    CategoryID VARCHAR2(20),                               -- 分类 ID
     RelationNote CLOB,                                     -- 备注
     CONSTRAINT pk_book_classify PRIMARY KEY (ISBN, CategoryID),
     CONSTRAINT fk_bc_bookinfo FOREIGN KEY (ISBN)       REFERENCES BookInfo(ISBN),

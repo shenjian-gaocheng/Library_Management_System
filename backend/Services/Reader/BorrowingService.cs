@@ -143,7 +143,8 @@ namespace backend.Services.BorrowingService
                 return new BorrowingServiceResponse<List<MyBorrowRecordDto>>
                 {
                     Success = false,
-                    Message = "读者ID不能为空"
+                    Message = "读者ID不能为空",
+                    Data = new List<MyBorrowRecordDto>()
                 };
             }
 
@@ -162,7 +163,8 @@ namespace backend.Services.BorrowingService
                 return new BorrowingServiceResponse<List<MyBorrowRecordDto>>
                 {
                     Success = false,
-                    Message = $"查询失败：{ex.Message}"
+                    Message = $"查询失败：{ex.Message}",
+                    Data = new List<MyBorrowRecordDto>()
                 };
             }
         }
@@ -172,7 +174,7 @@ namespace backend.Services.BorrowingService
     public class BorrowingServiceResponse<T>
     {
         public bool Success { get; set; }
-        public string Message { get; set; }
-        public T Data { get; set; }
+        public required string Message { get; set; }
+        public required T Data { get; set; }
     }
 }

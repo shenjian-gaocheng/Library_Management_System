@@ -5,7 +5,7 @@ namespace backend.DTOs.Reader
     public class ReaderDetailDto
     {
         [JsonPropertyName("userName")]
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
 
         [JsonPropertyName("fullName")]
         public string? FullName { get; set; }
@@ -20,9 +20,9 @@ namespace backend.DTOs.Reader
         public int CreditScore { get; set; }
 
         [JsonPropertyName("accountStatus")]
-        public string AccountStatus { get; set; }
+        public required string AccountStatus { get; set; }
 
         [JsonPropertyName("permission")]
-        public string Permission { get; set; }
+        public required string Permission { get; set; }
     }
 }

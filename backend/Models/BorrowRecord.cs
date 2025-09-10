@@ -8,10 +8,10 @@ namespace backend.Models
         public int BorrowRecordId { get; set; }
 
         // 读者ID
-        public string ReaderId { get; set; }
+        public required string ReaderId { get; set; }
 
         // 图书ID
-        public string BookId { get; set; }
+        public required string BookId { get; set; }
 
         // 借阅时间
         public DateTime BorrowTime { get; set; }
