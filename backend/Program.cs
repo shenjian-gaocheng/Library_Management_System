@@ -8,8 +8,8 @@ using backend.Services.Web;
 using backend.Services.Book;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
-using library_system.Repositories.Admin; // 添加这行
-using library_system.Services.Admin;    // 添加这行
+using backend.Repositories.Admin;
+using backend.Services.Admin;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,7 +105,10 @@ builder.Services.AddTransient<ReportService>();
 builder.Services.AddTransient<BookCategoryService>();
 builder.Services.AddTransient<BookShelfService>();
 
-// 添加公告管理相关的服务
+builder.Services.AddSingleton(new PurchaseAnalysisRepository(connectionString));
+builder.Services.AddTransient<PurchaseAnalysisService>();
+builder.Services.AddSingleton(new ReportRepository(connectionString));
+builder.Services.AddTransient<ReportService>();
 builder.Services.AddSingleton(new AnnouncementRepository(connectionString));
 builder.Services.AddTransient<AnnouncementService>();
 
