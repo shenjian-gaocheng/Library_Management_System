@@ -57,10 +57,12 @@ const totalPages = computed(() => {
   return Math.ceil(props.records.length / props.pageSize);
 });
 
-// 当前页数据
+// 当前页数据（倒序显示最新记录在前）
 const paginatedRecords = computed(() => {
+  // 先拷贝并倒序
+  const reversed = [...props.records].reverse();
   const start = (currentPage.value - 1) * props.pageSize;
-  return props.records.slice(start, start + props.pageSize);
+  return reversed.slice(start, start + props.pageSize);
 });
 
 // 上一页
@@ -111,6 +113,7 @@ const formatDate = (date) => {
 .styled-table td {
   padding: 12px;
   border-bottom: 1px solid #ddd;
+  text-align: center;
 }
 
 .styled-table tbody tr:nth-child(even) {

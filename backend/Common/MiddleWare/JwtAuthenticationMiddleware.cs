@@ -18,7 +18,6 @@
         "/api/docs",              //swagger UI 的根路径
         "/api/docs/index.html",   //swagger UI 的入口文件
         "/favicon.ico",           // 网站图标
-        "/api/borrowing",         // borrow，暂时不验证，之后会删去
         "/api/Book/search",       // search book
     };
 

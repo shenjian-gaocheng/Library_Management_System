@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using backend.Models;
 using backend.Services.BorrowingService;
+using backend.Services.ReaderService;
 using backend.DTOs;
+using backend.Services.Web;
 
 namespace backend.Controllers
 {
@@ -11,14 +13,17 @@ namespace backend.Controllers
     {
         private readonly BorrowingService _borrowingService;
 
+          private readonly SecurityService _securityService;
+
         /**
          * 构造函数
          * @param borrowingService BorrowingService 实例
          * @return 无
          */
-        public BorrowingController(BorrowingService borrowingService)
+        public BorrowingController(BorrowingService borrowingService, SecurityService securityService)
         {
             _borrowingService = borrowingService;
+            _securityService = securityService;
         }
 
         /**
@@ -38,7 +43,7 @@ namespace backend.Controllers
          * @return 借阅记录详情
          */
         [HttpGet("{id}")]
-        public async Task<ActionResult<BorrowRecord>> GetBorrowRecordByID(int id)
+        public async Task<ActionResult<BorrowRecordDetailDto>> GetBorrowRecordByID(int id)
         {
             var borrowRecord = await _borrowingService.GetBorrowRecordByIDAsync(id);
             if (borrowRecord == null) return NotFound();
@@ -50,10 +55,23 @@ namespace backend.Controllers
          * @param readerID 读者ID
          * @return 该读者的借阅记录列表
          */
-        [HttpGet("reader/{readerID}")]
-        public async Task<ActionResult<IEnumerable<BorrowRecord>>> GetBorrowRecordsByReaderID(string readerID)
+        [HttpGet("reader")]
+        public async Task<ActionResult<IEnumerable<BorrowRecordDetailDto>>> GetBorrowRecordsByReaderID()
         {
-            var borrowRecords = await _borrowingService.GetBorrowRecordsByReaderIDAsync(readerID);
+            var loginUser = _securityService.GetLoginUser();
+
+            if (!_securityService.CheckIsReader(loginUser))
+            {
+                return Forbid(); // 或 return Unauthorized();
+            }
+
+            var reader = loginUser.User as Reader;
+            if (reader == null)
+            {
+                return BadRequest("当前用户不是读者");
+            }
+
+            var borrowRecords = await _borrowingService.GetBorrowRecordsByReaderIDAsync(reader.ReaderID.ToString());
             return Ok(borrowRecords);
         }
 
@@ -63,7 +81,7 @@ namespace backend.Controllers
          * @return 借阅该图书的记录列表
          */
         [HttpGet("book/{bookID}")]
-        public async Task<ActionResult<IEnumerable<BorrowRecord>>> GetBorrowRecordsByBookID(string bookID)
+        public async Task<ActionResult<IEnumerable<BorrowRecordDetailDto>>> GetBorrowRecordsByBookID(string bookID)
         {
             var borrowRecords = await _borrowingService.GetBorrowRecordsByBookIDAsync(bookID);
             return Ok(borrowRecords);
@@ -137,31 +155,32 @@ namespace backend.Controllers
             }
         }
 
-
+        /**
+        * 归还图书接口
+        * @param readerId 读者ID（从查询参数获取）
+        * @param bookId 图书ID（从查询参数获取）
+        * @return 返回 IActionResult，成功返回200 OK，业务异常返回409 Conflict，其他异常返回500
+        */
         [HttpPost("return")]
         public async Task<IActionResult> ReturnBook([FromQuery] string readerId, [FromQuery] string bookId)
         {
-            var response = await _borrowingService.ReturnBookAsync(readerId, bookId);
+            try
+            {
+                // 调用服务层归还方法，成功返回提示信息
+                var message = await _borrowingService.ReturnBookAsync(readerId, bookId);
 
-            if (response.Success)
-            {
-                // 成功返回200 OK
-                return Ok(response);
+                // 成功返回 200 OK
+                return Ok(new { message });
             }
-            else if (response.Message == "记录不存在")
+            catch (InvalidOperationException ex)
             {
-                // 记录不存在返回400 Bad Request
-                return BadRequest(response);
+                // 出现业务异常返回 409 Conflict
+                return Conflict(new { message = ex.Message });
             }
-            else if (response.Message == "重复归还")
+            catch (Exception ex)
             {
-                // 重复归还返回400 Bad Request
-                return BadRequest(response);
-            }
-            else
-            {
-                // 其他错误返回400 Bad Request
-                return BadRequest(response);
+                // 其他未处理异常返回 500 Internal Server Error
+                return StatusCode(500, new { message = "服务器发生错误：" + ex.Message });
             }
         }
 
@@ -206,22 +225,6 @@ namespace backend.Controllers
             {
                 return StatusCode(500, $"服务器错误: {ex.Message}");
             }
-        }
-        
-        /**
-         * 通过读者ID查询所有借阅记录(读者自己查询)
-         * @param readerid 当前读者ID
-         * @return 业务处理结果
-         */
-        [HttpGet("reader/MyBorrowRecords/{readerId}")]
-        public async Task<ActionResult> GetByReaderIdAsDto(string readerId)
-        {
-            var response = await _borrowingService.GetMyBorrowRecordDtosByReaderIdAsync(readerId);
-            if (!response.Success)
-            {
-                return BadRequest(response.Message);
-            }
-            return Ok(response.Data);
         }
     }
 }

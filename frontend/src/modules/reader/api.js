@@ -38,8 +38,8 @@ export const updateAvatar = (avatarUrl) =>
 
 export const updateMyProfile = (data) => http.put('/reader/me/info', data,{withToken:true})
 
-export const getAllBorrowingRecords = (params) => http.get('/borrowing', { params },{withToken:true});
-export const getBorrowingRecordById = (id) => http.get(`/borrowing/${id}`,{withToken:true});
+export const getAllBorrowingRecords = (params) => http.get('/borrowing', { params , withToken:true});
+export const getBorrowingRecordByReaderId = (id) => http.get(`/borrowing/reader/`,{withToken:true});
 export const addBorrowingRecord = (data) => http.post('/borrowing', data,{withToken:true});
 export const updateBorrowingRecord = (data) => http.put('/borrowing', data,{withToken:true});
 export const deleteBorrowingRecord = (id) => http.delete(`/borrowing/${id}`,{withToken:true});
