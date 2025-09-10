@@ -27,12 +27,23 @@ public class BorrowRecordRepository
      * @param borrowRecordID 借阅记录 ID
      * @return 返回 BorrowRecord 对象
      */
-    public async Task<BorrowRecord> GetByIDAsync(int borrowRecordID)
+    public async Task<BorrowRecordDetailDto> GetByIDAsync(int borrowRecordID)
     {
         using var connection = new OracleConnection(_connectionString);
         await connection.OpenAsync();
-        var sql = "SELECT * FROM BorrowRecord WHERE BorrowRecordID = :BorrowRecordID";
-        return await connection.QueryFirstOrDefaultAsync<BorrowRecord>(sql, new { BorrowRecordID = borrowRecordID });
+        var sql = @"SELECT 
+                        BookId,
+                        ISBN,
+                        BookTitle,
+                        BookAuthor,
+                        ReaderId,
+                        ReaderName,
+                        BorrowTime,
+                        ReturnTime,
+                        OverdueFine
+                    FROM BorrowRecordDetailView
+                    WHERE BorrowRecordID = :BorrowRecordID";
+        return await connection.QueryFirstOrDefaultAsync<BorrowRecordDetailDto>(sql, new { BorrowRecordID = borrowRecordID });
     }
 
     /**
@@ -40,12 +51,23 @@ public class BorrowRecordRepository
      * @param readerID 读者 ID
      * @return 返回 BorrowRecord 对象列表
      */
-    public async Task<IEnumerable<BorrowRecord>> GetByReaderIDAsync(string readerID)
+    public async Task<IEnumerable<BorrowRecordDetailDto>> GetByReaderIDAsync(string readerID)
     {
         using var connection = new OracleConnection(_connectionString);
         await connection.OpenAsync();
-        var sql = "SELECT * FROM BorrowRecord WHERE ReaderID = :ReaderID";
-        return await connection.QueryAsync<BorrowRecord>(sql, new { ReaderID = readerID });
+        var sql = @"SELECT 
+                        BookId,
+                        ISBN,
+                        BookTitle,
+                        BookAuthor,
+                        ReaderId,
+                        ReaderName,
+                        BorrowTime,
+                        ReturnTime,
+                        OverdueFine
+                    FROM BorrowRecordDetailView
+                    WHERE ReaderID = :ReaderID";
+        return await connection.QueryAsync<BorrowRecordDetailDto>(sql, new { ReaderID = readerID });
     }
 
     /**
@@ -53,24 +75,48 @@ public class BorrowRecordRepository
      * @param bookID 图书 ID
      * @return 返回 BorrowRecord 对象列表
      */
-    public async Task<IEnumerable<BorrowRecord>> GetByBookIDAsync(string bookID)
+    public async Task<IEnumerable<BorrowRecordDetailDto>> GetByBookIDAsync(string bookID)
     {
         using var connection = new OracleConnection(_connectionString);
         await connection.OpenAsync();
-        var sql = "SELECT * FROM BorrowRecord WHERE BookID = :BookID";
-        return await connection.QueryAsync<BorrowRecord>(sql, new { BookID = bookID });
+        var sql = @"SELECT 
+                        BookId,
+                        ISBN,
+                        BookTitle,
+                        BookAuthor,
+                        ReaderId,
+                        ReaderName,
+                        BorrowTime,
+                        ReturnTime,
+                        OverdueFine
+                    FROM BorrowRecordDetailView
+                    WHERE BookID = :BookID";
+        return await connection.QueryAsync<BorrowRecordDetailDto>(sql, new { BookID = bookID });
     }
 
-    /**
-     * 获取所有 BorrowRecord 信息
-     * @return 返回 BorrowRecord 对象列表
-     */
-    public async Task<IEnumerable<BorrowRecord>> GetAllAsync()
+    /** 
+    * 获取所有 BorrowRecord 信息 
+    * @return 返回 BorrowRecordDetailDto 对象列表 
+    */
+    public async Task<IEnumerable<BorrowRecordDetailDto>> GetAllBorrowRecordsAsync()
     {
         using var connection = new OracleConnection(_connectionString);
         await connection.OpenAsync();
-        var sql = "SELECT * FROM BorrowRecord";
-        return await connection.QueryAsync<BorrowRecord>(sql);
+
+        // 查询视图
+        var sql = @"SELECT 
+                        BookId,
+                        ISBN,
+                        BookTitle,
+                        BookAuthor,
+                        ReaderId,
+                        ReaderName,
+                        BorrowTime,
+                        ReturnTime,
+                        OverdueFine
+                    FROM BorrowRecordDetailView";
+
+        return await connection.QueryAsync<BorrowRecordDetailDto>(sql);
     }
 
     /**
@@ -151,15 +197,30 @@ public class BorrowRecordRepository
             return existingRecord != null ? 0 : -1; // 0-重复归还，-1-无此记录
         }
 
-        // 3. 执行归还操作（更新归还时间为当前时间）
+        // 3. 计算超期费用
+        // 假设借阅记录中有借阅时间字段BorrowTime
+        var returnTime = DateTime.Now; // 获取当前时间
+        var borrowDuration = returnTime - borrowRecord.BorrowTime;
+        var allowedDays = 0; //为了看出效果，先以0天计算
+        decimal overdueFine = 0;
+
+        // 如果超期，计算罚款
+        if (borrowDuration.TotalDays > allowedDays)
+        {
+            var overdueDays = (int)Math.Ceiling(borrowDuration.TotalDays - allowedDays);
+            overdueFine = overdueDays * 0.1m; // 每天0.1元
+        }
+
+        // 4. 执行归还操作（更新归还时间和超期费用）
         var sqlUpdate = @"
             UPDATE BorrowRecord 
-            SET ReturnTime = SYSDATE  -- 使用Oracle数据库的当前时间
+            SET ReturnTime = :ReturnTime
+            , OverdueFine = :OverdueFine
             WHERE BorrowRecordID = :BorrowRecordID";
 
         await connection.ExecuteAsync(
             sqlUpdate,
-            new { BorrowRecordID = borrowRecord.BorrowRecordId }
+            new { BorrowRecordID = borrowRecord.BorrowRecordId, OverdueFine = overdueFine ,ReturnTime = returnTime}
         );
 
         return 1; // 归还成功
@@ -191,7 +252,7 @@ public class BorrowRecordRepository
         var sql = "SELECT * FROM BorrowRecord WHERE ReaderID = :ReaderID AND BookID = :BookID";
         return await connection.QueryFirstOrDefaultAsync<BorrowRecord>(sql, new { ReaderID = readerId, BookID = bookId });
     }
-    
+
     /**
      * 根据 readerId 该读者所有借阅信息
      * @param  readerId 读者ID
@@ -221,5 +282,19 @@ public class BorrowRecordRepository
             sql,
             new { ReaderId = readerId }
         )).AsList();
+    }
+    
+    /**
+    * 根据 readerId 获取该读者未归还的借阅数量
+    * @param readerId 读者ID
+    * @return 返回未归还的数量
+    */
+    public async Task<int> GetUnreturnedCountByReaderAsync(string readerId)
+    {
+        using var connection = new OracleConnection(_connectionString);
+        await connection.OpenAsync();
+
+        var sql = "SELECT COUNT(*) FROM BorrowRecord WHERE ReaderID = :ReaderID AND ReturnTime IS NULL";
+        return await connection.ExecuteScalarAsync<int>(sql, new { ReaderID = readerId });
     }
 }

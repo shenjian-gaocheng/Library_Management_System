@@ -3,6 +3,7 @@ using library_system.DTOs.Admin; // 确保引用了 DTO 命名空间
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace library_system.Repositories.Admin
 {
@@ -26,26 +27,35 @@ namespace library_system.Repositories.Admin
         // 增
         public async Task<LibrarianDto> CreateAsync(CreateLibrarianDto librarianDto)
         {
-            // !!! 安全警告: 您的表结构直接存储明文密码，这是极不安全的。
-            // 在生产项目中，必须使用 BCrypt.Net 等库将密码哈希化后再存储。
-            // string hashedPassword = BCrypt.Net.BCrypt.HashPassword(librarianDto.Password);
-            
+            // 【最终修正】从 INSERT 语句中彻底移除 LibrarianID
             var sql = @"
-                INSERT INTO Librarian (LibrarianID, Name, Password, Permission)
-                VALUES (:LibrarianID, :Name, :Password, :Permission)";
+                INSERT INTO Librarian (Name, Password, Permission)
+                VALUES (:Name, :Password, :Permission)
+                RETURNING LibrarianID INTO :id"; // 依然通过 RETURNING 获取新 ID
                 
             using var connection = new OracleConnection(_connectionString);
-            await connection.ExecuteAsync(sql, librarianDto);
-
+            
+            var parameters = new DynamicParameters();
+            parameters.Add("Name", librarianDto.Name);
+            parameters.Add("Password", librarianDto.Password);
+            parameters.Add("Permission", librarianDto.Permission);
+            parameters.Add("id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            
+            await connection.ExecuteAsync(sql, parameters);
+            
+            // 获取数据库自动生成的新 ID
+            var newId = parameters.Get<int>("id");
+            
+            // 返回一个包含了新 ID 的 DTO 对象
             return new LibrarianDto {
-                LibrarianID = librarianDto.LibrarianID,
+                LibrarianID = newId,
                 Name = librarianDto.Name,
                 Permission = librarianDto.Permission
             };
         }
 
         // 改
-        public async Task<bool> UpdateAsync(string librarianId, UpdateLibrarianDto librarianDto)
+        public async Task<bool> UpdateAsync(int librarianId, UpdateLibrarianDto librarianDto)
         {
             var sql = "UPDATE Librarian SET Name = :Name, Permission = :Permission WHERE LibrarianID = :LibrarianID";
             using var connection = new OracleConnection(_connectionString);
@@ -58,7 +68,7 @@ namespace library_system.Repositories.Admin
         }
 
         // 删
-        public async Task<bool> DeleteAsync(string librarianId)
+        public async Task<bool> DeleteAsync(int librarianId)
         {
             var sql = "DELETE FROM Librarian WHERE LibrarianID = :LibrarianID";
             using var connection = new OracleConnection(_connectionString);

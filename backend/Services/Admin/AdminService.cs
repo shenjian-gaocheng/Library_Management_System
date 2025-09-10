@@ -21,7 +21,7 @@ namespace library_system.Services.Admin
         public Task<IEnumerable<LibrarianDto>> GetAllLibrariansAsync() => _repository.GetAllAsync(); 
         
         public Task<LibrarianDto> CreateLibrarianAsync(CreateLibrarianDto librarianDto) => _repository.CreateAsync(librarianDto);
-        public Task<bool> UpdateLibrarianAsync(string id, UpdateLibrarianDto librarianDto) => _repository.UpdateAsync(id, librarianDto);
-        public Task<bool> DeleteLibrarianAsync(string id) => _repository.DeleteAsync(id);
+        public Task<bool> UpdateLibrarianAsync(int id, UpdateLibrarianDto librarianDto) => _repository.UpdateAsync(id, librarianDto);
+        public Task<bool> DeleteLibrarianAsync(int id) => _repository.DeleteAsync(id);
     }
 }

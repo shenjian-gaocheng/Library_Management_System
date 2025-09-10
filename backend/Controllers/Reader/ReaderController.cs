@@ -138,22 +138,23 @@ namespace backend.Controllers
             if (_securityService.CheckIsReader(loginUser))
             {
                 var reader = loginUser.User as Reader;
-                var avatarUrl = reader.Avatar;
+                var avatarUrl = reader?.Avatar;
 
                 if (avatarUrl == UserConstants.AvatarUrlNull || avatarUrl == UserConstants.AvatarUrlEmpty || avatarUrl == UserConstants.AvatarUrlDefault)
                 {
-                    reader.Avatar = UserConstants.SystemAvatar0;
+                    if (reader != null)
+                        reader.Avatar = UserConstants.SystemAvatar0;
                 }
 
                 var readerDetail = new ReaderDetailDto
                 {
-                    UserName = reader.UserName,
-                    FullName = reader.FullName,
-                    NickName = reader.NickName,
-                    Avatar = reader.Avatar,
-                    CreditScore = reader.CreditScore,
-                    AccountStatus = reader.AccountStatus,
-                    Permission = reader.Permission
+                    UserName = reader?.UserName ?? string.Empty,
+                    FullName = reader?.FullName,
+                    NickName = reader?.NickName,
+                    Avatar = reader?.Avatar,
+                    CreditScore = reader?.CreditScore ?? 0,
+                    AccountStatus = reader?.AccountStatus ?? string.Empty,
+                    Permission = reader?.Permission ?? string.Empty
                 };
                 return Ok(readerDetail);
             }
@@ -223,7 +224,7 @@ namespace backend.Controllers
                 var filePath = Path.Combine(UserConstants.AvatarDirectoryRoot, fileName);
 
                 // 删除旧头像（排除以 System 开头的）
-                if (!string.IsNullOrEmpty(reader.Avatar) && !reader.Avatar.StartsWith("system"))
+                if (!string.IsNullOrEmpty(reader?.Avatar) && !reader.Avatar.StartsWith("system"))
                 {
                     System.IO.File.Delete(Path.Combine(UserConstants.AvatarDirectoryRoot, reader.Avatar));
                 }
@@ -237,13 +238,14 @@ namespace backend.Controllers
                 var url = fileName; // 头像访问地址
 
                 // 更新 Reader 的头像 URL
-                reader.Avatar = url;
+                if (reader != null)
+                    reader.Avatar = url;
 
                 //更新登录用户信息
                 await _tokenService.SetLoginUserAsync(loginUser);
 
                 //返回头像 URL
-                return await _readerService.UpdateAvatarAsync(reader.ReaderID, url) ? Ok(url) : BadRequest("更新头像失败");
+                return await _readerService.UpdateAvatarAsync(reader?.ReaderID ?? 0, url) ? Ok(url) : BadRequest("更新头像失败");
             }
             return BadRequest("上传头像失败");
         }
@@ -266,19 +268,20 @@ namespace backend.Controllers
                 }
 
                 // 删除旧头像（排除以 System 开头的）
-                if (!string.IsNullOrEmpty(reader.Avatar) && !reader.Avatar.StartsWith("system"))
+                if (!string.IsNullOrEmpty(reader?.Avatar) && !reader.Avatar.StartsWith("system"))
                 {
                     System.IO.File.Delete(Path.Combine(UserConstants.AvatarDirectoryRoot, reader.Avatar));
                 }
 
                 // 更新 Reader 的头像 URL
-                reader.Avatar = avatarUrl;
+                if (reader != null)
+                    reader.Avatar = avatarUrl;
 
                 //更新登录用户信息
                 await _tokenService.SetLoginUserAsync(loginUser);
 
 
-                return await _readerService.UpdateAvatarAsync(reader.ReaderID, avatarUrl) ? Ok("头像更新成功") : BadRequest("更新头像失败");
+                return await _readerService.UpdateAvatarAsync(reader?.ReaderID ?? 0, avatarUrl) ? Ok("头像更新成功") : BadRequest("更新头像失败");
             }
 
             return BadRequest("更新头像时的未知错误");
@@ -299,24 +302,25 @@ namespace backend.Controllers
                 if (!string.IsNullOrWhiteSpace(readerDetail.UserName))
                 {
                     // 检查用户名是否已存在
-                    if(reader.UserName != readerDetail.UserName && await _readerService.IsUserNameExistsAsync(readerDetail.UserName))
+                    if(reader?.UserName != readerDetail.UserName && await _readerService.IsUserNameExistsAsync(readerDetail.UserName))
                     {
                         return BadRequest("用户名已存在，请选择其他用户名");
                     }
-                    reader.UserName = readerDetail.UserName;
+                    if (reader != null)
+                        reader.UserName = readerDetail.UserName;
                 }
 
                 // 只更新非空非空字符串字段
-                if (!string.IsNullOrWhiteSpace(readerDetail.FullName))
+                if (!string.IsNullOrWhiteSpace(readerDetail.FullName) && reader != null)
                     reader.FullName = readerDetail.FullName;
 
-                if (!string.IsNullOrWhiteSpace(readerDetail.NickName))
+                if (!string.IsNullOrWhiteSpace(readerDetail.NickName) && reader != null)
                     reader.NickName = readerDetail.NickName;
 
                 // 更新登录用户信息
                 await _tokenService.SetLoginUserAsync(loginUser);
 
-                return await _readerService.UpdateProfileAsync(reader)
+                return await _readerService.UpdateProfileAsync(reader!)
                     ? Ok("个人信息更新成功")
                     : BadRequest("更新个人信息失败");
             }

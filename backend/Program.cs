@@ -1,12 +1,17 @@
-
 using backend.Common.MiddleWare;
 using backend.Repositories.BorrowRecordRepository;
+using backend.Repositories.LibrarianRepository;
 using backend.Repositories.ReaderRepository;
+using backend.Repositories.Book;
 using backend.Services.BorrowingService;
+using backend.Services.LibrarianService;
 using backend.Services.ReaderService;
 using backend.Services.Web;
+using backend.Services.Book;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
+using library_system.Repositories.Admin; // 添加这行
+using library_system.Services.Admin;    // 添加这行
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,16 +93,26 @@ services.AddTransient<ReaderService>();
 services.AddSingleton(new BorrowRecordRepository(connectionString));
 services.AddTransient<BorrowingService>();
 
+services.AddSingleton(new LibrarianRepository(connectionString));
+services.AddTransient<LibrarianService>();
+
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
 builder.Services.AddSingleton(new CommentRepository(connectionString));
+builder.Services.AddSingleton(new ReportRepository(connectionString));
 builder.Services.AddSingleton(new BookCategoryTreeOperation(connectionString));
+builder.Services.AddSingleton(new BookCategoryRepository(connectionString));
 builder.Services.AddSingleton(new LogService(connectionString));
 builder.Services.AddSingleton(new BookShelfRepository(connectionString));
 builder.Services.AddTransient<BookService>();
 builder.Services.AddTransient<CommentService>();
+builder.Services.AddTransient<ReportService>();
 builder.Services.AddTransient<BookCategoryService>();
 builder.Services.AddTransient<BookShelfService>();
+
+// 添加公告管理相关的服务
+builder.Services.AddSingleton(new AnnouncementRepository(connectionString));
+builder.Services.AddTransient<AnnouncementService>();
 
 var app = builder.Build();
 
@@ -144,10 +159,7 @@ app.UseMiddleware<JwtAuthenticationMiddleware>(); // JWT 认证中间件
 
 app.UseAuthorization(); // 授权中间件（如果有）
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
+app.MapControllers();
 
 // 启动应用
 app.Run();

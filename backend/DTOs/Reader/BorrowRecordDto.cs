@@ -7,13 +7,13 @@ namespace backend.DTOs
 {
     public class BorrowRecordDto
     {   
-        public string ReaderId { get; set; }
+        public required string ReaderId { get; set; }
 
-        public string BookId { get; set; }
+        public required string BookId { get; set; }
 
-        public string ReaderName { get; set; }
+        public required string ReaderName { get; set; }
 
-        public string BookName { get; set; }
+        public required string BookName { get; set; }
 
         public DateTime BorrowTime { get; set; }
 

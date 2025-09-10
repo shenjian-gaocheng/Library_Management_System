@@ -32,7 +32,7 @@ namespace backend.Services.Web
          */
         public string GetLoginUserType()
         {
-            return GetLoginUser().UserType;
+            return GetLoginUser()?.UserType ?? string.Empty;
         }
 
         /**
@@ -60,6 +60,9 @@ namespace backend.Services.Web
             if (CheckIsReader(loginUser)) 
             {
                 userID = (user as Reader)?.ReaderID ?? 0;
+            }else if (CheckIsLibrarian(loginUser))
+            {
+                userID = (user as Librarian)?.LibrarianID ?? 0;
             }
 
 
@@ -87,6 +90,26 @@ namespace backend.Services.Web
             return CheckIsReader(GetLoginUser());
         }
 
+        /**
+ * 
+ * 检查登录用户是否为管理员
+ */
+        public bool CheckIsLibrarian(LoginUser loginUser)
+        {
+
+            var user = loginUser.User;
+
+            return loginUser.UserType == UserConstants.UserTypeLibrarian || user is Librarian;
+        }
+
+        /**
+         * 
+         * 检查当前登录用户是否为管理员
+         */
+        public bool CheckIsLirarian()
+        {
+            return CheckIsLibrarian(GetLoginUser());
+        }
 
     }
 }

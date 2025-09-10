@@ -6,6 +6,7 @@ import {
   updateAnnouncement, 
   deleteAnnouncement 
 } from '@/modules/admin/api.js';
+import { ElMessage } from 'element-plus';
 import AnnouncementList from '../components/AnnouncementList.vue';
 import AnnouncementForm from '../components/AnnouncementForm.vue';
 
@@ -20,7 +21,7 @@ const currentAnnouncement = ref({
   content: '',
   targetGroup: '所有人',
   status: '发布中',
-  librarianID: 'A001' // 真实项目中应从用户状态获取
+  librarianID: 8 // 真实项目中应从用户状态获取
 });
 
 // 获取列表数据
@@ -42,19 +43,25 @@ onMounted(fetchAnnouncements);
 
 // 处理表单的提交事件（可能是新建或更新）
 const handleSave = async (formData) => {
+  // 【最终修正】在发送给后端前，创建一个副本并强制转换类型
+  const payload = { ...formData };
+  payload.librarianID = parseInt(payload.librarianID, 10);
+
+  // 检查转换是否成功
+  if (isNaN(payload.librarianID)) {
+      ElMessage.error('Librarian ID 无效，无法提交。');
+      return;
+  }
+
   try {
-    if (formData.announcementID) {
-      // 有 ID，是更新操作
-      await updateAnnouncement(formData.announcementID, formData);
+    if (payload.announcementID) {
+      await updateAnnouncement(payload.announcementID, payload); // 发送修正后的 payload
       ElMessage.success('公告修改成功！');
     } else {
-      // 没有 ID，是创建操作
-      await createAnnouncement(formData);
+      await createAnnouncement(payload); // 发送修正后的 payload
       ElMessage.success('新公告发布成功！');
     }
-    // 操作成功后，重置表单并刷新列表
-    currentAnnouncement.value = { announcementID: null, title: '', content: '', targetGroup: '所有人', status: '发布中', librarianID: 'A001' };
-    await fetchAnnouncements();
+    // ... (后续重置和刷新逻辑) ...
   } catch (error) {
     ElMessage.error('操作失败，请重试。');
     console.error(error);

@@ -17,12 +17,10 @@
         public const string AccuntStatusFrozen = "冻结"; //账户状态：冻结
 
         //用户类型读者
-        public const string UserTypeReader = "Reader";
-
-
+        public const string UserTypeReader = "reader";
 
         //用户类型管理员
-        public const string UserTypeLibrarian = "Librarian";
+        public const string UserTypeLibrarian = "librarian";
 
         //头像url为null
         public const string AvatarUrlNull = "null";

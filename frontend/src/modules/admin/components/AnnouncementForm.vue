@@ -1,4 +1,5 @@
 <script setup>
+import { ElMessage } from 'element-plus';
 import { ref, watch } from 'vue';
 
 // 定义 props，用于接收父组件通过 v-model 传来的数据
@@ -40,7 +41,7 @@ const handleReset = () => {
       content: '',
       targetGroup: '所有人',
       status: '发布中',
-      librarianID: 'A001' // 真实项目中应从用户状态获取
+      librarianID: 101 // 真实项目中应从用户状态获取
   };
   // 同时通知父组件更新 v-model
   emit('update:modelValue', { ...formModel.value });

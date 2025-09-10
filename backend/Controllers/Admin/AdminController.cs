@@ -23,24 +23,18 @@ public class AdminController : ControllerBase
     }
 
 [HttpPost]
-public async Task<ActionResult<LibrarianDto>> Create(CreateLibrarianDto dto)
+public async Task<ActionResult<LibrarianDto>> Create(CreateLibrarianDto librarianDto)
 {
-    try
-    {
-        var created = await _service.CreateLibrarianAsync(dto);
-        return CreatedAtAction(nameof(GetAll), new { id = created.LibrarianID }, created);
-    }
-    catch (Oracle.ManagedDataAccess.Client.OracleException ex) when (ex.Number == 1) // ORA-00001 的错误号是 1
-    {
-        // 如果捕获到的是主键冲突异常
-        // 返回一个 409 Conflict 状态码，这比 500 更精确地描述了问题
-        return Conflict($"创建失败：ID为 '{dto.LibrarianID}' 的管理员已存在。");
-    }
-    // 如果是其他未知异常，它仍然会被默认的错误处理中间件捕获并记录为 fail
+    // CreateLibrarianAsync 现在会返回一个包含了新 ID 的 LibrarianDto 对象
+    var createdLibrarian = await _service.CreateLibrarianAsync(librarianDto);
+    
+    // 【核心修正】
+    // 从返回的、已经包含新 ID 的 DTO 对象中获取 LibrarianID
+    return CreatedAtAction(nameof(GetAll), new { id = createdLibrarian.LibrarianID }, createdLibrarian);
 }
 
     [HttpPut("{id}")] // PUT /api/admin/A001
-    public async Task<IActionResult> Update(string id, UpdateLibrarianDto librarianDto)
+    public async Task<IActionResult> Update(int id, UpdateLibrarianDto librarianDto)
     {
         var success = await _service.UpdateLibrarianAsync(id, librarianDto);
         if (!success) return NotFound("未找到指定ID的管理员");
@@ -48,7 +42,7 @@ public async Task<ActionResult<LibrarianDto>> Create(CreateLibrarianDto dto)
     }
 
     [HttpDelete("{id}")] // DELETE /api/admin/A001
-    public async Task<IActionResult> Delete(string id)
+    public async Task<IActionResult> Delete(int id)
     {
         var success = await _service.DeleteLibrarianAsync(id);
         if (!success) return NotFound("未找到指定ID的管理员");

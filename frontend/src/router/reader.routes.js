@@ -1,4 +1,4 @@
-import { BorrowingTest } from '@/modules/reader';
+﻿import  BorrowingTest  from '@/modules/reader/components/BorrowingTest.vue';
 
 export default [
   //导出我的图书馆页面路由
@@ -8,9 +8,14 @@ export default [
     component: () => import('@/modules/reader/pages/DashBoardHome_Page.vue'),
     meta: { requiresAuth: true }
   },
-  // 其他reader模块路由...
   {
-    path: '/reader/borrowing',
+    path: '/my/borrowingRecords',
+    name: 'BorrowingRecords',
+    component: () => import('@/modules/reader/pages/BorrowingRecords.vue'),
+  },
+ // 其他reader模块路由...
+  {
+    path: '/reader/BorrowingTest',
     name: 'BorrowingTest',
     component: BorrowingTest,
     meta: {

@@ -15,132 +15,105 @@ namespace backend.Services.BorrowingService
         }
 
         // 异步方法，通过借阅记录ID获取借阅记录
-        public async Task<BorrowRecord> GetBorrowRecordByIDAsync(int borrowRecordID)
+        public async Task<BorrowRecordDetailDto> GetBorrowRecordByIDAsync(int borrowRecordID)
         {
             return await _borrowRecordRepository.GetByIDAsync(borrowRecordID);
         }
 
         // 异步方法，通过读者ID获取该读者的所有借阅记录
-        public async Task<IEnumerable<BorrowRecord>> GetBorrowRecordsByReaderIDAsync(string readerID)
+        public async Task<IEnumerable<BorrowRecordDetailDto>> GetBorrowRecordsByReaderIDAsync(string readerID)
         {
             return await _borrowRecordRepository.GetByReaderIDAsync(readerID);
         }
 
         // 异步方法，通过图书ID获取所有借阅该图书的记录
-        public async Task<IEnumerable<BorrowRecord>> GetBorrowRecordsByBookIDAsync(string bookID)
+        public async Task<IEnumerable<BorrowRecordDetailDto>> GetBorrowRecordsByBookIDAsync(string bookID)
         {
             return await _borrowRecordRepository.GetByBookIDAsync(bookID);
         }
 
         // 异步方法，获取所有的借阅记录
-        public async Task<IEnumerable<BorrowRecord>> GetAllBorrowRecordsAsync()
+        public async Task<IEnumerable<BorrowRecordDetailDto>> GetAllBorrowRecordsAsync()
         {
-            return await _borrowRecordRepository.GetAllAsync();
+            return await _borrowRecordRepository.GetAllBorrowRecordsAsync();
         }
 
-        // 图书借阅功能
+        // 异步方法，图书借阅功能
         public async Task<BorrowingServiceResponse<string>> BorrowBookAsync(string readerId, string bookId)
         {
-            // 参数验证
+            // 1. 参数验证
             if (string.IsNullOrEmpty(readerId) || string.IsNullOrEmpty(bookId))
             {
-                return new BorrowingServiceResponse<string>
-                {
-                    Success = false,
-                    Message = "读者ID和图书ID不能为空",
-                    Data = null
-                };
+                throw new InvalidOperationException("读者ID和图书ID不能为空");
             }
 
-            // 检查书本是否已经借阅 且未归还
-            var existingRecords = await _borrowRecordRepository.GetByReaderAndBookAsync(readerId, bookId);
-            if (existingRecords == null)
+            // 2. 查询该读者未归还的所有记录数量
+            var unreturnedCount = await _borrowRecordRepository.GetUnreturnedCountByReaderAsync(readerId);
+
+            // 3. 判断是否已超过 5 本
+            if (unreturnedCount >= 5)
             {
-                return new BorrowingServiceResponse<string>
-                {
-                    Success = false,
-                    Message = "已借阅未归还",
-                    Data = $"读者者 {readerId} 已借阅图书 {bookId} 且未归还"
-                };
+                throw new InvalidOperationException($"读者 {readerId} 已借阅 {unreturnedCount} 本未归还，最多只能同时借 5 本");
             }
 
-            // 创建新的借阅记录，自动设置当前时间为借阅时间
+            // 4. 创建新的借阅记录
             var newRecord = new BorrowRecord
             {
                 ReaderId = readerId,
                 BookId = bookId,
-                BorrowTime = DateTime.Now,  // 自动填充当前时间
-                ReturnTime = null,          // 未归还
-                OverdueFine = 0             // 初始逾期费用为0
+                BorrowTime = DateTime.Now,
+                ReturnTime = null,
+                OverdueFine = 0
             };
 
-            // 保存到数据库
+            // 5. 保存到数据库
             var result = await _borrowRecordRepository.AddAsync(newRecord);
 
-            if (result > 0)
+            if (result <= 0)
             {
-                return new BorrowingServiceResponse<string>
-                {
-                    Success = true,
-                    Message = "图书借阅成功",
-                    Data = $"读者 {readerId} 成功借阅图书 {bookId}，借阅时间：{DateTime.Now:yyyy-MMMMdd HH:mm:ss}"
-                };
+                throw new InvalidOperationException("添加新借阅记录时发生错误");
             }
-            else
+
+            // 6. 返回成功响应
+            return new BorrowingServiceResponse<string>
             {
-                return new BorrowingServiceResponse<string>
-                {
-                    Success = false,
-                    Message = "借阅失败",
-                    Data = "添加新借阅记录时发生错误"
-                };
-            }
+                Success = true,
+                Message = "图书借阅成功",
+                Data = $"读者 {readerId} 成功借阅图书 {bookId}，借阅时间：{DateTime.Now:yyyy-MM-dd HH:mm:ss}"
+            };
         }
 
-        // 异步方法，归还图书
-        public async Task<BorrowingServiceResponse<string>> ReturnBookAsync(string readerId, string bookId)
+
+        /**
+        * 异步方法，归还图书
+        * @param readerId 读者ID
+        * @param bookId 图书ID
+        * @return 返回归还成功的提示信息
+        * @throws InvalidOperationException 当参数无效、重复归还、记录不存在或其他错误时抛出
+        */
+        public async Task<string> ReturnBookAsync(string readerId, string bookId)
         {
-            // 参数验证
+            // 1. 参数验证
             if (string.IsNullOrEmpty(readerId) || string.IsNullOrEmpty(bookId))
             {
-                return new BorrowingServiceResponse<string>
-                {
-                    Success = false,
-                    Message = "读者ID和图书ID不能为空",
-                    Data = null
-                };
+                throw new InvalidOperationException("读者ID和图书ID不能为空");
             }
 
-            // 调用仓库层的归还方法
+            // 2. 调用仓库层的归还方法
             var result = await _borrowRecordRepository.ReturnBookAsync(readerId, bookId);
 
-            // 根据仓库返回结果构建服务响应
+            // 3. 根据仓库返回结果进行判断
             return result switch
             {
-                1 => new BorrowingServiceResponse<string>
-                {
-                    Success = true,
-                    Message = "图书归还成功",
-                    Data = $"读者 {readerId} 已成功归还图书 {bookId}"
-                },
-                0 => new BorrowingServiceResponse<string>
-                {
-                    Success = false,
-                    Message = "重复归还",
-                    Data = $"读者 {readerId} 已归还过图书 {bookId}，不能重复归还"
-                },
-                -1 => new BorrowingServiceResponse<string>
-                {
-                    Success = false,
-                    Message = "记录不存在",
-                    Data = $"未找到读者 {readerId} 借阅图书 {bookId} 的记录"
-                },
-                _ => new BorrowingServiceResponse<string>
-                {
-                    Success = false,
-                    Message = "操作失败",
-                    Data = "归还图书时发生未知错误"
-                }
+                1 => $"读者 {readerId} 已成功归还图书 {bookId}",
+
+                0 => throw new InvalidOperationException(
+                    $"读者 {readerId} 已归还过图书 {bookId}，不能重复归还"),
+
+                -1 => throw new InvalidOperationException(
+                    $"未找到读者 {readerId} 借阅图书 {bookId} 的记录"),
+
+                _ => throw new InvalidOperationException("归还图书时发生未知错误")
             };
         }
 
@@ -170,7 +143,8 @@ namespace backend.Services.BorrowingService
                 return new BorrowingServiceResponse<List<MyBorrowRecordDto>>
                 {
                     Success = false,
-                    Message = "读者ID不能为空"
+                    Message = "读者ID不能为空",
+                    Data = new List<MyBorrowRecordDto>()
                 };
             }
 
@@ -189,7 +163,8 @@ namespace backend.Services.BorrowingService
                 return new BorrowingServiceResponse<List<MyBorrowRecordDto>>
                 {
                     Success = false,
-                    Message = $"查询失败：{ex.Message}"
+                    Message = $"查询失败：{ex.Message}",
+                    Data = new List<MyBorrowRecordDto>()
                 };
             }
         }
@@ -199,7 +174,7 @@ namespace backend.Services.BorrowingService
     public class BorrowingServiceResponse<T>
     {
         public bool Success { get; set; }
-        public string Message { get; set; }
-        public T Data { get; set; }
+        public required string Message { get; set; }
+        public required T Data { get; set; }
     }
 }
