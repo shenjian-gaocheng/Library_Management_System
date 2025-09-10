@@ -19,7 +19,8 @@
                s.FLOOR,
                s.ZONE,
                b.STATUS,
-               b.BOOKID
+               b.BOOKID,
+               b.BARCODE
         FROM Book b
         JOIN BookInfo i ON b.ISBN = i.ISBN LEFT JOIN BookShelf s ON (b.SHELFID = s.SHELFID )
         WHERE LOWER(i.TITLE) LIKE :keyword";
@@ -141,7 +142,7 @@
     {
         const string sql = @"
     UPDATE BOOK 
-    SET STATUS = '借出', 
+    SET STATUS = '下架', 
         SHELFID = NULL
     WHERE BOOKID = :bookId";
 
@@ -150,5 +151,27 @@
 
         return await Dapper.SqlMapper.ExecuteAsync(
             connection, sql, new { bookId });
+    }
+
+    // BookShelfRepository.cs 中添加获取书架书籍方法
+    public async Task<IEnumerable<ShelfBookDto>> GetShelfBooksAsync(int shelfId)
+    {
+        var sql = @"
+    SELECT 
+        b.BOOKID,
+        i.TITLE,
+        i.AUTHOR,
+        b.STATUS,
+        b.BARCODE
+    FROM BOOK b
+    JOIN BOOKINFO i ON b.ISBN = i.ISBN
+    WHERE b.SHELFID = :shelfId
+    ORDER BY i.TITLE";
+
+        using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
+        await connection.OpenAsync();
+
+        return await Dapper.SqlMapper.QueryAsync<ShelfBookDto>(
+            connection, sql, new { shelfId });
     }
 }

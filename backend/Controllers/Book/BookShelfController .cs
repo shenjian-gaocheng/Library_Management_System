@@ -104,7 +104,7 @@ public class BookShelfController : ControllerBase
         return shelfId > 0 ? Ok(shelfId) : NotFound("书架不存在");
     }
 
-    // BookShelfController.cs 中添加借出API
+    // BookShelfController.cs 中添加借出API，实际是下架图书
     [HttpPost("borrow-book")]
     public async Task<IActionResult> BorrowBook([FromBody] BookBorrowDto dto)
     {
@@ -112,6 +112,21 @@ public class BookShelfController : ControllerBase
         {
             await _service.BorrowBookAsync(dto.BookId);
             return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    // BookShelfController.cs 中添加查看书架书籍API
+    [HttpGet("shelf-books/{shelfId:int}")]
+    public async Task<IActionResult> GetShelfBooks(int shelfId)
+    {
+        try
+        {
+            var books = await _service.GetShelfBooksAsync(shelfId);
+            return Ok(books);
         }
         catch (Exception ex)
         {
