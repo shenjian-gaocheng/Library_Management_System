@@ -26,7 +26,7 @@ import renewIcon   from '@/assets/icons/renew.svg'
 
 const entries = [
   { label: '图书检索', icon: searchIcon,  route: '/books' },
-  { label: '我的借阅', icon: bookIcon,    route: '/my/borrowingRecords' },
+  { label: '我的借阅', icon: bookIcon,    route: '/user/borrowed' },
   { label: '借还服务', icon: renewIcon,   route: '/books/circulation' },
 ]
 

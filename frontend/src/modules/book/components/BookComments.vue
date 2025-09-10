@@ -41,26 +41,6 @@
         </div>
         <div class="comment-content">{{ comment.ReviewContent }}</div>
         <div class="comment-time">{{ formatDate(comment.CreateTime) }}</div>
-        <div class="comment-actions">
-          <button @click="reportComment(comment)" class="report-button">举报</button>
-        </div>
-        
-        <!-- 举报表单 -->
-        <div v-if="reportingCommentId === comment.CommentID" class="report-section">
-          <div class="form-group">
-            <label for="reportReason">举报理由：</label>
-            <textarea 
-              id="reportReason" 
-              v-model="reportReason" 
-              placeholder="请输入举报理由"
-              required
-            ></textarea>
-          </div>
-          <div class="report-actions">
-            <button @click="submitReport(comment)" class="submit-report-button">提交举报</button>
-            <button @click="cancelReport" class="cancel-report-button">取消</button>
-          </div>
-        </div>
       </div>
     </div>
     <div v-else class="no-comments">暂无评论</div>
@@ -69,19 +49,14 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { getCommentsByISBN, addComment, addReport } from '@/modules/book/api.js'
+import { useRoute } from 'vue-router'
+import { getCommentsByISBN, addComment } from '@/modules/book/api.js'
 
 const route = useRoute()
-const router = useRouter()
 const searchISBN = ref('')
 const comments = ref([])
 const loading = ref(false)
 const error = ref('')
-
-// 举报相关的响应式变量
-const reportingCommentId = ref(null)
-const reportReason = ref('')
 
 const newComment = ref({
   readerId: '1', // TODO: 从用户登录信息中获取
@@ -150,47 +125,6 @@ async function submitComment() {
   }
 }
 
-// 举报评论
-function reportComment(comment) {
-  // 设置要举报的评论ID
-  reportingCommentId.value = comment.CommentID
-  reportReason.value = ''
-}
-
-// 提交举报
-async function submitReport(comment) {
-  if (!reportReason.value.trim()) {
-    error.value = '请输入举报理由'
-    return
-  }
-  
-  // 构造举报数据
-  const reportData = {
-    CommentID: comment.CommentID,
-    READERID: 1, // TODO: 应该从当前登录用户获取
-    ReportReason: reportReason.value,
-    ReportTime: new Date().toISOString(),
-    Status: '待处理',
-    LibrarianID: 8
-  }
-  
-  try {
-    const response = await addReport(reportData)
-    if (response.status === 200) {
-      alert(`举报已提交，理由：${reportReason.value}`)
-      cancelReport()
-    }
-  } catch (err) {
-    error.value = '提交举报失败: ' + (err.response?.data?.message || err.message)
-  }
-}
-
-// 取消举报
-function cancelReport() {
-  reportingCommentId.value = null
-  reportReason.value = ''
-}
-
 // 初始化
 initISBNFromRoute()
 </script>
@@ -241,105 +175,5 @@ button[type='submit'] {
 
 button[type='submit']:hover {
   background-color: #337ecc;
-}
-
-.comment-item {
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 15px;
-  margin-bottom: 15px;
-  background-color: #fafafa;
-}
-
-.comment-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: #666;
-}
-
-.comment-content {
-  margin-bottom: 10px;
-  line-height: 1.5;
-}
-
-.comment-time {
-  font-size: 12px;
-  color: #999;
-}
-
-.comment-actions {
-  text-align: right;
-  margin-top: 10px;
-}
-
-.report-button {
-  background-color: #f56c6c;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.report-button:hover {
-  background-color: #e64a19;
-}
-
-.report-section {
-  margin-top: 15px;
-  padding: 15px;
-  background-color: #fff5f5;
-  border-radius: 8px;
-  border: 1px solid #f56c6c;
-}
-
-.report-section .form-group {
-  margin-bottom: 10px;
-}
-
-.report-section .form-group label {
-  font-weight: normal;
-  font-size: 14px;
-}
-
-.report-section .form-group textarea {
-  min-height: 80px;
-  font-size: 14px;
-}
-
-.report-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.submit-report-button {
-  background-color: #f56c6c;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.submit-report-button:hover {
-  background-color: #e64a19;
-}
-
-.cancel-report-button {
-  background-color: #909399;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.cancel-report-button:hover {
-  background-color: #606266;
 }
 </style>

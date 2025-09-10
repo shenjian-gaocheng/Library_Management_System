@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Oracle.ManagedDataAccess.Client;
-using backend.DTOs.Book;
 
 public class BookCategoryTreeOperation
 {

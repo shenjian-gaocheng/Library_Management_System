@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using backend.Services.Web;
-using backend.Services.BorrowingService;
-using backend.Services.ReaderService;
-using backend.DTOs;
-using backend.Models;
 
 // ====== 调用方法 ======
 // 搜索（书目）：GET /api/Book/search?keyword=...
@@ -36,16 +31,10 @@ using backend.Models;
 public class BookController : ControllerBase
 {
     private readonly BookService _service;
-    private readonly BorrowingService _borrowingService;
-    private readonly SecurityService _securityService;
 
-    
-
-    public BookController(BookService service, BorrowingService borrowingService, SecurityService securityService)
+    public BookController(BookService service)
     {
         _service = service;
-        _borrowingService = borrowingService;
-        _securityService = securityService;
     }
 
     // ====== 搜索 ======
@@ -112,29 +101,8 @@ public class BookController : ControllerBase
     [HttpPatch("by-barcode/{barcode}/borrow")]
     public async Task<IActionResult> BorrowByBarcode(string barcode, CancellationToken ct)
     {
-        try
-        {   
-            var dto = await _service.GetByBarcodeAsync(barcode);
-            var bookId=dto.BookID.ToString();
-
-            var loginUser = _securityService.GetLoginUser();
-            if (!_securityService.CheckIsReader(loginUser))
-            {
-                return Forbid(); // 或 return Unauthorized();
-            }
-            var reader = loginUser.User as Reader;
-            if (reader == null)
-            {
-                return BadRequest("当前用户不是读者");
-            }
-            await _borrowingService.BorrowBookAsync(reader.ReaderID.ToString(),bookId);
-            await _service.BorrowByBarcodeAsync(barcode);
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Conflict(new { message = ex.Message });
-        }
+        try { await _service.BorrowByBarcodeAsync(barcode); return NoContent(); }
+        catch (InvalidOperationException ex) { return Conflict(new { message = ex.Message }); }
     }
 
     // 正常 -> 下架（按条码）
@@ -149,29 +117,8 @@ public class BookController : ControllerBase
     [HttpPatch("by-barcode/{barcode}/return")]
     public async Task<IActionResult> ReturnByBarcode(string barcode, CancellationToken ct)
     {
-        try
-        {
-            var dto = await _service.GetByBarcodeAsync(barcode);
-            var bookId = dto.BookID.ToString();
-
-            var loginUser = _securityService.GetLoginUser();
-            if (!_securityService.CheckIsReader(loginUser))
-            {
-                return Forbid(); // 或 return Unauthorized();
-            }
-            var reader = loginUser.User as Reader;
-            if (reader == null)
-            {
-                return BadRequest("当前用户不是读者");
-            }
-            await _borrowingService.ReturnBookAsync(reader.ReaderID.ToString(), bookId);
-            await _service.ReturnByBarcodeAsync(barcode);
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return Conflict(new { message = ex.Message });
-        }
+        try { await _service.ReturnByBarcodeAsync(barcode); return NoContent(); }
+        catch (InvalidOperationException ex) { return Conflict(new { message = ex.Message }); }
     }
 
     // 下架 -> 上架(正常)（按条码）

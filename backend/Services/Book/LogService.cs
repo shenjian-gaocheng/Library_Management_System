@@ -52,12 +52,6 @@ public class LogService
         await LogOperationAsync(operationContent, "Librarian", operatorId, "成功");
     }
 
-    // 记录操作成功日志
-    public async Task LogOperationSuccessAsync(string operationContent, string operatorType, string operatorId)
-    {
-        await LogOperationAsync(operationContent, operatorType, operatorId, "成功");
-    }
-
     // 记录操作失败日志
     public async Task LogOperationFailureAsync(string operationContent, string operatorType, string operatorId, string errorMessage)
     {

@@ -10,7 +10,6 @@ public class BookDto
     public string? ZONE { get; set; }
     public string? STATUS { get; set; }
     public string? BOOKID { get; set; }
-    public string? BARCODE { get; set; }
 }
 
 public class BookShelf
@@ -44,14 +43,4 @@ public class BookReturnDto
 public class BookBorrowDto
 {
     public int BookId { get; set; }
-}
-
-// ShelfBookDto.cs
-public class ShelfBookDto
-{
-    public int BOOKID { get; set; }
-    public string? TITLE { get; set; }
-    public string? AUTHOR { get; set; }
-    public string? STATUS { get; set; }
-    public string? BARCODE { get; set; }
 }
