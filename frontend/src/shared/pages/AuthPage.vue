@@ -3,7 +3,7 @@
     <div class="login-box">
       <h2>{{ isLogin ? '欢迎登录' : '创建账户' }}</h2>
       <form @submit.prevent="onSubmit">
-        <!-- 登录身份reader/admin -->
+        <!-- 登录身份reader/librarian -->
         <!-- 注册时身份必须为reader -->
         <div v-if="isLogin" class="input-group">
           <div class="role-inline flex items-center gap-4 text-sm">
@@ -13,7 +13,7 @@
               <span>读者登录</span>
             </label>
             <label class="inline-flex items-center cursor-pointer gap-1">
-              <input type="radio" value="admin" v-model="loginType" />
+              <input type="radio" value="librarian" v-model="loginType" />
               <span>管理员登录</span>
             </label>
           </div>
@@ -81,7 +81,7 @@
 
 <script setup>
 import { reactive, ref, onMounted } from 'vue'
-import { getMyProfile, login, register } from '@/modules/reader/api.js'
+import { getLibrarianProfile, getMyProfile, login, register } from '@/modules/reader/api.js'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
@@ -151,9 +151,7 @@ async function onSubmit() {
   try {
     // === 登录 ===
     if (isLogin.value) {
-      if (loginType.value === 'reader') {
-        // 读者登录 —— 使用现有 API
-        const res = await login({ username: form.username, password: form.password })
+        const res = await login({ username: form.username, password: form.password ,usertype:loginType.value})
         console.log(res)
         if (res.status === 200) {
           if (rememberMe.value) {
@@ -163,30 +161,22 @@ async function onSubmit() {
           }
           localStorage.setItem('token', res.data)
 
-          const user = (await getMyProfile()).data
-          localStorage.setItem('user', JSON.stringify(user))
+          if(loginType.value === 'reader') {
+            const user = (await getMyProfile()).data
+            localStorage.setItem('user', JSON.stringify(user))
 
-          const redirectPath = route.query.redirect || '/' //读者登录后跳转到home页面
-          await router.push(redirectPath)
+            const redirectPath = route.query.redirect || '/' //读者登录后跳转到home页面
+            await router.push(redirectPath)
+          }else if(loginType.value === 'librarian'){
+            const user = (await getLibrarianProfile()).data
+            localStorage.setItem('user', JSON.stringify(user))
+            //跳转到管理员操作页面
+            await router.push('/admin/dashboard')
+          }
         } else {
           alert(res.msg || '登录失败')
         }
-      } 
-      else {
-        // 管理员登录 —— TODO: 填入你的管理员接口
-        // 示例占位：
-        // const res = await adminLogin({ username: form.username, password: form.password })
-        // if (res.status === 200) {
-        //   localStorage.setItem('admin_token', res.data)
-        //   const admin = (await getAdminProfile()).data
-        //   localStorage.setItem('admin_user', JSON.stringify(admin))
-        //   alert('管理员登录成功')
-        //   await router.push('fill in the admin console page's path') // 管理员登录后跳转到管理员控制台页面
-        // } else {
-        //   alert(res.msg || '登录失败')
-        // }
-      }
-    } 
+    }
     // === 注册 ===
     else {
       if (loginType.value === 'reader') {
@@ -198,7 +188,7 @@ async function onSubmit() {
         } else {
           alert(res.msg || '注册失败')
         }
-      } 
+      }
       // 管理员不能在公开位置注册，只能被其他管理员添加
     }
   } catch (e) {
