@@ -98,7 +98,7 @@ export function getReportsByReaderId(readerId) {
 }
 
 export function getReportsByLibrarianId(librarianId) {
-  return http.get(`/report/by-librarian/${librarianId}`)
+  return http.get(`/report/by-librarian/${librarianId}`, { withToken: true })
 }
 
 export function addReport(reportData) {
@@ -108,7 +108,7 @@ export function addReport(reportData) {
 
 
 export function changeReportStatus(statusData) {
-  return http.post('/report/change-status', statusData)
+  return http.post('/report/change-status', statusData, { withToken: true })
 }
 
 // ---------- 分类 ----------

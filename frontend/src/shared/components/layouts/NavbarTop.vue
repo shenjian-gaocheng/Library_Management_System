@@ -34,6 +34,9 @@
             
             <!-- 添加图书分类管理 -->
             <router-link to="/books/category-manage">图书分类管理</router-link>
+            
+            <!-- 添加评论管理 -->
+            <router-link to="/report-comment">评论举报处理</router-link>
           </div>
         </div>
         
@@ -89,6 +92,7 @@ onUnmounted(() => {
 onMounted(async () => {
   try {
     const res = await getMyProfile()               // 要求 http 拦截器自动带 token
+    // const res2 = await getLibrarianProfile()               // 要求 http 拦截器自动带 token
     const u = res?.data ?? res
     isLoggedIn.value = true
     displayName.value = u.fullName || u.nickName || u.userName || ''

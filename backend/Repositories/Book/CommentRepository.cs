@@ -31,7 +31,7 @@ public class CommentRepository
         using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
         await connection.OpenAsync();
 
-        Console.WriteLine($"id = {comment_id}");
+        // Console.WriteLine($"id = {comment_id}");
         return await Dapper.SqlMapper.QueryAsync<CommentDetailDto>(connection, sql, new { comment_id = comment_id });
     }
     
@@ -100,7 +100,7 @@ public class ReportRepository
     {
         // 如果状态是处理完成，先删除相关评论
         if (report_status.Status == "处理完成") {
-            Console.WriteLine($"准备更新评论状态，ReportID: {report_status.ReportID}");
+            // Console.WriteLine($"准备更新评论状态，ReportID: {report_status.ReportID}");
             var delete_comment_sql = @"update comment_table
                                         set status = '已删除'
                                         where commentid = (select commentID 
@@ -110,10 +110,10 @@ public class ReportRepository
 
             using var delete_comment_connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
             await delete_comment_connection.OpenAsync();
-            Console.WriteLine($"执行SQL: {delete_comment_sql}, 参数: ReportID={report_status.ReportID}");
+            // Console.WriteLine($"执行SQL: {delete_comment_sql}, 参数: ReportID={report_status.ReportID}");
             await Dapper.SqlMapper.ExecuteAsync(delete_comment_connection, delete_comment_sql, new { 
             ReportID = report_status.ReportID  });
-            Console.WriteLine("评论状态更新完成");
+            // Console.WriteLine("评论状态更新完成");
         }
 
         // 更新报告状态
@@ -125,12 +125,12 @@ public class ReportRepository
         using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
         await connection.OpenAsync();
 
-        Console.WriteLine($"执行SQL: {sql}, 参数: Status={report_status.Status}, ReportID={report_status.ReportID}");
+        // Console.WriteLine($"执行SQL: {sql}, 参数: Status={report_status.Status}, ReportID={report_status.ReportID}");
         var result = await Dapper.SqlMapper.ExecuteAsync(connection, sql, new { 
             Status = report_status.Status, 
             ReportID = report_status.ReportID 
         });
-        Console.WriteLine($"报告状态更新完成，影响行数: {result}");
+        // Console.WriteLine($"报告状态更新完成，影响行数: {result}");
         return result;
     }
 }

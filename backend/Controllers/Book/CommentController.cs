@@ -16,7 +16,7 @@ public class CommentController : ControllerBase
     {
         _commentService = commentService;
         _securityService = securityService;
-        Console.WriteLine("init comment");
+        // Console.WriteLine("init comment");
     }
 
     [HttpGet("search")]
@@ -77,6 +77,18 @@ public class ReportController : ControllerBase
     [HttpGet("by-librarian/{librarianId}")]
     public async Task<ActionResult<IEnumerable<ReportDto>>> GetReportsByLibrarianId(decimal librarianId)
     {
+        var loginUser = _securityService.GetLoginUser();
+        
+        // Console.WriteLine($"before LibrarianID = {librarianId}");
+    
+        // 检查登录用户是否为管理员
+        if (_securityService.CheckIsLibrarian(loginUser))
+        {
+            var librarian = loginUser.User as Librarian;
+            librarianId = librarian.LibrarianID;
+        }
+        
+        // Console.WriteLine($"LibrarianID = {librarianId}");
         var reports = await _reportService.GetReportsAsyncByLibrarianID(librarianId);
         return Ok(reports);
     }
