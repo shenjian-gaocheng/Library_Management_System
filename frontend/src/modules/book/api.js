@@ -1,11 +1,12 @@
-﻿
-import http from '@/services/http.js'
+﻿import http from '@/services/http.js'
 
+// ---------- 图书相关 ----------
 export function getBooks(keyword) {
   return http.get('/book/search', {
     params: { keyword }
-})
+  })
 }
+
 
 //创建书单
 export function createBooklist(data) {
@@ -70,11 +71,15 @@ export function updateBooklistIntro(booklistId, data) {
 }
 
 
+export function getBookByBarcode(barcode) {
+  return http.get(`/Book/by-barcode/${encodeURIComponent(barcode)}`, { withToken: true })
+}
 
-
+// ---------- 评论 ----------
 export function getCommentsByISBN(ISBN) {
   return http.get('/comment/search', {
-    params: { ISBN }
+    params: { ISBN },
+    withToken: true
   })
 }
 
@@ -106,7 +111,9 @@ export function changeReportStatus(statusData) {
   return http.post('/report/change-status', statusData)
 }
 
+// ---------- 分类 ----------
 export function getCategoryTree() {
+
   return http.get('/Category/tree', {
     withToken: true // 确保每个请求都带上 Token
   });
@@ -115,24 +122,30 @@ export function getCategoryTree() {
 export function addCategory(data) {
   return http.post('/Category', data, { withToken: true })
 }
+
 export function updateCategory(data) {
   return http.put('/Category', data, { withToken: true })
 }
+
 export function deleteCategory(id, operatorId) {
   return http.delete(`/Category/${id}?operatorId=${operatorId}`, { withToken: true })
 }
 
+// ---------- 书架 ----------
 export function getBooksBookShelf(keyword) {
-return http.get('/bookshelf/search_book_which_shelf', {
-    params: { keyword }
-})
+  return http.get('/bookshelf/search_book_which_shelf', {
+    params: { keyword },
+    withToken: true
+  })
 }
 
 export function getShelf(keyword) {
-return http.get('/bookshelf/search_bookshelf', {
-    params: { keyword }
-})
+  return http.get('/bookshelf/search_bookshelf', {
+    params: { keyword },
+    withToken: true
+  })
 }
+
 export function addShelf(buildingid, shelfcode, floor, zone) {
   return http.post('/bookshelf/add_bookshelf', {
     buildingid: Number(buildingid),
@@ -147,32 +160,28 @@ export function deleteShelf(shelfId) {
 }
 
 export function checkShelfHasBooks(shelfId) {
-  return http.get(`/bookshelf/has-books/${shelfId}`);
+  return http.get(`/bookshelf/has-books/${shelfId}`, { withToken: true })
 }
 
-// 检查书架是否存在
 export function checkShelfExists(buildingId, shelfCode, floor, zone) {
   return http.get('/bookshelf/check-shelf-exists', {
-    params: { buildingId, shelfCode, floor, zone }
-  });
+    params: { buildingId, shelfCode, floor, zone },
+    withToken: true
+  })
 }
 
 export function returnBook(bookId, shelfId) {
-  return http.post('/bookshelf/return-book', { 
+  return http.post('/bookshelf/return-book', {
     bookId: Number(bookId),
     shelfId: Number(shelfId)
   }, { withToken: true });
 }
-// 获取书架ID
+
 export function findShelfId(buildingId, shelfCode, floor, zone) {
   return http.get('/bookshelf/find-shelf-id', {
-    params: { 
-      buildingId, 
-      shelfCode, 
-      floor, 
-      zone 
-    }
-  });
+    params: { buildingId, shelfCode, floor, zone },
+    withToken: true
+  })
 }
 
 export function borrowBook(bookId) {

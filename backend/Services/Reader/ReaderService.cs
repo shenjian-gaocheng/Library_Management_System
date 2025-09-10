@@ -6,16 +6,16 @@ using backend.Repositories.ReaderRepository;
 namespace backend.Services.ReaderService
 {
     /**
-     * ReaderService �ṩ�� ReaderRepository ��ҵ���߼���װ
+     * ReaderService 锟结供锟斤拷 ReaderRepository 锟斤拷业锟斤拷锟竭硷拷锟斤拷装
      */
     public class ReaderService
     {
         private readonly ReaderRepository _readerRepository;
 
         /**
-         * ���캯��
-         * @param readerRepository Reader �ִ�����
-         * @return ��
+         * 锟斤拷锟届函锟斤拷
+         * @param readerRepository Reader 锟街达拷锟斤拷锟斤拷
+         * @return 锟斤拷
          */
         public ReaderService(ReaderRepository readerRepository)
         {
@@ -23,9 +23,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ���� ReaderID ��ȡ Reader ����
-         * @param readerID ���� ID
-         * @return Reader �����?null
+         * 锟斤拷锟斤拷 ReaderID 锟斤拷取 Reader 锟斤拷锟斤拷
+         * @param readerID 锟斤拷锟斤拷 ID
+         * @return Reader 锟斤拷锟斤拷锟?null
          */
         public async Task<Reader> GetReaderByReaderIDAsync(long readerID)
         {
@@ -33,9 +33,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ���� UserName ��ȡ Reader ����
-         * @param UserName �û���,ͨ����ѧ��
-         * @return Reader ����� null
+         * 根据 UserName 获取 Reader 对象
+         * @param UserName 用户名,通常是学号
+         * @return Reader 对象或 null
          */
         public async Task<Reader> GetReaderByUserNameAsync(string userName)
         {
@@ -43,8 +43,8 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ��ȡ���� Reader ����
-         * @return Reader �����б�
+         * 锟斤拷取锟斤拷锟斤拷 Reader 锟斤拷锟斤拷
+         * @return Reader 锟斤拷锟斤拷锟叫憋拷
          */
         public async Task<IEnumerable<Reader>> GetAllReadersAsync()
         {
@@ -52,9 +52,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ����һ���µ� Reader
-         * @param reader Reader ʵ��
-         * @return ��Ӱ�������?
+         * 锟斤拷锟斤拷一锟斤拷锟铰碉拷 Reader
+         * @param reader Reader 实锟斤拷
+         * @return 锟斤拷影锟斤拷锟斤拷锟斤拷锟?
          */
         public async Task<int> InsertReaderAsync(Reader reader)
         {
@@ -62,9 +62,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ����һ�� Reader
-         * @param reader Reader ʵ��
-         * @return ��Ӱ�������?
+         * 锟斤拷锟斤拷一锟斤拷 Reader
+         * @param reader Reader 实锟斤拷
+         * @return 锟斤拷影锟斤拷锟斤拷锟斤拷锟?
          */
         public async Task<int> UpdateReaderAsync(Reader reader)
         {
@@ -72,9 +72,9 @@ namespace backend.Services.ReaderService
         }
 
         /**
-         * ɾ��һ�� Reader
+         * 删锟斤拷一锟斤拷 Reader
          * @param readerID ReaderID
-         * @return ��Ӱ�������?
+         * @return 锟斤拷影锟斤拷锟斤拷锟斤拷锟?
          */
         public async Task<int> DeleteReaderAsync(long readerID)
         {
@@ -91,19 +91,19 @@ namespace backend.Services.ReaderService
 
             if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("�û��������벻��Ϊ�ա�");
+                throw new ArgumentException("用户名和密码不能为空。");
             }
             else if (userName.Length < UserConstants.UsernameMinLength || userName.Length > UserConstants.UsernameMaxLength)
             {
-                throw new ArgumentException($"�û������ȱ�����{UserConstants.UsernameMinLength}��{UserConstants.UsernameMaxLength}֮�䡣");
+                throw new ArgumentException($"用户名长度必须在{UserConstants.UsernameMinLength}到{UserConstants.UsernameMaxLength}之间。");
             }
             else if (password.Length < UserConstants.PasswordMinLength || password.Length > UserConstants.PasswordMaxLength)
             {
-                throw new ArgumentException($"���볤�ȱ�����{UserConstants.PasswordMinLength}��{UserConstants.PasswordMaxLength}֮�䡣");
+                throw new ArgumentException($"密码长度必须在{UserConstants.PasswordMinLength}到{UserConstants.PasswordMaxLength}之间。");
             }
             else if (IsUserNameExistsAsync(userName).Result)
             {
-                throw new ArgumentException("�û����Ѵ��ڣ���ѡ�������û�����");
+                throw new ArgumentException("用户名已存在，请选择其他用户名。");
             }
 
             Reader reader = new Reader
@@ -115,16 +115,16 @@ namespace backend.Services.ReaderService
             bool res = await _readerRepository.InsertReaderAsync(reader) > 0;
             if (!res)
             {
-                throw new Exception("ע��ʧ�ܣ����Ժ����ԡ�");
+                throw new Exception("注册失败，请稍后再试。");
             }
 
             return res;
         }
 
         /**
-         * ����û����Ƿ��Ѵ���
-         * @param userName �û���
-         * @return true ����û����Ѵ��ڣ����� false
+         * 检查用户名是否已存在
+         * @param userName 用户名
+         * @return true 如果用户名已存在，否则 false
          */
         public async Task<bool> IsUserNameExistsAsync(string userName)
         {
@@ -133,7 +133,7 @@ namespace backend.Services.ReaderService
 
         /**
          * 
-         * ��������
+         * 重置密码
          * 
          */
         public async Task<bool> ResetPasswordAsync(string userName, string newPassword)
@@ -144,7 +144,7 @@ namespace backend.Services.ReaderService
 
         /**
          * 
-         * ����ͷ��
+         * 更新头像
          * 
          */
         public async Task<bool> UpdateAvatarAsync(long readerID, string avatarUrl)
@@ -154,7 +154,7 @@ namespace backend.Services.ReaderService
 
         /**
          * 
-         * ����Reader��Profile�ֶ�
+         * 更新Reader的Profile字段
          * 
          */
         public async Task<bool> UpdateProfileAsync(Reader reader)

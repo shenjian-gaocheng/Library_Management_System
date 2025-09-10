@@ -1,8 +1,10 @@
 using backend.Common.MiddleWare;
 using backend.Repositories.BorrowRecordRepository;
+using backend.Repositories.LibrarianRepository;
 using backend.Repositories.ReaderRepository;
 using backend.Repositories.Book;
 using backend.Services.BorrowingService;
+using backend.Services.LibrarianService;
 using backend.Services.ReaderService;
 using backend.Services.Web;
 using backend.Services.Book;
@@ -90,6 +92,9 @@ services.AddTransient<ReaderService>();
 //注册 BorrowingService 和 BorrowingRepository
 services.AddSingleton(new BorrowRecordRepository(connectionString));
 services.AddTransient<BorrowingService>();
+
+services.AddSingleton(new LibrarianRepository(connectionString));
+services.AddTransient<LibrarianService>();
 
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
