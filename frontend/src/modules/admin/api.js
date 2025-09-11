@@ -15,16 +15,6 @@ export function addPurchaseLog(logText) {
   return http.post('/admin/purchase-analysis/logs', { logText },{withToken:true})
 }
 
-// 获取所有待处理的举报
-export function getPendingReports() {
-  return http.get('/admin/reports/pending',{withToken:true});
-}
-
-export function handleReport(reportId, action, commentId) {
-  // action can be 'approve' or 'reject'
-  return http.put(`/admin/reports/${reportId}/handle`, { action, commentId },{withToken:true}) // 在请求体中加入 commentId
-}
-
 // 获取所有公告（管理用）
 export function getAllAnnouncements() {
   return http.get('/admin/announcements',{withToken:true})
@@ -43,4 +33,34 @@ export function updateAnnouncement(id, data) {
 // 下架公告
 export function takedownAnnouncement(id) {
   return http.put(`/admin/announcements/${id}/takedown`,{withToken:true})
+}
+
+// 获取图书管理列表
+export function getAdminBooks(searchTerm = '') {
+  return http.get('/admin/books', { params: { search: searchTerm } },{withToken:true})
+}
+
+// 创建新图书
+export function createBook(bookData) {
+  return http.post('/admin/books', bookData,{withToken:true})
+}
+
+// 更新图书信息
+export function updateBook(isbn, bookData) {
+  return http.put(`/admin/books/${isbn}`, bookData,{withToken:true})
+}
+
+// 下架图书
+export function takedownBook(isbn) {
+  return http.delete(`/admin/books/${isbn}`,{withToken:true})
+}
+
+// 获取所有待处理的举报
+export function getPendingReports() {
+  return http.get('/admin/reports/pending',{withToken:true})
+}
+
+// 处理一个举报 (现在包含 banUser 参数)
+export function handleReport(reportId, action, banUser) {
+  return http.put(`/admin/reports/${reportId}`, { action, banUser },{withToken:true})
 }

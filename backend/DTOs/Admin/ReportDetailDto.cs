@@ -15,9 +15,12 @@ namespace backend.DTOs.Admin
         public string ReviewContent { get; set; } = string.Empty;
         public DateTime CommentTime { get; set; }
 
-        // User Info
+        // Commenter Info
         public int CommenterID { get; set; }
         public string CommenterNickname { get; set; } = string.Empty;
+        public string CommenterAccountStatus { get; set; } = string.Empty; // 新增
+
+        // Reporter Info
         public int ReporterID { get; set; }
         public string ReporterNickname { get; set; } = string.Empty;
 

@@ -16,10 +16,11 @@
         <p class="card-description">管理图书的分类层级结构。</p>
       </router-link>
 
-      <router-link to="/bookshelf" class="dashboard-card group border-l-4 border-amber-500 hover:bg-amber-50/60">
-        <h3 class="card-title">书架管理</h3>
-        <p class="card-description">管理图书馆的物理书架位置。</p>
+      <router-link to="/admin/shelves" class="dashboard-card group bg-yellow-100 hover:bg-yellow-200">
+        <h3 class="card-title text-yellow-800">书架管理</h3>
+        <p class="card-description text-yellow-600">管理图书馆的物理书架位置。</p>
       </router-link>
+
 
       <router-link to="/admin/analytics" class="dashboard-card group border-l-4 border-indigo-500 hover:bg-indigo-50/60">
         <h3 class="card-title">采购分析</h3>

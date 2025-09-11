@@ -112,10 +112,12 @@ builder.Services.AddTransient<BookShelfService>();
 
 builder.Services.AddSingleton(new PurchaseAnalysisRepository(connectionString));
 builder.Services.AddTransient<PurchaseAnalysisService>();
-builder.Services.AddSingleton(new ReportRepository(connectionString));
+builder.Services.AddSingleton(new ReportRepository(connectionString)); 
 builder.Services.AddTransient<ReportService>();
 builder.Services.AddSingleton(new AnnouncementRepository(connectionString));
 builder.Services.AddTransient<AnnouncementService>();
+builder.Services.AddSingleton(new BookAdminRepository(connectionString));
+builder.Services.AddTransient<BookAdminService>();
 
 var app = builder.Build();
 
