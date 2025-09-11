@@ -31,11 +31,6 @@
         <h3 class="card-title">公告发布</h3>
         <p class="card-description">发布图书馆最新通知与公告。</p>
       </router-link>
-
-      <router-link to="/admin/logs" class="dashboard-card group border-l-4 border-slate-500 hover:bg-slate-50/60">
-        <h3 class="card-title">操作日志</h3>
-        <p class="card-description">查看所有管理员的操作记录。</p>
-      </router-link>
       
       <router-link to="/admin/reports" class="dashboard-card group border-l-4 border-red-500 hover:bg-red-50/60">
         <h3 class="card-title">举报处理</h3>

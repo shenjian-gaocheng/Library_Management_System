@@ -229,3 +229,8 @@ export function updateBooklistName(booklistId, data) {
 export function updateBooklistIntro(booklistId, data) {
   return http.put(`/book/booklists/${booklistId}/intro`, data, { withToken: true })
 }
+
+// 获取书架上的书籍
+export function GetShelfBooks(shelfId) {
+  return http.get(`/bookshelf/shelf-books/${shelfId}`, { withToken: true });
+}

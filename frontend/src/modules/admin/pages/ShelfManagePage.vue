@@ -141,7 +141,7 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
-import { getShelf, addShelf, deleteShelf, checkShelfHasBooks, getShelfBooks } from '@/modules/book/api.js';
+import { getShelf, addShelf, deleteShelf, checkShelfHasBooks, GetShelfBooks } from '@/modules/book/api.js';
 
 const filterBuildingId = ref('');
 const filterFloor = ref('');
@@ -270,7 +270,7 @@ const handleView = async (shelf) => {
   showViewDialog.value = true;
   loadingBooks.value = true;
   try {
-    const response = await getShelfBooks(Number(shelf.SHELFID));
+    const response = await GetShelfBooks(Number(shelf.SHELFID));
     shelfBooks.value = response.data || [];
   } catch (error) {
     console.error('获取书架书籍失败:', error);
