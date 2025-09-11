@@ -22,15 +22,19 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(record, index) in paginatedRecords" :key="record.id || index">
-          <td>{{ record.ISBN }}</td>
-          <td>{{ record.BookTitle }}</td>
-          <td>{{ record.BookAuthor }}</td>
-          <td>{{ formatDate(record.BorrowTime) }}</td>
-          <td>{{ formatDate(record.ReturnTime) }}</td>
-          <td>{{ record.OverdueFine }}</td>
-        </tr>
-      </tbody>
+      <tr v-for="(record, index) in paginatedRecords" :key="record.id || index">
+        <td>{{ record.ISBN || '' }}</td>
+        <td>{{ record.BookTitle || '' }}</td>
+        <td>{{ record.BookAuthor || '' }}</td>
+        <td>{{ record.BorrowTime ? formatDate(record.BorrowTime) : '' }}</td>
+        <td>
+          {{ record.ReturnTime ? formatDate(record.ReturnTime) : (record.ISBN ? '未归还' : '') }}
+        </td>
+        <td>
+          {{ record.ISBN ? (record.OverdueFine ?? 0) : '' }}
+        </td>
+      </tr>
+    </tbody>
     </table>
 
     <!-- 没有记录时显示 -->
@@ -62,12 +66,15 @@ const props = defineProps({
 const currentPage = ref(1);
 const sortOrder = ref("desc"); // 默认降序
 
-// 总页数
+// 固定每页显示的行数（不足补空白）
+const fixedRows = 7;
+
+// 总页数（基于真实数据计算）
 const totalPages = computed(() => {
   return Math.ceil(props.records.length / props.pageSize);
 });
 
-// 当前页数据（根据 BorrowTime 排序）
+// 当前页数据（根据 BorrowTime 排序，并补空行）
 const paginatedRecords = computed(() => {
   const sorted = [...props.records].sort((a, b) => {
     const timeA = new Date(a.BorrowTime).getTime();
@@ -75,7 +82,14 @@ const paginatedRecords = computed(() => {
     return sortOrder.value === "desc" ? timeB - timeA : timeA - timeB;
   });
   const start = (currentPage.value - 1) * props.pageSize;
-  return sorted.slice(start, start + props.pageSize);
+  const pageData = sorted.slice(start, start + props.pageSize);
+
+  // 补齐空白行到 fixedRows 行
+  const filled = [...pageData];
+  while (filled.length < fixedRows) {
+    filled.push({}); // 空对象占位
+  }
+  return filled;
 });
 
 // 上一页
@@ -135,6 +149,7 @@ const formatDate = (date) => {
   padding: 12px;
   border-bottom: 1px solid #ddd;
   text-align: center;
+  height: 48px; /* 统一行高，空行也保持高度 */
 }
 
 .styled-table tbody tr:nth-child(even) {
