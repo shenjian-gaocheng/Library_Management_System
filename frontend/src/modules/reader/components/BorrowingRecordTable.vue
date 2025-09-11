@@ -22,19 +22,19 @@
         </tr>
       </thead>
       <tbody>
-      <tr v-for="(record, index) in paginatedRecords" :key="record.id || index">
-        <td>{{ record.ISBN || '' }}</td>
-        <td>{{ record.BookTitle || '' }}</td>
-        <td>{{ record.BookAuthor || '' }}</td>
-        <td>{{ record.BorrowTime ? formatDate(record.BorrowTime) : '' }}</td>
-        <td>
-          {{ record.ReturnTime ? formatDate(record.ReturnTime) : (record.ISBN ? '未归还' : '') }}
-        </td>
-        <td>
-          {{ record.ISBN ? (record.OverdueFine ?? 0) : '' }}
-        </td>
-      </tr>
-    </tbody>
+        <tr v-for="(record, index) in paginatedRecords" :key="record.id || index">
+          <td>{{ record.ISBN || '' }}</td>
+          <td>{{ record.BookTitle || '' }}</td>
+          <td>{{ record.BookAuthor || '' }}</td>
+          <td>{{ record.BorrowTime ? formatDate(record.BorrowTime) : '' }}</td>
+          <td :class="{ overdue: getReturnStatus(record) === '已逾期' }">
+            {{ getReturnStatus(record) }}
+          </td>
+          <td>
+            {{ record.ISBN ? getOverdueFine(record).toFixed(2) : '' }}
+          </td>
+        </tr>
+      </tbody>
     </table>
 
     <!-- 没有记录时显示 -->
@@ -66,15 +66,14 @@ const props = defineProps({
 const currentPage = ref(1);
 const sortOrder = ref("desc"); // 默认降序
 
-// 固定每页显示的行数（不足补空白）
-const fixedRows = 7;
+const fixedRows = 7; // 固定每页显示行数
 
-// 总页数（基于真实数据计算）
+// 总页数
 const totalPages = computed(() => {
   return Math.ceil(props.records.length / props.pageSize);
 });
 
-// 当前页数据（根据 BorrowTime 排序，并补空行）
+// 当前页数据（排序 + 补空行）
 const paginatedRecords = computed(() => {
   const sorted = [...props.records].sort((a, b) => {
     const timeA = new Date(a.BorrowTime).getTime();
@@ -84,20 +83,17 @@ const paginatedRecords = computed(() => {
   const start = (currentPage.value - 1) * props.pageSize;
   const pageData = sorted.slice(start, start + props.pageSize);
 
-  // 补齐空白行到 fixedRows 行
   const filled = [...pageData];
   while (filled.length < fixedRows) {
-    filled.push({}); // 空对象占位
+    filled.push({});
   }
   return filled;
 });
 
-// 上一页
+// 分页函数
 const prevPage = () => {
   if (currentPage.value > 1) currentPage.value--;
 };
-
-// 下一页
 const nextPage = () => {
   if (currentPage.value < totalPages.value) currentPage.value++;
 };
@@ -107,10 +103,39 @@ watch(() => props.records, () => {
   currentPage.value = 1;
 });
 
-// 时间格式化函数
+// 时间格式化
 const formatDate = (date) => {
   if (!date) return '未归还';
   return new Date(date).toLocaleString();
+};
+
+// 获取归还状态（超期判断改为 1 天）
+const getReturnStatus = (record) => {
+  if (!record || !record.ISBN) return '';
+
+  if (record.ReturnTime) {
+    return formatDate(record.ReturnTime);
+  }
+
+  const borrowTime = new Date(record.BorrowTime).getTime();
+  const now = Date.now();
+  const borrowDurationDays = (now - borrowTime) / (1000 * 60 * 60 * 24); // 转换为天数
+
+  return borrowDurationDays > 1 ? '已逾期' : '待归还';
+};
+
+// 按天计算罚金（与后端算法一致）
+const getOverdueFine = (record) => {
+  if (!record || !record.BorrowTime) return 0;
+
+  const borrowTime = new Date(record.BorrowTime).getTime();
+  const endTime = record.ReturnTime ? new Date(record.ReturnTime).getTime() : Date.now();
+  const borrowDurationDays = (endTime - borrowTime) / (1000 * 60 * 60 * 24); // 转换为天数
+  const allowedDays = 1; // 允许借1天
+  if (borrowDurationDays <= allowedDays) return 0;
+
+  const overdueDays = Math.ceil(borrowDurationDays - allowedDays);
+  return overdueDays * 0.1; // 每天 0.1 元
 };
 </script>
 
@@ -149,7 +174,7 @@ const formatDate = (date) => {
   padding: 12px;
   border-bottom: 1px solid #ddd;
   text-align: center;
-  height: 48px; /* 统一行高，空行也保持高度 */
+  height: 48px;
 }
 
 .styled-table tbody tr:nth-child(even) {
@@ -191,5 +216,10 @@ const formatDate = (date) => {
 .pagination button:disabled {
   background-color: #b3d9ff;
   cursor: not-allowed;
+}
+
+.overdue {
+  color: #e57373;
+  font-weight: bold;
 }
 </style>

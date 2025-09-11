@@ -22,13 +22,11 @@
         </div>
       </div>
 
-
       <!-- 信息统计卡片 -->
       <div class="info-cards">
         <DashBoardInfoCard title="当前借阅" :count="unreturnedCount" class="card-red" />
-        <DashBoardInfoCard title="超期图书" count="0" className="card-orange" />
-        <DashBoardInfoCard title="委托到书" count="0" className="card-green" />
-        <DashBoardInfoCard title="预约到书" count="0" className="card-blue" />
+        <DashBoardInfoCard title="当前逾期" :count="overdueCount" class="card-orange" />
+        <DashBoardInfoCard title="总逾期数" :count="allOverdueCount" class="card-green" />
       </div>
 
       <!-- 通知列表 -->
@@ -41,12 +39,13 @@
 import layout from '@/modules/reader/reader_DashBoard_layout/layout.vue'
 import DashBoardInfoCard from '../components/DashBoardInfoCard.vue'
 import DashBoardNotificationList from '../components/DashBoardNotificationList.vue'
-import {getUnreturnedCount} from '@/modules/reader/api.js'
-import {useUserStore} from '@/stores/user.js'
-import { computed,ref,onMounted } from 'vue'
-import axios from "axios";
+import { getUnreturnedCount, getOverdueUnreturnedCount, getAllOverdueUnreturnedCountByReader } from '@/modules/reader/api.js'
+import { useUserStore } from '@/stores/user.js'
+import { computed, ref, onMounted } from 'vue'
 
-const unreturnedCount = ref(0); // 当前借阅数
+const unreturnedCount = ref(0)    // 当前借阅数
+const overdueCount = ref(0)       // 当前逾期数
+const allOverdueCount = ref(0)    // 总逾期数（包含已归还逾期）
 
 // 引入用户 store
 const userStore = useUserStore()
@@ -73,10 +72,19 @@ const icons = [
 
 onMounted(async () => {
   try {
-    const response = await getUnreturnedCount()
-    unreturnedCount.value = response.data
+    // 获取当前借阅数
+    const res1 = await getUnreturnedCount()
+    unreturnedCount.value = res1.data
+
+    // 获取超期数（未归还逾期）
+    const res2 = await getOverdueUnreturnedCount()
+    overdueCount.value = res2.data
+
+    // 获取总逾期数（已归还 + 未归还逾期）
+    const res3 = await getAllOverdueUnreturnedCountByReader()
+    allOverdueCount.value = res3.data
   } catch (error) {
-    console.error("获取未归还书籍数失败：", error)
+    console.error("获取借阅信息失败：", error)
   }
 })
 </script>
@@ -153,5 +161,4 @@ onMounted(async () => {
   color: red;
   font-weight: bold;
 }
-
 </style>
