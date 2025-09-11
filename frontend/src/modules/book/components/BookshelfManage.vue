@@ -120,7 +120,7 @@
                       <button class="edit-btn" @click="openEditDialog(book)">修改</button>
                     </template>
                     <template v-else-if="book.STATUS === '借出'">
-                      <button class="return-btn" @click="handleReturn(book)">归还</button>
+                      <button class="return-btn" @click="handleReturn(book)">修改</button>
                      
                     </template>
                     <!-- 下架状态不显示任何按钮 -->
@@ -187,7 +187,7 @@
 <!-- 归还书籍弹窗 -->
 <div v-if="showReturnDialog" class="edit-dialog">
   <div class="dialog-content">
-    <h3>归还书籍位置</h3>
+    <h3>修改书籍位置</h3>
     <div class="form-item">
       <label>所属楼宇：</label>
       <select v-model="returnLocation.buildingId">
@@ -229,7 +229,7 @@
     
     <div class="dialog-buttons">
       <button class="cancel-btn" @click="closeReturnDialog">取消</button>
-      <button class="confirm-btn" @click="saveReturnLocation">确认归还</button>
+      <button class="confirm-btn" @click="saveReturnLocation">保存</button>
     </div>
   </div>
 </div>
@@ -447,12 +447,13 @@ const saveLocation = async () => {
   }
   const formattedShelfCode = formatShelfCode(editLocation.shelfCode);
   try {
+        const zoneForBackend = editLocation.zone.includes('区') ? editLocation.zone : editLocation.zone + '区';
     // 1. 检查书架是否存在
     const { data: shelfExists } = await checkShelfExists(
       editLocation.buildingId,
       formattedShelfCode,
       editLocation.floor,
-      editLocation.zone
+      zoneForBackend
     );
     
     if (!shelfExists) {
@@ -465,7 +466,7 @@ const saveLocation = async () => {
       editLocation.buildingId,
       formattedShelfCode,
       editLocation.floor,
-      editLocation.zone
+      zoneForBackend
     );
     
     // 3. 执行位置更新（需要创建对应的API函数）
@@ -548,11 +549,7 @@ const openReturnDialog = (book) => {
    currentBook.value = book; // 保存当前书籍
    console.log(currentBook.value);
   showReturnDialog.value = true
-  // 可以在这里预填充书籍当前位置
-  returnLocation.buildingId = book.BUILDINGID || null
-  returnLocation.floor = book.FLOOR || null
-  returnLocation.zone = book.ZONE || ''
-  returnLocation.shelfCode = book.SHELFCODE || null
+
 }
 
 // 关闭归还弹窗
@@ -582,12 +579,13 @@ const saveReturnLocation = async () => {
   
   try {
     // 1. 检查书架是否存在
+     const zoneForBackend = returnLocation.zone.includes('区') ? returnLocation.zone : returnLocation.zone + '区';
     const formattedShelfCode = formatShelfCode(returnLocation.shelfCode);
     const { data: shelfExists } = await checkShelfExists(
       returnLocation.buildingId,
       formattedShelfCode,
       returnLocation.floor,
-      returnLocation.zone
+      zoneForBackend
     );
     
     if (!shelfExists) {
@@ -600,18 +598,18 @@ const saveReturnLocation = async () => {
       returnLocation.buildingId,
       formattedShelfCode,
       returnLocation.floor,
-      returnLocation.zone
+      zoneForBackend
     );
     
     // 3. 执行归还
     await returnBook(currentBook.value.BOOKID, shelfId);
-    alert('归还成功');
+    alert('修改成功');
     closeReturnDialog();
     
     
   } catch (error) {
-    console.error('归还失败:', error);
-    alert('归还失败: ' + (error.response?.data || error.message));
+    console.error('修改失败:', error);
+    alert('修改失败: ' + (error.response?.data || error.message));
   }
 }
 </script>
@@ -839,7 +837,7 @@ const saveReturnLocation = async () => {
 
 .return-btn {
   padding: 6px 12px;
-  background-color: #e6a23c;
+  background-color: #1890ff;
   color: white;
   border: none;
   border-radius: 4px;
@@ -848,7 +846,7 @@ const saveReturnLocation = async () => {
 }
 
 .return-btn:hover {
-  background-color: #ebb563;
+  background-color: #40a9ff;
 }
 
 /* 原有编辑按钮样式保持不变 */
