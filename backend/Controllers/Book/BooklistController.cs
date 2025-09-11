@@ -2,10 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Backend.DTOs.Book;
 using Backend.Services.Book;
-using backend.Services.Web;
+using backend.Common.Constants;
+using backend.Common.Utils;
+using backend.DTOs.Reader;
 using backend.Models;
+using backend.Services.ReaderService;
+using backend.Services.Web;
 
-namespace backend.Controllers.Book
+namespace Backend.Controllers.Book
 {
     [ApiController]
     [Route("api/book/[controller]")]
@@ -23,32 +27,32 @@ namespace backend.Controllers.Book
         }
 
         // 获取 ReaderID 的方法
-        public long? GetCurrentReaderId()
+        public int GetCurrentReaderId()
         {
             var loginUser = _securityService.GetLoginUser();
             
             if (_securityService.CheckIsReader(loginUser))
             {
                 var reader = loginUser.User as Reader;
-                return reader.ReaderID;
+                return (int)reader.ReaderID;
             }
             
-            return null;
+            return 0;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateBooklist([FromBody] CreateBooklistRequest request)
         {
-            long creatorId = GetCurrentReaderId() ?? 0;
-            var result = await _service.CreateBooklistAsync(request, (int)creatorId);
+            int creatorId = GetCurrentReaderId();
+            var result = await _service.CreateBooklistAsync(request, creatorId);
             return Ok(result);
         }
 
         [HttpDelete("{booklistId}")]
         public async Task<IActionResult> DeleteBooklist(int booklistId)
         {
-            long readerId = GetCurrentReaderId() ?? 0;
-            var result = await _service.DeleteBooklistAsync(booklistId, (int)readerId);
+            int readerId = GetCurrentReaderId();
+            var result = await _service.DeleteBooklistAsync(booklistId, readerId);
             return Ok(result);
         }
 
@@ -70,64 +74,64 @@ namespace backend.Controllers.Book
         [HttpPost("{booklistId}/books")]
         public async Task<IActionResult> AddBookToBooklist(int booklistId, [FromBody] AddBookToBooklistRequest request)
         {
-            long readerId = GetCurrentReaderId() ?? 0;
-            var result = await _service.AddBookToBooklistAsync(booklistId, request, (int)readerId);
+            int readerId = GetCurrentReaderId();
+            var result = await _service.AddBookToBooklistAsync(booklistId, request, readerId);
             return Ok(result);
         }
 
         [HttpDelete("{booklistId}/books/{isbn}")]
         public async Task<IActionResult> RemoveBookFromBooklist(int booklistId, string isbn)
         {
-            long readerId = GetCurrentReaderId() ?? 0;
-            var result = await _service.RemoveBookFromBooklistAsync(booklistId, isbn, (int)readerId);
+            int readerId = GetCurrentReaderId();
+            var result = await _service.RemoveBookFromBooklistAsync(booklistId, isbn, readerId);
             return Ok(result);
         }
 
         [HttpPost("{booklistId}/collect")]
         public async Task<IActionResult> CollectBooklist(int booklistId, [FromBody] CollectBooklistRequest request)
         {
-            long readerId = GetCurrentReaderId() ?? 0;
-            var result = await _service.CollectBooklistAsync(booklistId, (int)readerId, request);
+            int readerId = GetCurrentReaderId();
+            var result = await _service.CollectBooklistAsync(booklistId, readerId, request);
             return Ok(result);
         }
 
         [HttpDelete("{booklistId}/collect")]
         public async Task<IActionResult> CancelCollectBooklist(int booklistId)
         {
-            long readerId = GetCurrentReaderId() ?? 0;
-            var result = await _service.CancelCollectBooklistAsync(booklistId, (int)readerId);
+            int readerId = GetCurrentReaderId();
+            var result = await _service.CancelCollectBooklistAsync(booklistId, readerId);
             return Ok(result);
         }
 
         [HttpPut("{booklistId}/collect/notes")]
         public async Task<IActionResult> UpdateCollectNotes(int booklistId, [FromBody] UpdateCollectNotesRequest request)
         {
-            long readerId = GetCurrentReaderId() ?? 0;
-            var result = await _service.UpdateCollectNotesAsync(booklistId, (int)readerId, request);
+            int readerId = GetCurrentReaderId();
+            var result = await _service.UpdateCollectNotesAsync(booklistId, readerId, request);
             return Ok(result);
         }
 
         [HttpGet("reader/{readerId}")]
         public async Task<IActionResult> SearchBooklistsByReader(int readerId)
         {
-            long currentReaderId = GetCurrentReaderId() ?? 0;
-            var result = await _service.SearchBooklistsByReaderAsync((int)currentReaderId);
+            readerId = GetCurrentReaderId();
+            var result = await _service.SearchBooklistsByReaderAsync(readerId);
             return Ok(result);
         }
 
         [HttpPut("{booklistId}/name")]
         public async Task<IActionResult> UpdateBooklistName(int booklistId, [FromBody] UpdateBooklistNameRequest request)
         {
-            long readerId = GetCurrentReaderId() ?? 0;
-            var result = await _service.UpdateBooklistNameAsync(booklistId, (int)readerId, request);
+            int readerId = GetCurrentReaderId();
+            var result = await _service.UpdateBooklistNameAsync(booklistId, readerId, request);
             return Ok(result);
         }
 
         [HttpPut("{booklistId}/intro")]
         public async Task<IActionResult> UpdateBooklistIntro(int booklistId, [FromBody] UpdateBooklistIntroRequest request)
         {
-            long readerId = GetCurrentReaderId() ?? 0;
-            var result = await _service.UpdateBooklistIntroAsync(booklistId, (int)readerId, request);
+            int readerId = GetCurrentReaderId();
+            var result = await _service.UpdateBooklistIntroAsync(booklistId, readerId, request);
             return Ok(result);
         }
     }

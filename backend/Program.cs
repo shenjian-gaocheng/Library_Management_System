@@ -1,3 +1,4 @@
+using Backend.Data;
 using backend.Common.MiddleWare;
 using backend.Repositories.BorrowRecordRepository;
 using backend.Repositories.LibrarianRepository;
@@ -92,6 +93,11 @@ services.AddTransient<ReaderService>();
 //注册 BorrowingService 和 BorrowingRepository
 services.AddSingleton(new BorrowRecordRepository(connectionString));
 services.AddTransient<BorrowingService>();
+
+//书单部分
+builder.Services.AddScoped<Backend.Repositories.Book.IBooklistRepository, Backend.Repositories.Book.BooklistRepository>();
+builder.Services.AddScoped<Backend.Services.Book.IBooklistService, Backend.Services.Book.BooklistService>();
+builder.Services.AddSingleton<IOracleConnectionFactory, OracleConnectionFactory>();
 
 services.AddSingleton(new LibrarianRepository(connectionString));
 services.AddTransient<LibrarianService>();
