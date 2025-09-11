@@ -336,7 +336,6 @@
               <tr>
                 <th>图书ISBN</th>
                 <th>图书名字</th>
-                <th>读者名字</th>
                 <th>借阅时间</th>
                 <th>归还时间</th>
                 <th>逾期费用</th>
@@ -349,7 +348,6 @@
               >
                 <td>{{ item.isbn }}</td>
                 <td>{{ item.title }}</td>
-                <td>{{ item.author }}</td>
                 <td>{{ formatDate(item.borrowTime) }}</td>
                 <td>{{ item.returnTime ? formatDate(item.returnTime) : '未归还' }}</td>
                 <td>{{ item.overdueFine }}</td>
@@ -387,7 +385,7 @@ import { ref, reactive, toRaw, onMounted } from 'vue';
 import axios from 'axios';
 
 // 基础URL
-const baseUrl = ref('http://localhost:5000/api');
+const baseUrl = ref(import.meta.env.VITE_API_BASE_URL);
 
 // 激活的标签页
 const activeTab = ref('getAll');
@@ -511,7 +509,7 @@ const apiRequest = async (method, url, data = null, params = null) => {
 
 // 获取所有借阅记录
 const getAllBorrowRecords = async () => {
-  await apiRequest('get', '');
+  await apiRequest('get', '',{withToken:true});
 };
 
 // 按ID查询借阅记录
@@ -520,7 +518,7 @@ const getBorrowRecordById = async () => {
     alert('请输入借阅记录ID');
     return;
   }
-  await apiRequest('get', `/${queryById.value}`);
+  await apiRequest('get', `/${queryById.value}`,{withToken:true});
 };
 
 // 按读者ID查询
@@ -529,7 +527,7 @@ const getBorrowRecordsByReader = async () => {
     alert('请输入读者ID');
     return;
   }
-  await apiRequest('get', `/reader/${queryByReader.value}`);
+  await apiRequest('get', `/reader/${queryByReader.value}`,{withToken:true});
 };
 
 // 按图书ID查询
@@ -538,7 +536,7 @@ const getBorrowRecordsByBook = async () => {
     alert('请输入图书ID');
     return;
   }
-  await apiRequest('get', `/book/${queryByBook.value}`);
+  await apiRequest('get', `/book/${queryByBook.value}`,{withToken:true});
 };
 
 // 添加借阅记录
@@ -548,7 +546,7 @@ const addBorrowRecord = async () => {
     return;
   }
   
-  await apiRequest('post', '', toRaw(newRecord));
+  await apiRequest('post', '', toRaw(newRecord),{withToken:true});
   alert('添加成功');
 };
 
@@ -559,7 +557,7 @@ const updateBorrowRecord = async () => {
     return;
   }
   
-  await apiRequest('put', '', toRaw(updateRecord));
+  await apiRequest('put', '', toRaw(updateRecord),{withToken:true});
   alert('更新成功');
 };
 
@@ -571,7 +569,7 @@ const deleteBorrowRecord = async () => {
   }
   
   if (confirm(`确定要删除ID为${deleteId.value}的借阅记录吗？`)) {
-    await apiRequest('delete', `/${deleteId.value}`);
+    await apiRequest('delete', `/${deleteId.value}`,{withToken:true});
     alert('删除成功');
   }
 };
@@ -587,7 +585,8 @@ const returnBook = async () => {
     'post', 
     '/return', 
     null, 
-    { readerId: returnInfo.readerId,bookId: returnInfo.bookId }
+    { readerId: returnInfo.readerId,bookId: returnInfo.bookId },
+    {withToken:true}
 );
 alert (' 归还成功 ');
 // 清空表单
@@ -611,7 +610,8 @@ const borrowBook = async () => {
     {
       readerId: borrowInfo.readerId,
       bookId: borrowInfo.bookId
-    }
+    },
+    {withToken:true}
   );
 
   alert('借阅成功');
@@ -626,7 +626,7 @@ const getMyBorrowRecordsByReader = async () => {
     alert('请输入读者ID');
     return;
   }
-  await apiRequest('get', `/reader/MyBorrowRecords/${queryByRecentReader.value}`);
+  await apiRequest('get', `/reader/MyBorrowRecords/${queryByRecentReader.value}`,{withToken:true});
 };
 
 // 日期格式化函数（用于表格中时间显示）

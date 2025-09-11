@@ -1,28 +1,5 @@
 ﻿-- 注释掉的数据均未插入数据库，仅作为代码参考
 
-
--- /* ---------- 5. Building ---------- */
--- INSERT INTO Building (BuildingID, BuildingName, Address, TotalFloors,
---                       OpenHours, ManagerID, Remark)
--- VALUES ('BLD_TG', '总图书馆',
---         '上海市杨浦区四平路1239号 同济大学本部',7,
---         '08:00-22:30', 'LIB001', '主馆');
-
--- INSERT INTO Building (BuildingID, BuildingName, Address, TotalFloors,
---                       OpenHours, ManagerID, Remark)
--- VALUES ('BLD_DW', '德文图书馆',
---         '上海市杨浦区四平路1239号 同济大学本部', 2,
---         '09:00-18:00', 'LIB001', '外文馆');
-
--- /* ---------- 6. Bookshelf ---------- */
--- /* ==========================================================
---    批量生成 Bookshelf 记录
---    规则：
---      - 区域：大馆用 A~D 区，小馆用 A~B 区
---      - ShelfCode 格式：<两位楼层号><区字母>-<三位序号>
---        例：01A-001  表示 1 楼 A 区 第 1 号书架
--- ========================================================== */
-
 -- SET SERVEROUTPUT ON
 -- DECLARE
 --     /* 公共过程，入参控制楼层/区/书柜数 */
@@ -66,5 +43,5 @@
 
 -- test data
 -- /* ---------- 9. Book ---------- */
-INSERT INTO Book (Status, ShelfID, ISBN)
-VALUES ('正常', 82, '9781594202667');
+-- INSERT INTO Book (Status, ShelfID, ISBN)
+-- VALUES ('正常', 82, '9781594202667');

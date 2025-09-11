@@ -1,96 +1,128 @@
-﻿
-import http from '@/services/http.js'
+﻿import http from '@/services/http.js'
 
+// ---------- 图书相关 ----------
 export function getBooks(keyword) {
   return http.get('/book/search', {
     params: { keyword }
-})
-}
-
-
-
-
-export function getCommentsByISBN(ISBN) {
-  return http.get('/comment/search', {
-    params: { ISBN }
   })
 }
 
-export function addComment(commentData) {
-  return http.post('/comment/add', commentData)
+
+export function getBookByBarcode(barcode) {
+  return http.get(`/Book/by-barcode/${encodeURIComponent(barcode)}`, { withToken: true })
 }
 
+// ---------- 评论 ----------
+export function getCommentsByISBN(ISBN) {
+  return http.get('/comment/search', {
+    params: { ISBN },
+    withToken: true
+  })
+}
+
+export function getCommentsByID(id) {
+  return http.get('/comment/search-id', {
+    params: { id }
+  })
+}
+export function addComment(commentData) {
+  return http.post('/comment/add', commentData, { withToken: true })
+}
+
+
+export function getReportsByReaderId(readerId) {
+  return http.get(`/report/by-reader/${readerId}`)
+}
+
+export function getReportsByLibrarianId(librarianId) {
+  return http.get(`/report/by-librarian/${librarianId}`)
+}
+
+export function addReport(reportData) {
+  return http.post('/report/add', reportData, { withToken: true })
+}
+
+
+
+export function changeReportStatus(statusData) {
+  return http.post('/report/change-status', statusData)
+}
+
+// ---------- 分类 ----------
 export function getCategoryTree() {
+
   return http.get('/Category/tree', {
     withToken: true // 确保每个请求都带上 Token
   });
 }
 
 export function addCategory(data) {
-  return http.post('/Category', data)
-}
-export function updateCategory(data) {
-  return http.put('/Category', data)
-}
-export function deleteCategory(id, operatorId) {
-  return http.delete(`/Category/${id}?operatorId=${operatorId}`)
+  return http.post('/Category', data, { withToken: true })
 }
 
+export function updateCategory(data) {
+  return http.put('/Category', data, { withToken: true })
+}
+
+export function deleteCategory(id, operatorId) {
+  return http.delete(`/Category/${id}?operatorId=${operatorId}`, { withToken: true })
+}
+
+// ---------- 书架 ----------
 export function getBooksBookShelf(keyword) {
-return http.get('/bookshelf/search_book_which_shelf', {
-    params: { keyword }
-})
+  return http.get('/bookshelf/search_book_which_shelf', {
+    params: { keyword },
+    withToken: true
+  })
 }
 
 export function getShelf(keyword) {
-return http.get('/bookshelf/search_bookshelf', {
-    params: { keyword }
-})
+  return http.get('/bookshelf/search_bookshelf', {
+    params: { keyword },
+    withToken: true
+  })
 }
+
 export function addShelf(buildingid, shelfcode, floor, zone) {
   return http.post('/bookshelf/add_bookshelf', {
     buildingid: Number(buildingid),
     shelfcode: shelfcode,
     floor: Number(floor),
     zone: zone
-  })
+  }, { withToken: true })
 }
 
 export function deleteShelf(shelfId) {
-  return http.delete(`/bookshelf/delete/${shelfId}`);
+  return http.delete(`/bookshelf/delete/${shelfId}`, { withToken: true });
 }
 
 export function checkShelfHasBooks(shelfId) {
-  return http.get(`/bookshelf/has-books/${shelfId}`);
+  return http.get(`/bookshelf/has-books/${shelfId}`, { withToken: true })
 }
 
-// 检查书架是否存在
 export function checkShelfExists(buildingId, shelfCode, floor, zone) {
   return http.get('/bookshelf/check-shelf-exists', {
-    params: { buildingId, shelfCode, floor, zone }
-  });
+    params: { buildingId, shelfCode, floor, zone },
+    withToken: true
+  })
 }
 
 export function returnBook(bookId, shelfId) {
-  return http.post('/bookshelf/return-book', { 
+  return http.post('/bookshelf/return-book', {
     bookId: Number(bookId),
     shelfId: Number(shelfId)
-  });
+  }, { withToken: true });
 }
-// 获取书架ID
+
 export function findShelfId(buildingId, shelfCode, floor, zone) {
   return http.get('/bookshelf/find-shelf-id', {
-    params: { 
-      buildingId, 
-      shelfCode, 
-      floor, 
-      zone 
-    }
-  });
+    params: { buildingId, shelfCode, floor, zone },
+    withToken: true
+  })
 }
 
 export function borrowBook(bookId) {
-  return http.post('/bookshelf/borrow-book', { bookId })
+  return http.post('/bookshelf/borrow-book', { bookId }, { withToken: true })
 }
 
 // ---------- 查询单册 ----------
@@ -98,38 +130,38 @@ export function getBookById(bookId) {
   return http.get(`/Book/${bookId}`)
 }
 
-export function getBookByBarcode(barcode) {
-  return http.get(`/Book/by-barcode/${encodeURIComponent(barcode)}`)
-}
+// export function getBookByBarcode(barcode) {
+//   return http.get(`/Book/by-barcode/${encodeURIComponent(barcode)}`)
+// }
 
 // ---------- 状态流转：按 BookID ----------
 export function borrowBookById(bookId) {
-  return http.patch(`/Book/${bookId}/borrow`)
+  return http.patch(`/Book/${bookId}/borrow`, {}, { withToken: true })
 }
 
 export function offShelfBookById(bookId) {
-  return http.patch(`/Book/${bookId}/off-shelf`)
+  return http.patch(`/Book/${bookId}/off-shelf`, {}, { withToken: true })
 }
 
 export function returnBookById(bookId) {
-  return http.patch(`/Book/${bookId}/return`)
+  return http.patch(`/Book/${bookId}/return`, {}, { withToken: true })
 }
 
 export function onShelfBookById(bookId) {
-  return http.patch(`/Book/${bookId}/on-shelf`)
+  return http.patch(`/Book/${bookId}/on-shelf`, {}, { withToken: true })
 }
 
 // ---------- 状态流转：按条码 ----------
 export function borrowBookByBarcode(barcode) {
-  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/borrow`)
+  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/borrow`, {}, { withToken: true })
 }
 
 export function offShelfBookByBarcode(barcode) {
-  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/off-shelf`)
+  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/off-shelf`, {}, { withToken: true })
 }
 
 export function returnBookByBarcode(barcode) {
-  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/return`)
+  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/return`, {}, { withToken: true })
 }
 
 export function onShelfBookByBarcode(barcode) {

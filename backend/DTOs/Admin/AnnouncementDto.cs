@@ -1,0 +1,14 @@
+namespace library_system.DTOs.Admin
+{
+    public class AnnouncementDto
+    {
+        public int AnnouncementID { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
+        public DateTime CreateTime { get; set; }
+        public string TargetGroup { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public int LibrarianID { get; set; }
+        public string LibrarianName { get; set; } = string.Empty;
+    }
+}

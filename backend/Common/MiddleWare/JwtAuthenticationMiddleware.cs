@@ -19,6 +19,14 @@
         "/api/docs/index.html",   //swagger UI 的入口文件
         "/favicon.ico",           // 网站图标
         "/api/Book/search",       // search book
+        "/api/bookshelf/search_book_which_shelf",//bookshelf
+        "/api/bookshelf/has-books",
+        "/api/bookshelf/check-shelf-exists",
+        "/api/bookshelf/find-shelf-id",
+        "/api/bookshelf/search_bookshelf",
+        "/api/bookshelf/shelf-books",//
+        "/api/announcements/public",
+        "/api/comment/search",
     };
 
 
@@ -34,7 +42,7 @@
             }
 
             // 判断是否跳过认证
-            if (_excludedPaths.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+            if (_excludedPaths.Any(p => path?.StartsWith(p, StringComparison.OrdinalIgnoreCase) == true))
             {
                 await _next(context); // 直接放行
                 return;

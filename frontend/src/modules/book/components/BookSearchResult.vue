@@ -9,31 +9,47 @@
     <div v-else>
       <p v-if="books.length === 0" class="empty">未找到相关图书</p>
       <ul v-else class="flex flex-wrap gap-6 justify-center">
-        <div v-for="book in books" :key="book.ISBN" class="wr_suggestion_card_wrapper">
-          <div class="wr_suggestion_card_content">
+        <div v-for="book in books" :key="book.ISBN" class="wr_suggestion_card_wrapper relative" >
+          <div class="wr_suggestion_card_content pb-16">
             <img
               :src="`/covers/${book.ISBN}.jpg`"
               alt="封面"
               class="fixed-cover-size"
               @error="e => (e.target.src = defaultCover)"
             />
-            <div class="mt-4 text-center">
-              <div class="text-base font-semibold leading-tight">
+            <div class="mt-4 text-center ">
+              <div class="text-base font-semibold leading-tight ">
                 {{ book.Title }}
               </div>
-              <div class="text-sm text-gray-600 mt-1">
+              <div class="text-sm text-gray-600 mt-1 ">
                 作者：{{ book.Author }}
               </div>
+              <div class="text-sm text-gray-600 mt-1">
+                ISBN：{{ book.ISBN }}
+              </div>
+              <div class="text-sm text-gray-600 mt-1">
+                分类：{{ book.Categories || '暂无分类' }}
+              </div>
               <div class="mt-2">
-                <button 
-                  @click="viewComments(book.ISBN)"
-                  class="comments-button"
-                >
-                  查看评论
-                </button>
+
               </div>
             </div>
           </div>
+
+                  <div class="absolute bottom-4   flex flex-col gap-2 items-center ">
+                    <button 
+                      @click="viewComments(book.ISBN)"
+                      class="comments-button "
+                    >
+                      查看评论
+                    </button>
+                    <button 
+                      @click="viewPhysicalBooks(book.Title)"
+                      class="physical-books-button "
+                    >
+                      查看实体书
+                    </button>
+                  </div>
         </div>
       </ul>
     </div>
@@ -60,9 +76,43 @@ async function fetchBooks() {
   loading.value = true
   error.value = ''
   try {
+    console.log('开始搜索，关键词:', keyword.value)
     const res = await getBooks(keyword.value)
+    console.log('API响应:', res)
+    console.log('响应数据:', res.data)
     books.value = res.data || []
+    console.log('处理后的图书列表:', books.value)
+    console.log('图书数量:', books.value.length)
+    
+    // 详细检查每本书的数据结构
+    if (books.value.length > 0) {
+      console.log('第一本书的详细信息:')
+      console.log('原始数据:', books.value[0])
+      console.log('字段列表:', Object.keys(books.value[0]))
+      console.log('Title字段:', books.value[0].Title)
+      console.log('Author字段:', books.value[0].Author)
+      console.log('ISBN字段:', books.value[0].ISBN)
+      console.log('Categories字段:', books.value[0].Categories)
+      
+      // 检查所有可能的字段名变体
+      const book = books.value[0]
+      console.log('所有字段值:')
+      console.log('  title:', book.title)
+      console.log('  Title:', book.Title)
+      console.log('  author:', book.author)
+      console.log('  Author:', book.Author)
+      console.log('  isbn:', book.isbn)
+      console.log('  ISBN:', book.ISBN)
+      console.log('  categories:', book.categories)
+      console.log('  Categories:', book.Categories)
+    }
   } catch (e) {
+    console.error('搜索错误:', e)
+    console.error('错误详情:', {
+      message: e.message,
+      status: e.response?.status,
+      data: e.response?.data
+    })
     error.value = '搜索失败，请稍后重试'
   } finally {
     loading.value = false
@@ -77,6 +127,14 @@ function viewComments(isbn) {
   })
 }
 
+//实体书
+// 查看实体书功能
+function viewPhysicalBooks(title) {
+  router.push({
+    path: '/booklocation',
+    query: { q: title }
+  })
+}
 // 初次加载
 onMounted(fetchBooks)
 
@@ -132,7 +190,7 @@ watch(
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 6px 12px;
+  padding: 6px 8px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
@@ -140,5 +198,27 @@ watch(
 
 .comments-button:hover {
   background-color: #337ecc;
+}
+
+
+
+.physical-books-button {
+  background-color: #67c23a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.physical-books-button:hover {
+  background-color: #85ce61;
+}
+
+.comments-button, .physical-books-button {
+  width: 120px;  /* 或者具体的像素值，如 width: 80px; */
+  
 }
 </style>
