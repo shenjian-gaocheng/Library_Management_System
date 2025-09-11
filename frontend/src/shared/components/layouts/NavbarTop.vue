@@ -18,13 +18,7 @@
 
         <router-link to="/my/home/dashboard" class="nav-item">读者控制台</router-link>
 
-        <div class="nav-item dropdown">
-          <span>管理员操作</span>
-          <div class="dropdown-menu">
-            <!-- This is now the single entry point to the admin area -->
-            <router-link to="/admin/dashboard">管理中心</router-link>
-          </div>
-        </div>
+
         
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>

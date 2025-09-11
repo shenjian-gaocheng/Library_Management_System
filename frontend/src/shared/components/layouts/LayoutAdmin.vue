@@ -12,7 +12,6 @@
       <header class="bg-white/70 backdrop-blur-sm shadow-md sticky top-0">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <h1 class="text-xl font-bold text-gray-800">管理员控制台</h1>
-          <router-link to="/" class="text-sm text-blue-600 font-semibold hover:underline">返回网站首页</router-link>
         </div>
       </header>
       <main class="p-4 sm:p-6 lg:p-8 flex-grow">
