@@ -27,10 +27,12 @@
           <td>{{ record.BookTitle || '' }}</td>
           <td>{{ record.BookAuthor || '' }}</td>
           <td>{{ record.BorrowTime ? formatDate(record.BorrowTime) : '' }}</td>
+          <!-- 归还时间仅“已逾期”标红 -->
           <td :class="{ overdue: getReturnStatus(record) === '已逾期' }">
             {{ getReturnStatus(record) }}
           </td>
-          <td>
+          <!-- 罚金非0标红 -->
+          <td :class="{ overdue: getOverdueFine(record) > 0 }">
             {{ record.ISBN ? getOverdueFine(record).toFixed(2) : '' }}
           </td>
         </tr>
@@ -65,7 +67,6 @@ const props = defineProps({
 
 const currentPage = ref(1);
 const sortOrder = ref("desc"); // 默认降序
-
 const fixedRows = 7; // 固定每页显示行数
 
 // 总页数
@@ -109,7 +110,7 @@ const formatDate = (date) => {
   return new Date(date).toLocaleString();
 };
 
-// 获取归还状态（超期判断改为 1 天）
+// 获取归还状态
 const getReturnStatus = (record) => {
   if (!record || !record.ISBN) return '';
 
@@ -119,19 +120,19 @@ const getReturnStatus = (record) => {
 
   const borrowTime = new Date(record.BorrowTime).getTime();
   const now = Date.now();
-  const borrowDurationDays = (now - borrowTime) / (1000 * 60 * 60 * 24); // 转换为天数
+  const borrowDurationDays = (now - borrowTime) / (1000 * 60 * 60 * 24);
 
   return borrowDurationDays > 1 ? '已逾期' : '待归还';
 };
 
-// 按天计算罚金（与后端算法一致）
+// 按天计算罚金
 const getOverdueFine = (record) => {
   if (!record || !record.BorrowTime) return 0;
 
   const borrowTime = new Date(record.BorrowTime).getTime();
   const endTime = record.ReturnTime ? new Date(record.ReturnTime).getTime() : Date.now();
-  const borrowDurationDays = (endTime - borrowTime) / (1000 * 60 * 60 * 24); // 转换为天数
-  const allowedDays = 1; // 允许借1天
+  const borrowDurationDays = (endTime - borrowTime) / (1000 * 60 * 60 * 24);
+  const allowedDays = 1;
   if (borrowDurationDays <= allowedDays) return 0;
 
   const overdueDays = Math.ceil(borrowDurationDays - allowedDays);
