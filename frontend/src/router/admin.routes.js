@@ -91,6 +91,10 @@ export default [
     path: '/admin/reports',
     name: 'ReportHandling',
     component: ReportHandlingPage,
-    meta: { /* ... */ }
+    meta: {       
+      layout: 'Admin', 
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: '举报处理' }
   }
 ]

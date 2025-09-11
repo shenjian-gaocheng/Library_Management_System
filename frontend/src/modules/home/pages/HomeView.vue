@@ -1,5 +1,4 @@
 <template>
-  <NavbarTop />
 
   <!-- 首页轮播图和图书搜索栏 -->
   <Banner />
@@ -13,7 +12,6 @@
   <!-- 公告栏模块 -->
   <Announcement />
 
-  <Footer />
 </template>
 
 <script setup>

@@ -70,19 +70,18 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
-import { getPendingReports, handleReport } from '../api.js';
+import { getPendingReports, handleReport } from '@/modules/admin/api.js';
 
 const loading = ref(true);
 const reports = ref([]);
 const processingId = ref(null);
-const banFlags = reactive({}); // 用于存储每个举报卡片的禁言选项状态
+const banFlags = reactive({});
 
 async function fetchData() {
   try {
     loading.value = true;
     const res = await getPendingReports();
     reports.value = res.data;
-    // 初始化 banFlags
     reports.value.forEach(r => {
       banFlags[r.ReportID] = false;
     });
@@ -110,7 +109,7 @@ async function processReport(reportId, action, index) {
   try {
     processingId.value = reportId;
     await handleReport(reportId, action, banUser);
-    reports.value.splice(index, 1); // 从列表中移除已处理的项
+    reports.value.splice(index, 1);
   } catch (error) {
     console.error(`Failed to ${action} report:`, error);
     alert(error.response?.data?.message || "操作失败，请稍后再试。");
