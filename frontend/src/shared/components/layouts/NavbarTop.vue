@@ -72,6 +72,7 @@ onUnmounted(() => {
 onMounted(async () => {
   try {
     const res = await getMyProfile()               // 要求 http 拦截器自动带 token
+    // const res2 = await getLibrarianProfile()               // 要求 http 拦截器自动带 token
     const u = res?.data ?? res
     isLoggedIn.value = true
     displayName.value = u.fullName || u.nickName || u.userName || ''

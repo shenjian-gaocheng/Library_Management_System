@@ -3,32 +3,45 @@
     <div class="page-body">
       <!-- 用户信息卡片 -->
       <div class="user-card">
-        <div class="user-info">
+        <!-- 左侧头像 -->
+        <div class="avatar-section">
           <img :src="avatar" class="avatar" />
-          <div class="info">
-            <div><strong>用户名：</strong>{{ userName }}</div>
-            <div><strong>真实姓名：</strong>{{ fullName }}</div>
-            <div><strong>昵称：</strong>{{ nickName }}</div>
-            <div><strong>信誉分：</strong>{{ creditScore }}</div>
-            <div><strong>账户状态：</strong><span :class="statusClass">{{ accountStatus }}</span></div>
-            <div><strong>权限：</strong>{{ permission }}</div>
+        </div>
+
+        <!-- 中间用户资料 -->
+        <div class="info-section">
+          <div class="info-row">
+            <span class="label">用户名：</span>
+            <span class="value">{{ userName }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">真实姓名：</span>
+            <span class="value">{{ fullName }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">昵称：</span>
+            <span class="value">{{ nickName }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">信誉分：</span>
+            <span class="value credit-score">{{ creditScore }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">账户状态：</span>
+            <span :class="['value', statusClass]">{{ accountStatus }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">权限：</span>
+            <span class="value">{{ permission }}</span>
           </div>
         </div>
-        <div class="user-icons">
-          <div v-for="item in icons" :key="item.label" class="icon-item">
-            <div class="icon-circle" />
-            <div class="icon-label">{{ item.label }}</div>
-          </div>
+
+        <!-- 右侧统计数据 -->
+        <div class="stats-section">
+          <DashBoardInfoCard title="当前借阅" :count="unreturnedCount" class="card-blue small-card" />
+          <DashBoardInfoCard title="当前逾期" :count="overdueCount" class="card-red small-card" />
+          <DashBoardInfoCard title="总逾期数" :count="allOverdueCount" class="card-green small-card" />
         </div>
-      </div>
-
-
-      <!-- 信息统计卡片 -->
-      <div class="info-cards">
-        <DashBoardInfoCard title="当前借阅" :count="unreturnedCount" class="card-red" />
-        <DashBoardInfoCard title="超期图书" count="0" className="card-orange" />
-        <DashBoardInfoCard title="委托到书" count="0" className="card-green" />
-        <DashBoardInfoCard title="预约到书" count="0" className="card-blue" />
       </div>
 
       <!-- 通知列表 -->
@@ -41,16 +54,15 @@
 import layout from '@/modules/reader/reader_DashBoard_layout/layout.vue'
 import DashBoardInfoCard from '../components/DashBoardInfoCard.vue'
 import DashBoardNotificationList from '../components/DashBoardNotificationList.vue'
-import {getUnreturnedCount} from '@/modules/reader/api.js'
-import {useUserStore} from '@/stores/user.js'
-import { computed,ref,onMounted } from 'vue'
-import axios from "axios";
+import { getUnreturnedCount, getOverdueUnreturnedCount, getAllOverdueUnreturnedCountByReader } from '@/modules/reader/api.js'
+import { useUserStore } from '@/stores/user.js'
+import { computed, ref, onMounted } from 'vue'
 
-const unreturnedCount = ref(0); // 当前借阅数
+const unreturnedCount = ref(0)
+const overdueCount = ref(0)
+const allOverdueCount = ref(0)
 
-// 引入用户 store
 const userStore = useUserStore()
-
 const baseAvatarUrl = 'http://localhost:5000/avatars/'
 const avatar = computed(() => baseAvatarUrl + userStore.avatar)
 
@@ -61,97 +73,129 @@ const creditScore = computed(() => userStore.creditScore)
 const accountStatus = computed(() => userStore.accountStatus)
 const permission = computed(() => userStore.permission)
 
-const statusClass = computed(() => {
-  return accountStatus.value === '正常' ? 'status-normal' : 'status-blocked'
-})
-
-const icons = [
-  { label: '可借阅' },
-  { label: '可预约' },
-  { label: '可委托' }
-]
+const statusClass = computed(() => accountStatus.value === '正常' ? 'status-normal' : 'status-blocked')
 
 onMounted(async () => {
   try {
-    const response = await getUnreturnedCount()
-    unreturnedCount.value = response.data
+    const res1 = await getUnreturnedCount()
+    unreturnedCount.value = res1.data
+
+    const res2 = await getOverdueUnreturnedCount()
+    overdueCount.value = res2.data
+
+    const res3 = await getAllOverdueUnreturnedCountByReader()
+    allOverdueCount.value = res3.data
   } catch (error) {
-    console.error("获取未归还书籍数失败：", error)
+    console.error("获取借阅信息失败：", error)
   }
 })
 </script>
 
 <style scoped>
-.layout {
-  display: flex;
-}
-.main-content {
-  flex: 1;
-  background: #f8f9fa;
-  min-height: 100vh;
-}
+/* 页面整体背景 */
 .page-body {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-.user-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  padding: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #ccc;
-}
-.user-icons {
-  display: flex;
   gap: 32px;
-}
-.icon-item {
-  text-align: center;
-}
-.icon-circle {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  margin: 0 auto 8px;
-}
-.icon-label {
-  font-size: 14px;
-  color: #555;
-}
-.info-cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  background: #f4f7fa;
+  min-height: 100vh;
 }
 
-.info {
-  color: black;
-  font-size: 14px;
-  line-height: 24px;
+/* 用户信息卡片 */
+.user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #ffffff, #f0f4ff);
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  padding: 32px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.user-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+/* 左侧头像 */
+.avatar-section {
+  margin-right: 40px;
+}
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid #4da6ff;
+  object-fit: cover;
+}
+
+/* 中间用户资料 */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1; /* 占据中间剩余空间 */
+}
+.info-row {
+  display: flex;
+  gap: 12px;
+  font-size: 18px;
+  align-items: center;
+}
+.label {
+  font-weight: bold;
+  color: #555;
+  width: 100px;
+}
+.value {
+  color: #222;
+}
+.credit-score {
+  color: #4da6ff;
+  font-weight: bold;
 }
 .status-normal {
-  color: green;
+  color: #28a745;
   font-weight: bold;
 }
 .status-blocked {
-  color: red;
+  color: #dc3545;
   font-weight: bold;
 }
 
+/* 右侧统计数据 */
+.stats-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 160px;
+}
+.small-card {
+  padding: 16px;
+  font-size: 14px;
+}
+
+/* 卡片颜色 */
+.card-blue {
+  background: linear-gradient(135deg, #4da6ff, #1a73e8);
+  color: white;
+}
+.card-red {
+  background: linear-gradient(135deg, #ff6b6b, #e63946);
+  color: white;
+}
+.card-green {
+  background: linear-gradient(135deg, #51cf66, #2f9e44);
+  color: white;
+}
+
+/* 小卡片悬停效果 */
+DashBoardInfoCard {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+DashBoardInfoCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
 </style>

@@ -1,12 +1,14 @@
 <!-- frontend/src/modules/book/pages/ReportPage.vue -->
 <template>
-  <div class="report-page">
-    <Report />
-  </div>
+  <LayoutDefault>
+    <div class="report-page">
+      <Report />
+    </div>
+  </LayoutDefault>
 </template>
-
 <script setup>
 import Report from '../components/Report.vue'
+import LayoutDefault from '@/shared/components/layouts/LayoutDefault.vue'
 </script>
 
 <style scoped>

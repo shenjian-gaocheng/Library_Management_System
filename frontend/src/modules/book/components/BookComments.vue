@@ -167,11 +167,11 @@ async function submitReport(comment) {
   // 构造举报数据
   const reportData = {
     CommentID: comment.CommentID,
-    READERID: 1, // TODO: 应该从当前登录用户获取
+    ReaderID: 1, // TODO: 应该从当前登录用户获取
     ReportReason: reportReason.value,
     ReportTime: new Date().toISOString(),
     Status: '待处理',
-    LibrarianID: 8
+    LibrarianID: 9
   }
   
   try {

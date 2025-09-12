@@ -1,10 +1,58 @@
 <template>
     <div class="header-section">
-    <h1>书籍管理系统</h1>
-    <p>查看并管理图书馆书籍所属书架信息</p>
+    <h1>图书管理系统</h1>
+    <p>新增、查看并管理图书馆书籍所属书架信息</p>
   </div>
   <p class="search-tip">请输入要查询或加入书架的书籍</p>
   
+  <details class="add-copies-panel">
+    <summary class="panel-summary">+ 新书入库 (为已有图书添加副本)</summary>
+    <div class="panel-content">
+      <div class="form-grid">
+        <div class="form-item">
+          <label>ISBN (必填)</label>
+          <input v-model="addCopyForm.ISBN" type="text" placeholder="输入要入库的图书ISBN">
+        </div>
+        <div class="form-item">
+          <label>入库数量</label>
+          <input v-model.number="addCopyForm.NumberOfCopies" type="number" min="1">
+        </div>
+        <div class="form-item">
+          <label>所属楼宇</label>
+          <select v-model="addCopyForm.buildingId">
+            <option :value="null">请选择楼宇</option>
+            <option :value="21">总图书馆</option>
+            <option :value="22">德文图书馆</option>
+          </select>
+        </div>
+        <div class="form-item">
+          <label>楼层</label>
+          <select v-model="addCopyForm.floor">
+            <option :value="null">请选择楼层</option>
+            <option v-for="floor in availableAddCopyFloors" :key="floor" :value="floor">{{ floor }}层</option>
+          </select>
+        </div>
+        <div class="form-item">
+          <label>区域</label>
+          <select v-model="addCopyForm.zone">
+            <option value="">请选择区域</option>
+            <option v-for="zone in availableAddCopyZones" :key="zone" :value="zone">{{ zone }}区</option>
+          </select>
+        </div>
+        <div class="form-item">
+          <label>书架编号</label>
+          <select v-model="addCopyForm.shelfCode">
+            <option :value="null">请选择书架</option>
+            <option v-for="shelf in availableAddCopyShelves" :key="shelf" :value="shelf">{{ shelf }}号书架</option>
+          </select>
+        </div>
+      </div>
+      <div class="panel-footer">
+          <button @click="handleAddCopies" class="confirm-btn">确认入库</button>
+      </div>
+    </div>
+  </details>
+
   <div class="simple-search">
     
     <input
@@ -185,7 +233,7 @@
 <!-- 归还书籍弹窗 -->
 <div v-if="showReturnDialog" class="edit-dialog">
   <div class="dialog-content">
-    <h3>归还书籍位置</h3>
+    <h3>修改书籍位置</h3>
     <div class="form-item">
       <label>所属楼宇：</label>
       <select v-model="returnLocation.buildingId">
@@ -227,7 +275,7 @@
     
     <div class="dialog-buttons">
       <button class="cancel-btn" @click="closeReturnDialog">取消</button>
-      <button class="confirm-btn" @click="saveReturnLocation">确认</button>
+      <button class="confirm-btn" @click="saveReturnLocation">保存</button>
     </div>
   </div>
 </div>
@@ -237,7 +285,7 @@
 <script setup>
 import { ref, reactive,computed,onMounted } from 'vue'
 import axios from 'axios'
-import {  getBooks,getBooksBookShelf,checkShelfExists,returnBook,findShelfId, borrowBook } from '@/modules/book/api.js'
+import { getBooks, getBooksBookShelf, checkShelfExists, returnBook, findShelfId, borrowBook, addBookCopies } from '@/modules/book/api.js'
 const searchText = ref('')
 const loading = ref(false)
 const error = ref('')
@@ -587,6 +635,79 @@ const saveReturnLocation = async () => {
     alert('修改失败: ' + (error.response?.data || error.message));
   }
 }
+
+const addCopyForm = reactive({
+  ISBN: '',
+  NumberOfCopies: 1,
+  buildingId: null,
+  floor: null,
+  zone: '',
+  shelfCode: null
+});
+
+// 为入库表单创建独立的计算属性，以避免与“修改”和“归还”弹窗冲突
+const availableAddCopyFloors = computed(() => {
+  if (addCopyForm.buildingId === 21) return Array.from({ length: 14 }, (_, i) => i + 1);
+  if (addCopyForm.buildingId === 22) return Array.from({ length: 2 }, (_, i) => i + 1);
+  return [];
+});
+const availableAddCopyZones = computed(() => {
+  if (addCopyForm.buildingId === 21) return ['A', 'B', 'C', 'D'];
+  if (addCopyForm.buildingId === 22) return ['A', 'B'];
+  return [];
+});
+const availableAddCopyShelves = computed(() => {
+  if (addCopyForm.buildingId === 21) return Array.from({ length: 10 }, (_, i) => i + 1);
+  if (addCopyForm.buildingId === 22) return Array.from({ length: 5 }, (_, i) => i + 1);
+  return [];
+});
+
+async function handleAddCopies() {
+  const form = addCopyForm;
+  if (!form.ISBN || !form.NumberOfCopies || !form.buildingId || !form.floor || !form.zone || !form.shelfCode) {
+    return alert('请填写入库表单的完整信息！');
+  }
+
+  const floorStr = String(form.floor).padStart(2, '0');
+  const shelfNumStr = String(form.shelfCode).padStart(3, '0');
+  const formattedShelfCode = `${floorStr}${form.zone}-${shelfNumStr}`;
+
+  try {
+    const { data: shelfExists } = await checkShelfExists(form.buildingId, formattedShelfCode, form.floor, form.zone);
+    if (!shelfExists) return alert('指定的目标书架不存在，请在“书架管理”中创建。');
+
+    const { data: shelfId } = await findShelfId(form.buildingId, formattedShelfCode, form.floor, form.zone);
+    if (!shelfId) return alert('无法找到目标书架的ID。');
+
+    await addBookCopies({
+      ISBN: form.ISBN,
+      NumberOfCopies: form.NumberOfCopies,
+      ShelfID: shelfId
+    });
+
+    alert('新书入库成功！');
+    resetAddCopyForm();
+    // 刷新整个列表，或者只刷新当前搜索的列表
+    if (searchText.value) {
+        handleSearch();
+    } else {
+        showAllBooks();
+    }
+  } catch (error) {
+    console.error('入库失败:', error);
+    alert('入库失败: ' + (error.response?.data?.message || error.message));
+  }
+}
+
+function resetAddCopyForm() {
+    addCopyForm.ISBN = '';
+    addCopyForm.NumberOfCopies = 1;
+    addCopyForm.buildingId = null;
+    addCopyForm.floor = null;
+    addCopyForm.zone = '';
+    addCopyForm.shelfCode = null;
+}
+
 </script>
 
 <style scoped>
@@ -639,4 +760,38 @@ const saveReturnLocation = async () => {
 .header-section h1 { margin: 0 0 8px 0; font-size: 28px; }
 .header-section p { margin: 0; opacity: 0.9; }
 .shelf-management { padding: 25px; background-color: #f8fafc; min-height: 100vh; }
+.add-copies-panel {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+.panel-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #1890ff;
+}
+.panel-summary::-webkit-details-marker {
+  display: none;
+}
+.panel-content {
+  padding: 1.25rem;
+  border-top: 1px solid #e5e7eb;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+.form-item label {
+  font-size: 14px;
+}
+.panel-footer {
+  margin-top: 1rem;
+  text-align: right;
+}
 </style>

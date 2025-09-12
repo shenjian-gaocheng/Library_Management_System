@@ -84,5 +84,37 @@ namespace backend.Repositories.Admin
             var affectedRows = await connection.ExecuteAsync(sql, new { ISBN = isbn });
             return affectedRows > 0;
         }
+
+        public async Task AddCopiesAsync(AddCopiesDto dto)
+        {
+            using var connection = new OracleConnection(_connectionString);
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                // 步骤 1: 在 Book 表中批量插入新的实体书副本
+                if (dto.NumberOfCopies > 0)
+                {
+                    var bookSql = "INSERT INTO Book (Status, ShelfID, ISBN) VALUES ('正常', :ShelfID, :ISBN)";
+                    var booksToInsert = new List<object>();
+                    for (int i = 0; i < dto.NumberOfCopies; i++)
+                    {
+                        booksToInsert.Add(new { ShelfID = dto.ShelfID, ISBN = dto.ISBN });
+                    }
+                    await connection.ExecuteAsync(bookSql, booksToInsert, transaction);
+                }
+
+                // 步骤 2: 更新 BookInfo 表中的总库存量 (Stock)
+                var bookInfoSql = "UPDATE BookInfo SET Stock = Stock + :NumberOfCopies WHERE ISBN = :ISBN";
+                await connection.ExecuteAsync(bookInfoSql, new { dto.NumberOfCopies, dto.ISBN }, transaction);
+
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
     }
 }

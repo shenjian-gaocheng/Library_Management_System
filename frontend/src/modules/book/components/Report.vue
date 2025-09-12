@@ -2,7 +2,7 @@
 <template>
   <div class="report-management">
     <h2>举报管理</h2>
-    
+<!--     
     <div class="filter-section">
       <label for="librarianId">图书管理员ID:</label>
       <input 
@@ -12,7 +12,7 @@
         @keyup.enter="loadReports"
       />
       <button @click="loadReports">加载举报</button>
-    </div>
+    </div> -->
 
     <div v-if="loading" class="loading">加载中...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
@@ -84,16 +84,16 @@ function formatDate(dateString) {
 
 // 加载举报记录
 async function loadReports() {
-  if (!librarianId.value.trim()) {
-    error.value = '请输入图书管理员ID'
-    return
-  }
+  // if (!librarianId.value.trim()) {
+  //   error.value = '请输入图书管理员ID'
+  //   return
+  // }
 
   loading.value = true
   error.value = ''
 
   try {
-    const response = await getReportsByLibrarianId(librarianId.value)
+    const response = await getReportsByLibrarianId(8)
     reports.value = response.data || []
     
     // 为每个举报添加newStatus属性用于状态更改
@@ -110,7 +110,7 @@ async function loadReports() {
     loading.value = false
   }
 }
-
+loadReports()
 // 加载评论内容
 async function loadComment(report) {
   report.loadingComment = true

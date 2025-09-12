@@ -39,5 +39,16 @@ namespace backend.Services.Admin
         {
             return _repository.TakedownBookAsync(isbn);
         }
+
+        public async Task AddCopiesAsync(AddCopiesDto dto)
+        {
+            // 确保目标图书种类 (ISBN) 确实存在
+            var exists = await _repository.IsIsbnExistsAsync(dto.ISBN);
+            if (!exists)
+            {
+                throw new InvalidOperationException("无法为不存在的ISBN添加入库，请先新增该图书种类。");
+            }
+            await _repository.AddCopiesAsync(dto);
+        }
     }
 }

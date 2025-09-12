@@ -1,5 +1,4 @@
 <template>
-  <LayoutDefault>
     <div class="book-category-manage">
       <div class="page-header">
         <h1 class="page-title">图书分类管理</h1>
@@ -136,7 +135,6 @@
         </div>
       </div>
     </div>
-  </LayoutDefault>
 </template>
 
 <script setup>

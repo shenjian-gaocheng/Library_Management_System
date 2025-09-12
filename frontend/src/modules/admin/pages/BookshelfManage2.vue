@@ -142,7 +142,7 @@
     <select v-model="newShelfForm.ZONE" @change="updateShelfCode">
       <option value="">请选择区域</option>
       <option v-for="zone in availableZones" :key="zone" :value="zone">
-        {{ zone }}区
+        {{ zone }}
       </option>
     </select>
   </div>
@@ -302,6 +302,7 @@ const updateShelfCode = () => {
     const floor = newShelfForm.FLOOR.toString().padStart(2, '0')
     
     const sequence = newShelfForm.SEQUENCE.toString().padStart(3, '0')
+     const zone = newShelfForm.ZONE.replace('区', '')
     newShelfForm.SHELFCODE = `${floor}${zone}-${sequence}`
   } else {
     newShelfForm.SHELFCODE = ''

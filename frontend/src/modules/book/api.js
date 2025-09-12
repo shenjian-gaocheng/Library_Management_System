@@ -35,17 +35,17 @@ export function getReportsByReaderId(readerId) {
 }
 
 export function getReportsByLibrarianId(librarianId) {
-  return http.get(`/report/by-librarian/${librarianId}`)
+  return http.get(`/report/by-librarian/${librarianId}`, { withToken: true })
 }
 
 export function addReport(reportData) {
-  return http.post('/report/add', reportData, { withToken: true })
+  return http.post('/admin/reports/add', reportData, { withToken: true })
 }
 
 
 
 export function changeReportStatus(statusData) {
-  return http.post('/report/change-status', statusData)
+  return http.post('/report/change-status', statusData, { withToken: true })
 }
 
 // ---------- 分类 ----------
@@ -233,4 +233,9 @@ export function updateBooklistIntro(booklistId, data) {
 // 获取书架上的书籍
 export function GetShelfBooks(shelfId) {
   return http.get(`/bookshelf/shelf-books/${shelfId}`, { withToken: true });
+}
+
+export function addBookCopies(data) {
+  // data should be { ISBN, NumberOfCopies, ShelfID }
+  return http.post('/admin/books/copies', data)
 }

@@ -226,7 +226,7 @@ namespace backend.Controllers
                 return StatusCode(500, $"服务器错误: {ex.Message}");
             }
         }
-        
+
         /**
         * 获取当前读者未归还书籍数量
         * @param readerId 读者 ID
@@ -234,8 +234,8 @@ namespace backend.Controllers
         */
         [HttpGet("unreturned-count/{readerId}")]
         public async Task<ActionResult<int>> GetUnreturnedCountByReader(string readerId)
-        {   
-             var loginUser = _securityService.GetLoginUser();
+        {
+            var loginUser = _securityService.GetLoginUser();
 
             if (!_securityService.CheckIsReader(loginUser))
             {
@@ -251,6 +251,72 @@ namespace backend.Controllers
             readerId = reader.ReaderID.ToString();
 
             var count = await _borrowingService.GetUnreturnedCountByReaderAsync(readerId);
+
+            if (count < 0)
+            {
+                return NotFound("未找到该读者或数据异常");
+            }
+
+            return Ok(count);
+        }
+
+        /**
+        * 获取当前读者未归还且逾期书籍数量
+        * @param readerId 读者 ID
+        * @return 未归还书籍数量
+        */
+        [HttpGet("overdue-unreturned-count/{readerId}")]
+        public async Task<ActionResult<int>> GetOverdueUnreturnedCountByReader(string readerId)
+        {
+            var loginUser = _securityService.GetLoginUser();
+
+            if (!_securityService.CheckIsReader(loginUser))
+            {
+                return Forbid(); // 或 return Unauthorized();
+            }
+
+            var reader = loginUser.User as Reader;
+            if (reader == null)
+            {
+                return BadRequest("当前用户不是读者");
+            }
+
+            readerId = reader.ReaderID.ToString();
+
+            var count = await _borrowingService.GetOverdueUnreturnedAndOverdueCountByReaderAsync(readerId);
+
+            if (count < 0)
+            {
+                return NotFound("未找到该读者或数据异常");
+            }
+
+            return Ok(count);
+        }
+        
+        /**
+        * 获取当前读者所有未归还且逾期书籍数量
+        * @param readerId 读者 ID
+        * @return 未归还书籍数量
+        */
+        [HttpGet("all-overdue-unreturned-count/{readerId}")]
+        public async Task<ActionResult<int>> GetAllOverdueUnreturnedCountByReader(string readerId)
+        {
+            var loginUser = _securityService.GetLoginUser();
+
+            if (!_securityService.CheckIsReader(loginUser))
+            {
+                return Forbid(); // 或 return Unauthorized();
+            }
+
+            var reader = loginUser.User as Reader;
+            if (reader == null)
+            {
+                return BadRequest("当前用户不是读者");
+            }
+
+            readerId = reader.ReaderID.ToString();
+
+            var count = await _borrowingService.GetALlOverdueUnreturnedAndOverdueCountByReaderAsync(readerId);
 
             if (count < 0)
             {
