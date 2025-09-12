@@ -5,7 +5,7 @@ AS
 BEGIN
 OPEN v_cursor FOR
 SELECT r.ISBN, bi.Title, bi.Author, r.BooklistCount
-FROM book_list_rank r
+FROM book_list_rank_view r
          JOIN BookInfo bi ON r.ISBN = bi.ISBN
 WHERE r.ReaderID = p_ReaderID
 ORDER BY r.BooklistCount DESC

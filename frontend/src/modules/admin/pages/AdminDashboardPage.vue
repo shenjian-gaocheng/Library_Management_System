@@ -4,7 +4,7 @@
       功能导航
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      
+
       <!-- 1. 为每张卡片添加了独立的 border-l-4 和 边框颜色/悬停背景色 -->
       <router-link to="/admin/books" class="dashboard-card group border-l-4 border-blue-500 hover:bg-blue-50/60">
         <h3 class="card-title">图书管理</h3>
@@ -31,10 +31,15 @@
         <h3 class="card-title">公告发布</h3>
         <p class="card-description">发布图书馆最新通知与公告。</p>
       </router-link>
-      
+
       <router-link to="/admin/reports" class="dashboard-card group border-l-4 border-red-500 hover:bg-red-50/60">
         <h3 class="card-title">举报处理</h3>
         <p class="card-description">处理用户提交的各类举报信息。</p>
+      </router-link>
+
+      <router-link to="/admin/readers" class="dashboard-card group border-l-4 border-red-500 hover:bg-red-50/60">
+        <h3 class="card-title">读者管理</h3>
+        <p class="card-description">查看并管理图书馆读者信息</p>
       </router-link>
 
     </div>
