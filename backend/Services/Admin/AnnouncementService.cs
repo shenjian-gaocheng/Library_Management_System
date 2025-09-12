@@ -22,11 +22,13 @@ namespace backend.Services.Admin
 
         public async Task<PublicAnnouncementsDto> GetPublicAnnouncementsAsync()
         {
-            var allPublic = await _repository.GetPublicAnnouncementsAsync();
+            var allPublic = await _repository.GetPublicAnnouncementsAsync(); 
+
             return new PublicAnnouncementsDto
             {
-                Urgent = allPublic.Where(a => a.Priority == "紧急"),
-                Regular = allPublic.Where(a => a.Priority == "常规").Take(3)
+                // 核心修改：在进行字符串比较前，也使用 Trim()
+                Urgent = allPublic.Where(a => a.Priority.Trim() == "紧急"),
+                Regular = allPublic.Where(a => a.Priority.Trim() == "常规").Take(3) 
             };
         }
 
