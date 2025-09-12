@@ -1,29 +1,31 @@
 <template>
-  <div class="p-4 mt-[60px]">
-    <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
-      ⬅ 返回
-    </button>
-
-    <BooklistHeader
-      :name="store.currentBooklist?.BooklistInfo.BooklistName"
-      :intro="store.currentBooklist?.BooklistInfo.BooklistIntroduction"
-      :notes="store.currentBooklist?.Notes"
-      show-notes
-      @edit-notes="editNotes"
-    />
-
-    <BookItem
-      v-for="b in store.currentBooklist?.Books"
-      :key="b.ISBN"
-      :book="b"
-    />
-
-    <div class="mt-4">
-      <button class="px-3 py-1 bg-red-500 text-white rounded" @click="cancelCollect">
-        取消收藏
+  <Layout>
+    <div class="p-4 mt-[60px]">
+      <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
+        ⬅ 返回
       </button>
+
+      <BooklistHeader
+        :name="store.currentBooklist?.BooklistInfo.BooklistName"
+        :intro="store.currentBooklist?.BooklistInfo.BooklistIntroduction"
+        :notes="store.currentBooklist?.Notes"
+        show-notes
+        @edit-notes="editNotes"
+      />
+
+      <BookItem
+        v-for="b in store.currentBooklist?.Books"
+        :key="b.ISBN"
+        :book="b"
+      />
+
+      <div class="mt-4">
+        <button class="px-3 py-1 bg-red-500 text-white rounded" @click="cancelCollect">
+          取消收藏
+        </button>
+      </div>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script setup>
@@ -32,6 +34,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useBooklistStore } from '@/stores/bookliststore'
 import BooklistHeader from '../components/BooklistHeader.vue'
 import BookItem from '../components/BookItem.vue'
+import Layout from '@/modules/reader/reader_DashBoard_layout/layout.vue';
 
 const store = useBooklistStore()
 const route = useRoute()
