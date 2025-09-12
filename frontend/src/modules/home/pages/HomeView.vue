@@ -19,8 +19,6 @@ import Banner from '@/modules/home/components/Banner.vue'
 import QuickEntry from '@/modules/home/components/QuickEntry.vue'
 import BookRecommend from '@/modules/home/components/BookRecommend.vue'
 import Announcement from '@/modules/home/components/Announcement.vue'
-import NavbarTop from '@/shared/components/layouts/NavbarTop.vue'
-import Footer from '@/shared/components/layouts/Footer.vue'
 </script>
 
 <style scoped>

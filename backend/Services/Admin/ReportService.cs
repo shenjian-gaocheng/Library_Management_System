@@ -38,5 +38,10 @@ namespace backend.Services.Admin
                 _ => throw new ArgumentException("Invalid action specified.")
             };
         }
+        
+        public async Task<int> AddReportAsync(ReportDto report)
+        {
+            return await _repository.AddReportAsync(report);
+        }
     }
 }

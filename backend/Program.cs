@@ -105,14 +105,14 @@ services.AddTransient<LibrarianService>();
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
 builder.Services.AddSingleton(new CommentRepository(connectionString));
-builder.Services.AddSingleton(new ReportRepository(connectionString));
+// builder.Services.AddSingleton(new ReportRepository(connectionString));
 builder.Services.AddSingleton(new BookCategoryTreeOperation(connectionString));
 builder.Services.AddSingleton(new BookCategoryRepository(connectionString));
 builder.Services.AddSingleton(new LogService(connectionString));
 builder.Services.AddSingleton(new BookShelfRepository(connectionString));
 builder.Services.AddTransient<BookService>();
 builder.Services.AddTransient<CommentService>();
-builder.Services.AddTransient<ReportService>();
+// builder.Services.AddTransient<ReportService>();
 builder.Services.AddTransient<BookCategoryService>();
 builder.Services.AddTransient<BookShelfService>();
 

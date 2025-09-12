@@ -171,7 +171,7 @@ async function onSubmit() {
             const user = (await getLibrarianProfile()).data
             localStorage.setItem('user', JSON.stringify(user))
             //跳转到管理员操作页面
-            await router.push('/')
+            await router.push('/admin/dashboard')
           }
         } else {
           alert(res.msg || '登录失败')

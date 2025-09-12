@@ -2,7 +2,7 @@
   <div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
     <div class="mb-3">
       <div class="text-base font-semibold leading-tight">馆藏信息</div>
-      <div class="text-sm text-gray-500">仅按条码进行借出 / 还回 / 下架 / 上架</div>
+      <div class="text-sm text-gray-500">仅按条码进行借出 / 还回</div>
     </div>
 
     <div v-if="book" class="grid grid-cols-2 gap-y-2 gap-x-6 text-sm">
@@ -28,12 +28,6 @@
         @click="$emit('borrow')"
       >借出</button>
 
-      <button
-        class="px-3 py-2 rounded-lg text-white bg-amber-500 disabled:opacity-60"
-        :disabled="loading || book.Status !== normal"
-        @click="$emit('offShelf')"
-      >下架</button>
-
       <!-- 借出 -> 还回 -->
       <button
         class="px-3 py-2 rounded-lg bg-gray-100 border border-gray-300 disabled:opacity-60"
@@ -41,12 +35,6 @@
         @click="$emit('return')"
       >还回</button>
 
-      <!-- 下架 -> 上架(正常) -->
-      <button
-        class="px-3 py-2 rounded-lg text-white bg-emerald-600 disabled:opacity-60"
-        :disabled="loading || book.Status !== off"
-        @click="$emit('onShelf')"
-      >上架</button>
     </div>
   </div>
 </template>

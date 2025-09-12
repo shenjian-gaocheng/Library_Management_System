@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4">
+  <div class="p-4 mt-[60px]">
     <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
       ⬅ 返回
     </button>
