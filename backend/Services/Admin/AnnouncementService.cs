@@ -1,20 +1,50 @@
-using library_system.DTOs.Admin;
-    // ↓↓↓ 这是最关键的新增行，告诉编译器去哪里找 AnnouncementRepository ↓↓↓
-using library_system.Repositories.Admin; 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using backend.DTOs.Admin;
+using backend.Repositories.Admin;
 
-namespace library_system.Services.Admin
+namespace backend.Services.Admin
 {
     public class AnnouncementService
     {
         private readonly AnnouncementRepository _repository;
-        public AnnouncementService(AnnouncementRepository repository) { _repository = repository; }
-        
-        public Task<IEnumerable<AnnouncementDto>> GetAllAnnouncementsAsync() => _repository.GetAllAsync();
-        public Task<IEnumerable<AnnouncementDto>> GetPublicAnnouncementsAsync() => _repository.GetPubliclyVisibleAsync();
-        public Task<int> CreateAnnouncementAsync(CreateOrUpdateAnnouncementDto dto) => _repository.CreateAsync(dto);
-        public Task<bool> UpdateAnnouncementAsync(int id, CreateOrUpdateAnnouncementDto dto) => _repository.UpdateAsync(id, dto);
-        public Task<bool> DeleteAnnouncementAsync(int id) => _repository.DeleteAsync(id);
+
+        public AnnouncementService(AnnouncementRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public Task<IEnumerable<AnnouncementDto>> GetAllAnnouncementsAsync()
+        {
+            return _repository.GetAllAnnouncementsAsync();
+        }
+
+        public async Task<PublicAnnouncementsDto> GetPublicAnnouncementsAsync()
+        {
+            var allPublic = await _repository.GetPublicAnnouncementsAsync(); 
+
+            return new PublicAnnouncementsDto
+            {
+                // 核心修改：在进行字符串比较前，也使用 Trim()
+                Urgent = allPublic.Where(a => a.Priority.Trim() == "紧急"),
+                Regular = allPublic.Where(a => a.Priority.Trim() == "常规").Take(3) 
+            };
+        }
+
+        public Task<AnnouncementDto> CreateAnnouncementAsync(UpsertAnnouncementDto dto, int librarianId)
+        {
+            return _repository.CreateAnnouncementAsync(dto, librarianId);
+        }
+
+        public Task<AnnouncementDto> UpdateAnnouncementAsync(int id, UpsertAnnouncementDto dto)
+        {
+            return _repository.UpdateAnnouncementAsync(id, dto);
+        }
+
+        public Task<bool> TakedownAnnouncementAsync(int id)
+        {
+            return _repository.UpdateStatusAsync(id, "已撤回");
+        }
     }
 }

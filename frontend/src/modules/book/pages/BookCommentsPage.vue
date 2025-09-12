@@ -1,10 +1,10 @@
 <!-- frontend/src/modules/book/pages/BookCommentsPage.vue -->
 <template>
-  <LayoutDefault>
-    <div class="book-comments-page">
+
+    <div class="book-comments-page mt-[60px]" >
       <BookComments />
     </div>
-  </LayoutDefault>
+
 </template>
 
 <script setup>

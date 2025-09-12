@@ -1,32 +1,31 @@
 <template>
-  <div class="p-4">
-    <!-- <button class="text-blue-500 mb-4" @click="$router.back()">⬅ 返回</button> -->
-    <button 
-    class="text-blue-500 mb-4" 
-    @click="$router.push({ name: 'Booklist' })"
-    >
-    ⬅ 返回
-    </button>
-    <BooklistHeader
-      :name="store.currentBooklist?.booklistInfo.booklistName"
-      :intro="store.currentBooklist?.booklistInfo.booklistIntroduction"
-      :notes="store.currentBooklist?.collectNotes"
-      show-notes
-      @edit-notes="editNotes"
-    />
-
-    <BookItem
-      v-for="b in store.currentBooklist?.books"
-      :key="b.isbn"
-      :book="b"
-    />
-
-    <div class="mt-4">
-      <button class="px-3 py-1 bg-red-500 text-white rounded" @click="cancelCollect">
-        取消收藏
+  <Layout>
+    <div class="p-4 mt-[60px]">
+      <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
+        ⬅ 返回
       </button>
+
+      <BooklistHeader
+        :name="store.currentBooklist?.BooklistInfo.BooklistName"
+        :intro="store.currentBooklist?.BooklistInfo.BooklistIntroduction"
+        :notes="store.currentBooklist?.Notes"
+        show-notes
+        @edit-notes="editNotes"
+      />
+
+      <BookItem
+        v-for="b in store.currentBooklist?.Books"
+        :key="b.ISBN"
+        :book="b"
+      />
+
+      <div class="mt-4">
+        <button class="px-3 py-1 bg-red-500 text-white rounded" @click="cancelCollect">
+          取消收藏
+        </button>
+      </div>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script setup>
@@ -35,6 +34,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useBooklistStore } from '@/stores/bookliststore'
 import BooklistHeader from '../components/BooklistHeader.vue'
 import BookItem from '../components/BookItem.vue'
+import Layout from '@/modules/reader/reader_DashBoard_layout/layout.vue';
 
 const store = useBooklistStore()
 const route = useRoute()
@@ -45,15 +45,19 @@ onMounted(() => {
   store.fetchBooklistDetails(booklistId, {withToken:true})
 })
 
-function editNotes() {
+// 修改收藏备注
+async function editNotes() {
   const newNotes = prompt('请输入新的收藏备注')
-  if (newNotes) store.updateCollectNotes(booklistId, { newNotes }, {withToken:true})
+  if (newNotes) {
+    await store.updateCollectNotes(booklistId, { NewNotes: newNotes }, {withToken:true})
+    store.fetchBooklistDetails(booklistId, {withToken:true})
+  }
 }
 
-function cancelCollect() {
-  if (confirm('确定要取消收藏吗？')) {
-    store.cancelCollect(booklistId, {withToken:true})
-    router.push({ name: 'Booklist' })
-  }
+// 取消收藏
+async function cancelCollect() {
+  if (!confirm('确定要取消收藏吗？')) return
+  await store.cancelCollect(booklistId)
+  router.push({ name: 'Booklist' })
 }
 </script>

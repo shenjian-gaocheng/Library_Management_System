@@ -1,27 +1,67 @@
-// 文件: frontend/src/modules/admin/api.js
-import http from '@/services/http.js';
+﻿import http from '@/services/http.js'
 
-// [公开] 获取可发布的公告
-export function getPublicAnnouncements() {
-  return http.get('/announcements/public');
+// 获取所有采购分析排名数据
+export function getPurchaseAnalysis() {
+  return http.get('/admin/purchase-analysis',{withToken:true})
 }
 
-// [管理] 获取所有公告以供管理
-export function getAllAnnouncementsForManagement() {
-  return http.get('/announcements/manage');
+// 获取采购日志列表
+export function getPurchaseLogs() {
+  return http.get('/admin/purchase-analysis/logs',{withToken:true})
 }
 
-// [管理] 创建一个新公告
+// 添加一条新的采购日志
+export function addPurchaseLog(logText) {
+  return http.post('/admin/purchase-analysis/logs', { logText },{withToken:true})
+}
+
+// 获取所有公告（管理用）
+export function getAllAnnouncements() {
+  return http.get('/admin/announcements',{withToken:true})
+}
+
+// 创建新公告
 export function createAnnouncement(data) {
-  // data 格式: { title, content, targetGroup, status, librarianID }
-  return http.post('/announcements/manage', data);
+  return http.post('/admin/announcements', data,{withToken:true})
 }
 
-export function deleteAnnouncement(id) {
-  // 注意：后端的管理接口，我们之前都统一在了 /manage 路径下
-  return http.delete(`/announcements/manage/${id}`);
-}
-
+// 更新公告
 export function updateAnnouncement(id, data) {
-  return http.put(`/announcements/manage/${id}`, data);
+  return http.put(`/admin/announcements/${id}`, data,{withToken:true})
 }
+
+// 下架公告
+export function takedownAnnouncement(id) {
+  return http.put(`/admin/announcements/${id}/takedown`,{withToken:true})
+}
+
+// 获取图书管理列表
+export function getAdminBooks(searchTerm = '') {
+  return http.get('/admin/books', { params: { search: searchTerm } },{withToken:true})
+}
+
+// 创建新图书
+export function createBook(bookData) {
+  return http.post('/admin/books', bookData,{withToken:true})
+}
+
+// 更新图书信息
+export function updateBook(isbn, bookData) {
+  return http.put(`/admin/books/${isbn}`, bookData,{withToken:true})
+}
+
+// 下架图书
+export function takedownBook(isbn) {
+  return http.delete(`/admin/books/${isbn}`,{withToken:true})
+}
+
+// 获取所有待处理的举报
+export function getPendingReports() {
+  return http.get('/admin/reports/pending',{withToken:true})
+}
+
+// 处理一个举报 (现在包含 banUser 参数)
+export function handleReport(reportId, action, banUser) {
+  return http.put(`/admin/reports/${reportId}`, { action, banUser },{withToken:true})
+}
+

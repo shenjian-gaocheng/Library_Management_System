@@ -45,6 +45,9 @@ export const updateBorrowingRecord = (data) => http.put('/borrowing', data,{with
 export const deleteBorrowingRecord = (id) => http.delete(`/borrowing/${id}`,{withToken:true});
 export const returnBook = (id) => http.put(`/borrowing/${id}/return`,{withToken:true});
 export const renewBorrowing = (id) => http.put(`/borrowing/${id}/renew`,{withToken:true});
+export const getUnreturnedCount = (id) => http.get('/borrowing/unreturned-count/placeholder', { withToken: true });
+export const getOverdueUnreturnedCount = (id) => http.get('/borrowing/overdue-unreturned-count/placeholder', { withToken: true });
+export const getAllOverdueUnreturnedCountByReader = (id) => http.get('/borrowing/all-overdue-unreturned-count/placeholder', { withToken: true });
 
 // ——————————————————Librarian相关接口————————————————
 
@@ -55,3 +58,20 @@ export const updateLibrarian = (data) => http.put('/librarian', data,{withToken:
 export const deleteLibrarian = (id) => http.delete(`/librarian/${id}`,{withToken:true})
 
 export const getLibrarianProfile = () => http.get('/librarian/info',{withToken:true})
+
+
+export function getSeatLayout(buildingId, floor) {
+  return http.get('/space/seats', { params: { buildingId, floor } });
+}
+
+export function createSeatReservation(data) {
+  return http.post('/space/reservations/seat', data);
+}
+
+export function getMyReservations() {
+  return http.get('/space/my-reservations');
+}
+
+export function cancelReservation(id) {
+  return http.put(`/space/reservations/${id}/cancel`);
+}

@@ -1,8 +1,8 @@
 ﻿<template>
   
-  <LayoutDefault>
+
     <BookSearchLocation />
-  </LayoutDefault>
+
 </template>
 
 <script setup>

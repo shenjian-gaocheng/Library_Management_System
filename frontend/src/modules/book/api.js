@@ -8,69 +8,6 @@ export function getBooks(keyword) {
 }
 
 
-//创建书单
-export function createBooklist(data) {
-  return http.post('/book/booklists', data, { withToken: true })
-}
-
-//删除书单
-export function deleteBooklist(booklistId) {
-  return http.delete(`/book/booklists/${booklistId}`, { withToken: true })
-}
-
-//获取书单详情
-export function getBooklistDetails(booklistId) {
-  return http.get(`/book/booklists/${booklistId}`, { withToken: true })
-}
-
-//推荐书单
-export function recommendBooklists(booklistId, limit = 10) {
-  return http.get(`/book/booklists/${booklistId}/recommend`, {
-    params: { limit }, withToken: true
-  })
-}
-
-//添加图书到书单
-export function addBookToBooklist(booklistId, data) {
-  return http.post(`/book/booklists/${booklistId}/books`, data, { withToken: true })
-}
-
-//从书单移除图书
-export function removeBookFromBooklist(booklistId, isbn) {
-  return http.delete(`/book/booklists/${booklistId}/books/${isbn}`, { withToken: true })
-}
-
-//收藏书单
-export function collectBooklist(booklistId, data) {
-  return http.post(`/book/booklists/${booklistId}/collect`, data, { withToken: true })
-}
-
-//取消收藏书单
-export function cancelCollectBooklist(booklistId) {
-  return http.delete(`/book/booklists/${booklistId}/collect`, { withToken: true })
-}
-
-//更新收藏备注
-export function updateCollectNotes(booklistId, data) {
-  return http.put(`/book/booklists/${booklistId}/collect/notes`, data, { withToken: true })
-}
-
-//查询某个用户的书单（创建 + 收藏）
-export function searchBooklistsByReader(readerId) {
-  return http.get(`/book/booklists/reader/${readerId}`, { withToken: true })
-}
-
-//修改书单名称
-export function updateBooklistName(booklistId, data) {
-  return http.put(`/book/booklists/${booklistId}/name`, data, { withToken: true })
-}
-
-//修改书单简介
-export function updateBooklistIntro(booklistId, data) {
-  return http.put(`/book/booklists/${booklistId}/intro`, data, { withToken: true })
-}
-
-
 export function getBookByBarcode(barcode) {
   return http.get(`/Book/by-barcode/${encodeURIComponent(barcode)}`, { withToken: true })
 }
@@ -98,17 +35,17 @@ export function getReportsByReaderId(readerId) {
 }
 
 export function getReportsByLibrarianId(librarianId) {
-  return http.get(`/report/by-librarian/${librarianId}`)
+  return http.get(`/report/by-librarian/${librarianId}`, { withToken: true })
 }
 
 export function addReport(reportData) {
-  return http.post('/report/add', reportData, { withToken: true })
+  return http.post('/admin/reports/add', reportData, { withToken: true })
 }
 
 
 
 export function changeReportStatus(statusData) {
-  return http.post('/report/change-status', statusData)
+  return http.post('/report/change-status', statusData, { withToken: true })
 }
 
 // ---------- 分类 ----------
@@ -129,6 +66,38 @@ export function updateCategory(data) {
 
 export function deleteCategory(id, operatorId) {
   return http.delete(`/Category/${id}?operatorId=${operatorId}`, { withToken: true })
+}
+
+// ---------- 图书-分类 关联 ----------
+// 绑定图书到多个分类
+export function bindBookToCategories(data) {
+  // data: { isbn: string, categoryIds: string[], relationNote?: string|null }
+  return http.post('/BookCategory/bind', data, { withToken: true })
+}
+
+// 获取某本书已绑定的分类
+export function getBookCategories(isbn) {
+  return http.get(`/BookCategory/book/${encodeURIComponent(isbn)}`, { withToken: true })
+}
+
+// 获取某分类下的图书
+export function getCategoryBooks(categoryId) {
+  return http.get(`/BookCategory/category/${encodeURIComponent(categoryId)}`, { withToken: true })
+}
+
+// 获取所有叶子分类（用于绑定选择）
+export function getLeafCategories() {
+  return http.get('/BookCategory/leaf-categories', { withToken: true })
+}
+
+// 获取图书-分类关联统计
+export function getBookCategoryStats() {
+  return http.get('/BookCategory/stats', { withToken: true })
+}
+
+// 移除某书与某分类的关联
+export function removeBookCategory(isbn, categoryId) {
+  return http.delete(`/BookCategory/${encodeURIComponent(isbn)}/${encodeURIComponent(categoryId)}`, { withToken: true })
 }
 
 // ---------- 书架 ----------
@@ -228,52 +197,77 @@ export function returnBookByBarcode(barcode) {
 }
 
 export function onShelfBookByBarcode(barcode) {
-  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/on-shelf`, {}, { withToken: true })
+  return http.patch(`/Book/by-barcode/${encodeURIComponent(barcode)}/on-shelf`)
 }
 
-// ---------- 图书分类关联相关接口 ----------
-
-// 绑定图书到多个分类
-export function bindBookToCategories(bindData) {
-  return http.post('/BookCategory/bind', bindData, { withToken: true })
+//创建书单
+export function createBooklist(data) {
+  return http.post('/book/booklists', data, { withToken: true })
 }
 
-// 添加单个图书分类关联
-export function addBookCategory(categoryData) {
-  return http.post('/BookCategory/add', categoryData, { withToken: true })
+//删除书单
+export function deleteBooklist(booklistId) {
+  return http.delete(`/book/booklists/${booklistId}`, { withToken: true })
 }
 
-// 移除图书分类关联
-export function removeBookCategory(isbn, categoryId) {
-  return http.delete(`/BookCategory/${encodeURIComponent(isbn)}/${encodeURIComponent(categoryId)}`, { withToken: true })
+//获取书单详情
+export function getBooklistDetails(booklistId) {
+  return http.get(`/book/booklists/${booklistId}`, { withToken: true })
 }
 
-// 获取图书的所有分类关联
-export function getBookCategories(isbn) {
-  return http.get(`/BookCategory/book/${encodeURIComponent(isbn)}`, { withToken: true })
+//推荐书单
+export function recommendBooklists(booklistId, limit = 10) {
+  return http.get(`/book/booklists/${booklistId}/recommend`, {
+    params: { limit }, withToken: true
+  })
 }
 
-// 获取分类的所有图书关联
-export function getCategoryBooks(categoryId) {
-  return http.get(`/BookCategory/category/${encodeURIComponent(categoryId)}`, { withToken: true })
+//添加图书到书单
+export function addBookToBooklist(booklistId, data) {
+  return http.post(`/book/booklists/${booklistId}/books`, data, { withToken: true })
 }
 
-// 获取所有叶子节点分类（用于绑定选择）
-export function getLeafCategories() {
-  return http.get('/BookCategory/leaf-categories', { withToken: true })
+//从书单移除图书
+export function removeBookFromBooklist(booklistId, isbn) {
+  return http.delete(`/book/booklists/${booklistId}/books/${isbn}`, { withToken: true })
 }
 
-// 获取图书分类关联统计
-export function getBookCategoryStats() {
-  return http.get('/BookCategory/stats', { withToken: true })
+//收藏书单
+export function collectBooklist(booklistId, data) {
+  return http.post(`/book/booklists/${booklistId}/collect`, data, { withToken: true })
 }
 
-// 检查图书分类关联是否存在
-export function checkBookCategoryExists(isbn, categoryId) {
-  return http.get(`/BookCategory/exists/${encodeURIComponent(isbn)}/${encodeURIComponent(categoryId)}`, { withToken: true })
+//取消收藏书单
+export function cancelCollectBooklist(booklistId) {
+  return http.delete(`/book/booklists/${booklistId}/collect`, { withToken: true })
+}
+
+//更新收藏备注
+export function updateCollectNotes(booklistId, data) {
+  return http.put(`/book/booklists/${booklistId}/collect/notes`, data, { withToken: true })
+}
+
+//查询某个用户的书单（创建 + 收藏）
+export function searchBooklistsByReader(readerId) {
+  return http.get(`/book/booklists/reader/${readerId}`, { withToken: true })
+}
+
+//修改书单名称
+export function updateBooklistName(booklistId, data) {
+  return http.put(`/book/booklists/${booklistId}/name`, data, { withToken: true })
+}
+
+//修改书单简介
+export function updateBooklistIntro(booklistId, data) {
+  return http.put(`/book/booklists/${booklistId}/intro`, data, { withToken: true })
 }
 
 // 获取书架上的书籍
-export function getShelfBooks(shelfId) {
-  return http.get(`/bookshelf/shelf-books/${shelfId}`);
+export function GetShelfBooks(shelfId) {
+  return http.get(`/bookshelf/shelf-books/${shelfId}`, { withToken: true });
+}
+
+export function addBookCopies(data) {
+  // data should be { ISBN, NumberOfCopies, ShelfID }
+  return http.post('/admin/books/copies', data)
 }

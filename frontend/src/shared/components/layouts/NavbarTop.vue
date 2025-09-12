@@ -8,34 +8,15 @@
         <router-link to="/books" class="nav-item">图书资源</router-link>
 
         <div class="nav-item dropdown">
-          <span>借阅服务</span>
+          <span>空间服务</span> <!-- 修改名称 -->
           <div class="dropdown-menu">
-            <router-link to="/services/rules">借阅规则</router-link>
-            <router-link to="/services/reserve">图书预约</router-link>
-            <router-link to="/services/renew">图书续借</router-link>
+            <router-link to="/space/seats">座位预约</router-link> <!-- 修改链接 -->
           </div>
         </div>
 
         <router-link to="/my/home/dashboard" class="nav-item">读者控制台</router-link>
 
-        <div class="nav-item dropdown">
-          <span>管理员操作</span>
-          <div class="dropdown-menu">
-            
-            <router-link to="example-route">example-title</router-link>
-            <!-- 管理员操作临时入口，以后需要改到管理员主页里 -->
-            <!-- 在下面新增：路由，功能名称 -->
-            <router-link to="/admin/announcements">公告管理</router-link>
-            <!-- 添加书架管理 -->
-            <router-link to="bookshelf">书架管理</router-link>
 
-            <!-- 添加分类管理 -->
-            <router-link to="/admin/category">分类管理</router-link>
-            
-            <!-- 添加图书分类管理 -->
-            <router-link to="/books/category-manage">图书分类管理</router-link>
-          </div>
-        </div>
         
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>
@@ -89,6 +70,7 @@ onUnmounted(() => {
 onMounted(async () => {
   try {
     const res = await getMyProfile()               // 要求 http 拦截器自动带 token
+    // const res2 = await getLibrarianProfile()               // 要求 http 拦截器自动带 token
     const u = res?.data ?? res
     isLoggedIn.value = true
     displayName.value = u.fullName || u.nickName || u.userName || ''
