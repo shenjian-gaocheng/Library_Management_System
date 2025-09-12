@@ -42,6 +42,13 @@
         <p class="card-description">查看并管理图书馆读者信息</p>
       </router-link>
 
+      <router-link to="/admin/book-category" class="dashboard-card group border-l-4 border-teal-500 hover:bg-teal-50/60">
+        <h3 class="card-title text-teal-800">书籍分类</h3>
+        <p class="card-description text-teal-600">为指定的图书绑定或更新其所属分类。</p>
+      </router-link>
+
+
+
     </div>
   </div>
 </template>

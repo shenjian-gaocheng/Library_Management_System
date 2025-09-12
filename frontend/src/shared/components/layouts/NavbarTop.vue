@@ -8,11 +8,9 @@
         <router-link to="/books" class="nav-item">图书资源</router-link>
 
         <div class="nav-item dropdown">
-          <span>借阅服务</span>
+          <span>空间服务</span> <!-- 修改名称 -->
           <div class="dropdown-menu">
-            <router-link to="/services/rules">借阅规则</router-link>
-            <router-link to="/services/reserve">图书预约</router-link>
-            <router-link to="/services/renew">图书续借</router-link>
+            <router-link to="/space/seats">座位预约</router-link> <!-- 修改链接 -->
           </div>
         </div>
 

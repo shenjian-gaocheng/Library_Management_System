@@ -6,6 +6,7 @@ import BookManagePage from '@/modules/admin/pages/BookManagePage.vue'
 import ShelfManagePage from '@/modules/admin/pages/ShelfManagePage.vue' // 确保这个新页面被引入
 import ReportHandlingPage from '@/modules/admin/pages/ReportHandlingPage.vue'
 import ReaderMagnagePage from '@/modules/admin/pages/ReaderMagnagePage.vue'
+import BookBindCategoryPage from '@/modules/admin/pages/BookBindCategoryPage.vue';
 
 export default [
   // 管理员仪表盘
@@ -108,5 +109,19 @@ export default [
       requiresAuth: true,
       requiresAdmin: true,
       title: '读者管理' }
-  }
+  },
+
+  {
+    path: '/admin/book-category',
+    name: 'BookBindCategory',
+    component: BookBindCategoryPage,
+    meta: {
+      layout: 'Admin',
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: '书籍分类'
+    }
+  },
+
+
 ]

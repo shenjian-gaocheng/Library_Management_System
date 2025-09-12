@@ -1,41 +1,43 @@
 <template>
-  <div class="p-4 mt-[60px]">
-    <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
-      ⬅ 返回
-    </button>
+  <Layout>
+    <div class="p-4 mt-[60px]">
+      <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
+        ⬅ 返回
+      </button>
 
-    <!-- ✅ 正确从 BooklistInfo 取字段 -->
-    <BooklistHeader
-      :name="store.currentBooklist?.BooklistInfo.BooklistName"
-      :intro="store.currentBooklist?.BooklistInfo.BooklistIntroduction"
-      editable-name
-      editable-intro
-      @edit-name="editName"
-      @edit-intro="editIntro"
-    />
+      <!-- ✅ 正确从 BooklistInfo 取字段 -->
+      <BooklistHeader
+        :name="store.currentBooklist?.BooklistInfo.BooklistName"
+        :intro="store.currentBooklist?.BooklistInfo.BooklistIntroduction"
+        editable-name
+        editable-intro
+        @edit-name="editName"
+        @edit-intro="editIntro"
+      />
 
-    <BookItem
-      v-for="b in store.currentBooklist?.Books"
-      :key="b.ISBN"
-      :book="b"
-      show-remove
-      @remove="removeBook"
-    />
+      <BookItem
+        v-for="b in store.currentBooklist?.Books"
+        :key="b.ISBN"
+        :book="b"
+        show-remove
+        @remove="removeBook"
+      />
 
-    <!-- ✅ ISBN 输入框点击后显示 -->
-    <div class="mt-4">
-      <div v-if="showInput">
-        <input v-model="isbn" placeholder="输入 ISBN" class="border px-2 py-1 mr-2"/>
-        <button class="px-3 py-1 bg-green-500 text-white rounded" @click="addBook">确定</button>
-        <button class="px-3 py-1 bg-gray-300 rounded ml-2" @click="cancelAdd">取消</button>
-      </div>
-      <div v-else>
-        <button class="px-3 py-1 bg-green-500 text-white rounded" @click="showInput = true">
-          ➕ 添加图书
-        </button>
+      <!-- ✅ ISBN 输入框点击后显示 -->
+      <div class="mt-4">
+        <div v-if="showInput">
+          <input v-model="isbn" placeholder="输入 ISBN" class="border px-2 py-1 mr-2"/>
+          <button class="px-3 py-1 bg-green-500 text-white rounded" @click="addBook">确定</button>
+          <button class="px-3 py-1 bg-gray-300 rounded ml-2" @click="cancelAdd">取消</button>
+        </div>
+        <div v-else>
+          <button class="px-3 py-1 bg-green-500 text-white rounded" @click="showInput = true">
+            ➕ 添加图书
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script setup>
@@ -44,6 +46,7 @@ import { useRoute } from 'vue-router'
 import { useBooklistStore } from '@/stores/bookliststore'
 import BooklistHeader from '../components/BooklistHeader.vue'
 import BookItem from '../components/BookItem.vue'
+import Layout from '@/modules/reader/reader_DashBoard_layout/layout.vue';
 
 const store = useBooklistStore()
 const route = useRoute()

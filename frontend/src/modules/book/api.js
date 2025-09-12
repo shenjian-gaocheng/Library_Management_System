@@ -68,6 +68,38 @@ export function deleteCategory(id, operatorId) {
   return http.delete(`/Category/${id}?operatorId=${operatorId}`, { withToken: true })
 }
 
+// ---------- 图书-分类 关联 ----------
+// 绑定图书到多个分类
+export function bindBookToCategories(data) {
+  // data: { isbn: string, categoryIds: string[], relationNote?: string|null }
+  return http.post('/BookCategory/bind', data, { withToken: true })
+}
+
+// 获取某本书已绑定的分类
+export function getBookCategories(isbn) {
+  return http.get(`/BookCategory/book/${encodeURIComponent(isbn)}`, { withToken: true })
+}
+
+// 获取某分类下的图书
+export function getCategoryBooks(categoryId) {
+  return http.get(`/BookCategory/category/${encodeURIComponent(categoryId)}`, { withToken: true })
+}
+
+// 获取所有叶子分类（用于绑定选择）
+export function getLeafCategories() {
+  return http.get('/BookCategory/leaf-categories', { withToken: true })
+}
+
+// 获取图书-分类关联统计
+export function getBookCategoryStats() {
+  return http.get('/BookCategory/stats', { withToken: true })
+}
+
+// 移除某书与某分类的关联
+export function removeBookCategory(isbn, categoryId) {
+  return http.delete(`/BookCategory/${encodeURIComponent(isbn)}/${encodeURIComponent(categoryId)}`, { withToken: true })
+}
+
 // ---------- 书架 ----------
 export function getBooksBookShelf(keyword) {
   return http.get('/bookshelf/search_book_which_shelf', {
@@ -233,4 +265,9 @@ export function updateBooklistIntro(booklistId, data) {
 // 获取书架上的书籍
 export function GetShelfBooks(shelfId) {
   return http.get(`/bookshelf/shelf-books/${shelfId}`, { withToken: true });
+}
+
+export function addBookCopies(data) {
+  // data should be { ISBN, NumberOfCopies, ShelfID }
+  return http.post('/admin/books/copies', data)
 }

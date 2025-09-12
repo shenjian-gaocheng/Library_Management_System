@@ -22,5 +22,19 @@ export default [
       title: '借阅记录管理',
       //requiresAuth: true // 如果需要登录验证
     }
+  },
+
+  {
+    path: '/space/seats',
+    name: 'SeatReservation',
+    component: () => import('@/modules/reader/pages/SeatReservationPage.vue'),
+    meta: { requiresAuth: true, title: '座位预约' }
+  },
+
+  {
+    path: '/my/reservations',
+    name: 'MyReservations',
+    component: () => import('@/modules/reader/pages/MyReservationsPage.vue'),
+    meta: { requiresAuth: true, title: '我的预约', layout: 'Dashboard' } // 假设读者有自己的控制台布局
   }
 ];

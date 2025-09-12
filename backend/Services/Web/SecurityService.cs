@@ -111,5 +111,15 @@ namespace backend.Services.Web
             return CheckIsLibrarian(GetLoginUser());
         }
 
+        public Reader? GetReaderFromToken()
+        {
+            var loginUser = GetLoginUser();
+            if (CheckIsReader(loginUser))
+            {
+                return loginUser.User as Reader;
+            }
+            return null;
+        }
+
     }
 }
