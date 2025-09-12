@@ -158,7 +158,7 @@ namespace backend.Controllers
                 };
                 return Ok(readerDetail);
             }
-
+            //todo
 
             return BadRequest("获取详细信息错误");
         }

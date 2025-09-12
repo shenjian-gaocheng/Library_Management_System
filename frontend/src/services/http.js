@@ -31,7 +31,7 @@ http.interceptors.response.use(
     if (status === 401) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      alert('登录已过期，请重新登录。')
+      // alert('登录已过期，请重新登录。')
 
       // 可选跳转
       // router.push({ path: '/login' })
