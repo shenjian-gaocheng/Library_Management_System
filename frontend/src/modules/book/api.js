@@ -35,17 +35,17 @@ export function getReportsByReaderId(readerId) {
 }
 
 export function getReportsByLibrarianId(librarianId) {
-  return http.get(`/report/by-librarian/${librarianId}`)
+  return http.get(`/report/by-librarian/${librarianId}`, { withToken: true })
 }
 
 export function addReport(reportData) {
-  return http.post('/report/add', reportData, { withToken: true })
+  return http.post('/admin/reports/add', reportData, { withToken: true })
 }
 
 
 
 export function changeReportStatus(statusData) {
-  return http.post('/report/change-status', statusData)
+  return http.post('/report/change-status', statusData, { withToken: true })
 }
 
 // ---------- 分类 ----------

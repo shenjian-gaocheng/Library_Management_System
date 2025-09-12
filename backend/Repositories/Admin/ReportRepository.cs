@@ -57,5 +57,17 @@ namespace backend.Repositories.Admin
                 throw;
             }
         }
+
+
+        public async Task<int> AddReportAsync(ReportDto report)
+        {
+            var sql = @"
+                INSERT INTO report(COMMENTID, READERID, REPORTREASON, REPORTTIME, STATUS, LIBRARIANID)
+                VALUES (:CommentID, :READERID, :ReportReason, :ReportTime, :Status, :LibrarianID)";
+
+            using var connection = new OracleConnection(_connectionString);
+            await connection.OpenAsync();
+            return await SqlMapper.ExecuteAsync(connection, sql, report);
+        }
     }
 }
