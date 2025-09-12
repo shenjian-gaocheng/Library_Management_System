@@ -57,3 +57,20 @@ export const updateLibrarian = (data) => http.put('/librarian', data,{withToken:
 export const deleteLibrarian = (id) => http.delete(`/librarian/${id}`,{withToken:true})
 
 export const getLibrarianProfile = () => http.get('/librarian/info',{withToken:true})
+
+
+export function getSeatLayout(buildingId, floor) {
+  return http.get('/space/seats', { params: { buildingId, floor } });
+}
+
+export function createSeatReservation(data) {
+  return http.post('/space/reservations/seat', data);
+}
+
+export function getMyReservations() {
+  return http.get('/space/my-reservations');
+}
+
+export function cancelReservation(id) {
+  return http.put(`/space/reservations/${id}/cancel`);
+}

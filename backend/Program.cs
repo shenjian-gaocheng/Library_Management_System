@@ -13,6 +13,9 @@ using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 using backend.Repositories.Admin;
 using backend.Services.Admin;
+using backend.Repositories.ReaderRepository;
+using backend.Repositories.Space; // <-- 新增或修改
+using backend.Services.Space;   // <-- 新增或修改
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -124,6 +127,9 @@ builder.Services.AddSingleton(new AnnouncementRepository(connectionString));
 builder.Services.AddTransient<AnnouncementService>();
 builder.Services.AddSingleton(new BookAdminRepository(connectionString));
 builder.Services.AddTransient<BookAdminService>();
+
+services.AddSingleton(new SpaceRepository(connectionString)); 
+services.AddTransient<SpaceService>();
 
 var app = builder.Build();
 
