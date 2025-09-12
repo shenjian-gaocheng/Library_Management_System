@@ -1,10 +1,10 @@
 <!-- frontend/src/modules/book/pages/ReportPage.vue -->
 <template>
-  <LayoutDefault>
+
     <div class="report-page">
       <Report />
     </div>
-  </LayoutDefault>
+
 </template>
 <script setup>
 import Report from '../components/Report.vue'
