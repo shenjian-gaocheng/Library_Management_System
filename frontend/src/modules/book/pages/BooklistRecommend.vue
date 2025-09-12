@@ -1,28 +1,28 @@
 <template>
-  <div class="p-4 mt-[60px]">
-    <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
-      ⬅ 返回
-    </button>
-    <h2 class="text-xl font-bold mb-4">猜你喜欢</h2>
-
-    <div
-      v-for="b in store.recommended"
-      :key="b.BooklistId"
-      class="flex justify-between items-center border p-3 mb-2 rounded"
-    >
-      <div>
-        <h3 class="font-semibold">{{ b.BooklistName }}</h3>
-        <p class="text-gray-500">{{ b.BooklistIntroduction }}</p>
-        <p class="text-sm text-gray-400">创建者: {{ b.CreatorName }}</p>
-      </div>
-      <button
-        class="px-3 py-1 bg-blue-500 text-white rounded"
-        @click="collect(b.BooklistId)"
-      >
-        收藏
+    <div class="p-4 mt-[60px]">
+      <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
+        ⬅ 返回
       </button>
+      <h2 class="text-xl font-bold mb-4">猜你喜欢</h2>
+
+      <div
+        v-for="b in store.recommended"
+        :key="b.BooklistId"
+        class="flex justify-between items-center border p-3 mb-2 rounded"
+      >
+        <div>
+          <h3 class="font-semibold">{{ b.BooklistName }}</h3>
+          <p class="text-gray-500">{{ b.BooklistIntroduction }}</p>
+          <p class="text-sm text-gray-400">创建者: {{ b.CreatorName }}</p>
+        </div>
+        <button
+          class="px-3 py-1 bg-blue-500 text-white rounded"
+          @click="collect(b.BooklistId)"
+        >
+          收藏
+        </button>
+      </div>
     </div>
-  </div>
 </template>
 
 <script setup>

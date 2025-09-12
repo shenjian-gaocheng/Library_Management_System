@@ -1,4 +1,5 @@
 <template>
+  <Layout>
   <div class="p-4 mt-[20px]">
     <h1 class="text-2xl font-bold mb-4">我的书单</h1>
 
@@ -48,7 +49,7 @@
       </div>
     </div>
   </div>
-
+  </Layout>
 </template>
 
 <script setup>
@@ -56,6 +57,7 @@ import LayoutDefault from '@/shared/components/layouts/LayoutDefault.vue'
 import { onMounted } from 'vue'
 import { useBooklistStore } from '@/stores/bookliststore'
 import BooklistCard from '../components/BooklistCard.vue'
+import Layout from '@/modules/reader/reader_DashBoard_layout/layout.vue';
 
 const store = useBooklistStore()
 

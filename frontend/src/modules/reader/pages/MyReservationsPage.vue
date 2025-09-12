@@ -1,40 +1,42 @@
 <template>
-  <div class="my-reservations-page">
-    <h1 class="page-title">我的预约记录</h1>
-    
-    <div v-if="loading" class="status-message">
-      正在加载您的预约记录...
-    </div>
-    <div v-else-if="error" class="status-message error">
-      {{ error }}
-    </div>
-    <div v-else-if="reservations.length === 0" class="status-message">
-      您还没有任何预约记录。
-    </div>
-    
-    <div v-else class="reservations-list">
-      <div v-for="r in reservations" :key="r.ReservationID" class="reservation-card">
-        <div class="card-header">
-          <span class="building-name">{{ r.BuildingName }}</span>
-          <span class="status" :class="getStatusClass(r.Status)">{{ r.Status }}</span>
+    <Layout>
+        <div class="my-reservations-page">
+            <h1 class="page-title">我的预约记录</h1>
+            
+            <div v-if="loading" class="status-message">
+            正在加载您的预约记录...
+            </div>
+            <div v-else-if="error" class="status-message error">
+            {{ error }}
+            </div>
+            <div v-else-if="reservations.length === 0" class="status-message">
+            您还没有任何预约记录。
+            </div>
+            
+            <div v-else class="reservations-list">
+            <div v-for="r in reservations" :key="r.ReservationID" class="reservation-card">
+                <div class="card-header">
+                <span class="building-name">{{ r.BuildingName }}</span>
+                <span class="status" :class="getStatusClass(r.Status)">{{ r.Status }}</span>
+                </div>
+                <div class="card-body">
+                <p><strong>座位号：</strong> {{ r.Floor }}楼 - {{ r.SeatNumber }}</p>
+                <p><strong>开始时间：</strong> {{ formatTime(r.StartTime) }}</p>
+                <p><strong>结束时间：</strong> {{ formatTime(r.EndTime) }}</p>
+                </div>
+                <div class="card-footer" v-if="r.Status === '未完成' && isFuture(r.StartTime)">
+                <button @click="handleCancel(r.ReservationID)" class="cancel-btn">取消预约</button>
+                </div>
+            </div>
+            </div>
         </div>
-        <div class="card-body">
-          <p><strong>座位号：</strong> {{ r.Floor }}楼 - {{ r.SeatNumber }}</p>
-          <p><strong>开始时间：</strong> {{ formatTime(r.StartTime) }}</p>
-          <p><strong>结束时间：</strong> {{ formatTime(r.EndTime) }}</p>
-        </div>
-        <div class="card-footer" v-if="r.Status === '未完成' && isFuture(r.StartTime)">
-          <button @click="handleCancel(r.ReservationID)" class="cancel-btn">取消预约</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  </Layout>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { getMyReservations, cancelReservation } from '@/modules/reader/api.js';
-
+import Layout from '@/modules/reader/reader_DashBoard_layout/layout.vue';
 const loading = ref(true);
 const error = ref('');
 const reservations = ref([]);
