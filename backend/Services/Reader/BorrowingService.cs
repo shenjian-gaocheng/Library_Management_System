@@ -134,7 +134,7 @@ namespace backend.Services.BorrowingService
         {
             return await _borrowRecordRepository.DeleteAsync(borrowRecordID);
         }
-        
+
         // 新增：通过读者ID获取该读者的所有借阅记录并转换为DTO
         public async Task<BorrowingServiceResponse<List<MyBorrowRecordDto>>> GetMyBorrowRecordDtosByReaderIdAsync(string readerId)
         {
@@ -167,6 +167,16 @@ namespace backend.Services.BorrowingService
                     Data = new List<MyBorrowRecordDto>()
                 };
             }
+        }
+        
+        /**
+        * 获取指定读者未归还书籍数量
+        * @param readerId 读者 ID
+        * @return 未归还书籍数量
+        */
+        public async Task<int> GetUnreturnedCountByReaderAsync(string readerId)
+        {
+            return await _borrowRecordRepository.GetUnreturnedCountByReaderAsync(readerId);
         }
     }
     

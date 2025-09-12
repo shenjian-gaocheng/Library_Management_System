@@ -1,4 +1,3 @@
-import BookBooklistPage from '@/modules/book/pages/BooklistPage.vue'
 import BookCommentsPage from '@/modules/book/pages/BookCommentsPage.vue'
 
 export default [
@@ -74,27 +73,12 @@ export default [
     }
   },
 
-   //书架管理
-  {
-    path: '/bookshelf',
-    name: 'BookshelfManage',
-    component: () =>
-    import(
-        /* webpackChunkName: "book-search" */
-        '@/modules/book/pages/BookshelfManagePage.vue'
-    ),
-    meta: {
-      requiresAuth: true,
-      title: '书架管理',
-      //role: 'librarian' // 添加权限控制，仅管理员可见
-    }
-  },
   //用条码借还图书
   {
-  path: '/books/circulation',
-  name: 'BookCirculation',
-  component: () => import('@/modules/book/pages/BookCirculationPage.vue'),
-  meta: { title: '借还服务（条码）' }
+    path: '/books/circulation',
+    name: 'BookCirculation',
+    component: () => import('@/modules/book/pages/BookCirculationPage.vue'),
+    meta: { title: '借还服务（条码）' }
   },
   
   // 举报评论页面
@@ -119,9 +103,8 @@ export default [
       role: 'librarian' // 仅管理员可见
     }
   },
-
-
-    //搜索的实体书页面
+  
+  //搜索的实体书页面
   {
     path: '/booklocation',
     name: 'BookSearchLocation',
@@ -135,6 +118,6 @@ export default [
       title: '实体书位置',
     }
   }
+
+  // ========== 已删除旧的 /bookshelf 路由 ==========
 ]
-
-

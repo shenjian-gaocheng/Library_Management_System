@@ -25,7 +25,7 @@
 
       <!-- 信息统计卡片 -->
       <div class="info-cards">
-        <DashBoardInfoCard title="当前借阅" count="0" className="card-red" />
+        <DashBoardInfoCard title="当前借阅" :count="unreturnedCount" class="card-red" />
         <DashBoardInfoCard title="超期图书" count="0" className="card-orange" />
         <DashBoardInfoCard title="委托到书" count="0" className="card-green" />
         <DashBoardInfoCard title="预约到书" count="0" className="card-blue" />
@@ -41,9 +41,12 @@
 import layout from '@/modules/reader/reader_DashBoard_layout/layout.vue'
 import DashBoardInfoCard from '../components/DashBoardInfoCard.vue'
 import DashBoardNotificationList from '../components/DashBoardNotificationList.vue'
-
+import {getUnreturnedCount} from '@/modules/reader/api.js'
 import {useUserStore} from '@/stores/user.js'
-import { computed } from 'vue'
+import { computed,ref,onMounted } from 'vue'
+import axios from "axios";
+
+const unreturnedCount = ref(0); // 当前借阅数
 
 // 引入用户 store
 const userStore = useUserStore()
@@ -67,6 +70,15 @@ const icons = [
   { label: '可预约' },
   { label: '可委托' }
 ]
+
+onMounted(async () => {
+  try {
+    const response = await getUnreturnedCount()
+    unreturnedCount.value = response.data
+  } catch (error) {
+    console.error("获取未归还书籍数失败：", error)
+  }
+})
 </script>
 
 <style scoped>

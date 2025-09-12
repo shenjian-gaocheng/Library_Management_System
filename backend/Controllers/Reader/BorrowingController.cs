@@ -13,7 +13,7 @@ namespace backend.Controllers
     {
         private readonly BorrowingService _borrowingService;
 
-          private readonly SecurityService _securityService;
+        private readonly SecurityService _securityService;
 
         /**
          * 构造函数
@@ -225,6 +225,39 @@ namespace backend.Controllers
             {
                 return StatusCode(500, $"服务器错误: {ex.Message}");
             }
+        }
+        
+        /**
+        * 获取当前读者未归还书籍数量
+        * @param readerId 读者 ID
+        * @return 未归还书籍数量
+        */
+        [HttpGet("unreturned-count/{readerId}")]
+        public async Task<ActionResult<int>> GetUnreturnedCountByReader(string readerId)
+        {   
+             var loginUser = _securityService.GetLoginUser();
+
+            if (!_securityService.CheckIsReader(loginUser))
+            {
+                return Forbid(); // 或 return Unauthorized();
+            }
+
+            var reader = loginUser.User as Reader;
+            if (reader == null)
+            {
+                return BadRequest("当前用户不是读者");
+            }
+
+            readerId = reader.ReaderID.ToString();
+
+            var count = await _borrowingService.GetUnreturnedCountByReaderAsync(readerId);
+
+            if (count < 0)
+            {
+                return NotFound("未找到该读者或数据异常");
+            }
+
+            return Ok(count);
         }
     }
 }

@@ -18,27 +18,7 @@
 
         <router-link to="/my/home/dashboard" class="nav-item">读者控制台</router-link>
 
-        <div class="nav-item dropdown">
-          <span>管理员操作</span>
-          <div class="dropdown-menu">
-            
-            <router-link to="example-route">example-title</router-link>
-            <!-- 管理员操作临时入口，以后需要改到管理员主页里 -->
-            <!-- 在下面新增：路由，功能名称 -->
-            <router-link to="/admin/announcements">公告管理</router-link>
-            <!-- 添加书架管理 -->
-            <router-link to="bookshelf">书架管理</router-link>
 
-            <!-- 添加分类管理 -->
-            <router-link to="/admin/category">分类管理</router-link>
-            
-            <!-- 添加图书分类管理 -->
-            <router-link to="/books/category-manage">图书分类管理</router-link>
-            
-            <!-- 添加评论管理 -->
-            <router-link to="/report-comment">评论举报处理</router-link>
-          </div>
-        </div>
         
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>

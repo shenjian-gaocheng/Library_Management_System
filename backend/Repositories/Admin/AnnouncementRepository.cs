@@ -1,33 +1,29 @@
-// 文件: backend/Repositories/Admin/AnnouncementRepository.cs
-// 这是最终的、包含了“获取最新3条”逻辑的完整版本
-
 using Dapper;
-using library_system.DTOs.Admin;
 using Oracle.ManagedDataAccess.Client;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using backend.DTOs.Admin;
 using System.Data;
 
-namespace library_system.Repositories.Admin
+namespace backend.Repositories.Admin
 {
     public class AnnouncementRepository
     {
         private readonly string _connectionString;
 
-        public AnnouncementRepository(string connectionString) 
+        public AnnouncementRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
 
-        public async Task<IEnumerable<AnnouncementDto>> GetAllAsync()
+        public async Task<IEnumerable<AnnouncementDto>> GetAllAnnouncementsAsync()
         {
-            var sql = "SELECT * FROM announcement_view ORDER BY CreateTime DESC";
+            var sql = "SELECT * FROM Announcement ORDER BY CreateTime DESC";
             using var connection = new OracleConnection(_connectionString);
             return await connection.QueryAsync<AnnouncementDto>(sql);
         }
-
-        // 公开用：只获取正在发布的、面向所有人的、最新的三条公告
-        public async Task<IEnumerable<AnnouncementDto>> GetPubliclyVisibleAsync()
+        
+        public async Task<IEnumerable<AnnouncementDto>> GetPublicAnnouncementsAsync()
         {
             // 【核心修正】
             // 1. WHERE 条件包含了 "所有人" 或 "读者"，范围更广
@@ -44,85 +40,53 @@ namespace library_system.Repositories.Admin
             using var connection = new OracleConnection(_connectionString);
             return await connection.QueryAsync<AnnouncementDto>(sql);
         }
-        
 
-        // 创建公告
-        public async Task<int> CreateAsync(CreateOrUpdateAnnouncementDto dto)
+        public async Task<AnnouncementDto> CreateAnnouncementAsync(UpsertAnnouncementDto dto, int librarianId)
         {
+            var sql = @"
+                INSERT INTO Announcement (LibrarianID, Title, Content, TargetGroup, Priority, Status)
+                VALUES (:LibrarianID, :Title, :Content, :TargetGroup, :Priority, '发布中')
+                RETURNING AnnouncementID, CreateTime INTO :AnnouncementID, :CreateTime";
+            
             using var connection = new OracleConnection(_connectionString);
-            await connection.OpenAsync();
-
-            // ===================================================================
-            // 【终极诊断：在 INSERT 之前，先执行一次 SELECT 查询】
-            // 我们要让应用程序自己去确认，它到底能不能看到那个父项关键字
-            // ===================================================================
-            try
-            {
-                var validationSql = "SELECT COUNT(*) FROM LIBRARIAN WHERE LIBRARIANID = :LibrarianID";
-                Console.WriteLine("===================== [终极诊断开始] =====================");
-                Console.WriteLine($"[诊断] 准备验证 LibrarianID: {dto.LibrarianID} 是否存在...");
-                
-                var count = await connection.QuerySingleAsync<int>(validationSql, new { dto.LibrarianID });
-                
-                Console.WriteLine($"[诊断] 查询 LIBRARIAN 表完成。对于 ID = {dto.LibrarianID}，找到了 {count} 条记录。");
-
-                if (count == 0)
-                {
-                    // 如果程序自己都找不到，那就证明确实有问题
-                    Console.WriteLine("[诊断] 致命错误：应用程序在自己的连接会话中，找不到指定的 LibrarianID！");
-                    Console.WriteLine("===================== [终极诊断结束 - 失败] =====================");
-                    throw new Exception($"[DIAGNOSTIC FAILURE] The database reports that NO librarian exists with ID = {dto.LibrarianID}. Please verify the data and that the transaction in SQL Developer was truly COMMITTED.");
-                }
-                Console.WriteLine("[诊断] 验证通过！应用程序可以看到父项关键字。现在尝试插入...");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[诊断] 在验证阶段就发生了异常: {ex.Message}");
-                Console.WriteLine("===================== [终极诊断结束 - 异常] =====================");
-                throw; // 重新抛出异常
-            }
-            // ===================================================================
-            // 诊断结束
-            // ===================================================================
-
-            // 如果验证通过，才继续执行插入操作
-            var insertSql = @"
-                INSERT INTO Announcement (Title, Content, TargetGroup, Status, LibrarianID)
-                VALUES (:Title, :Content, :TargetGroup, :Status, :LibrarianID)
-                RETURNING AnnouncementID INTO :id";
-            
             var parameters = new DynamicParameters(dto);
-            parameters.Add("id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("LibrarianID", librarianId);
+            parameters.Add("AnnouncementID", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("CreateTime", dbType: DbType.DateTime, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync(sql, parameters);
             
-            await connection.ExecuteAsync(insertSql, parameters);
-            
-            return parameters.Get<int>("id");
+            return new AnnouncementDto {
+                AnnouncementID = parameters.Get<int>("AnnouncementID"),
+                LibrarianID = librarianId,
+                Title = dto.Title,
+                Content = dto.Content,
+                TargetGroup = dto.TargetGroup,
+                Priority = dto.Priority,
+                Status = "发布中",
+                CreateTime = parameters.Get<DateTime>("CreateTime")
+            };
         }
 
-
-        public async Task<bool> UpdateAsync(int id, CreateOrUpdateAnnouncementDto dto)
+        public async Task<AnnouncementDto> UpdateAnnouncementAsync(int id, UpsertAnnouncementDto dto)
         {
             var sql = @"
                 UPDATE Announcement 
-                SET 
-                    Title = :Title, 
-                    Content = :Content, 
-                    TargetGroup = :TargetGroup, 
-                    Status = :Status
-                WHERE AnnouncementID = :id";
-            
+                SET Title = :Title, Content = :Content, Priority = :Priority, TargetGroup = :TargetGroup
+                WHERE AnnouncementID = :AnnouncementID";
+
             using var connection = new OracleConnection(_connectionString);
-            var parameters = new DynamicParameters(dto);
-            parameters.Add("id", id);
-            var affectedRows = await connection.ExecuteAsync(sql, parameters);
-            return affectedRows > 0;
+            await connection.ExecuteAsync(sql, new { dto.Title, dto.Content, dto.Priority, dto.TargetGroup, AnnouncementID = id });
+
+            var updatedSql = "SELECT * FROM Announcement WHERE AnnouncementID = :AnnouncementID";
+            return await connection.QuerySingleOrDefaultAsync<AnnouncementDto>(updatedSql, new { AnnouncementID = id });
         }
-        
-        public async Task<bool> DeleteAsync(int id)
+
+        public async Task<bool> UpdateStatusAsync(int id, string status)
         {
-            var sql = "DELETE FROM Announcement WHERE AnnouncementID = :id";
+            var sql = "UPDATE Announcement SET Status = :Status WHERE AnnouncementID = :AnnouncementID";
             using var connection = new OracleConnection(_connectionString);
-            var affectedRows = await connection.ExecuteAsync(sql, new { id });
+            var affectedRows = await connection.ExecuteAsync(sql, new { Status = status, AnnouncementID = id });
             return affectedRows > 0;
         }
     }
