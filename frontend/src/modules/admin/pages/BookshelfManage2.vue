@@ -300,6 +300,7 @@ const updateOptions = () => {
 const updateShelfCode = () => {
   if (newShelfForm.FLOOR && newShelfForm.ZONE && newShelfForm.SEQUENCE) {
     const floor = newShelfForm.FLOOR.toString().padStart(2, '0')
+    
     const sequence = newShelfForm.SEQUENCE.toString().padStart(3, '0')
      const zone = newShelfForm.ZONE.replace('区', '')
     newShelfForm.SHELFCODE = `${floor}${zone}-${sequence}`
@@ -343,7 +344,7 @@ const confirmAdd = async () => {
       Number(newShelfForm.BUILDINGID),  // 确保转换为number
       newShelfForm.SHELFCODE,
       Number(newShelfForm.FLOOR),      // 确保转换为number
-      newShelfForm.ZONE
+      newShelfForm.ZONE 
     )
     alert('新增书架成功')
     showDialog.value = false

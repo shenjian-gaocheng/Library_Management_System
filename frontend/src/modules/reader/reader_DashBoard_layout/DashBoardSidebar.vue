@@ -1,6 +1,6 @@
 ﻿<template>
   <div class="sidebar">
-    <div class="logo">我的图书馆</div>
+    <div class="logo">菜单列表</div>
     <ul class="nav-list">
       <li>
         <router-link 
@@ -74,15 +74,21 @@
   height: 100vh;
   background: #1e293b;
   color: white;
-  padding: 24px 16px;
+  padding: 24px 0;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
 }
 
 /* Logo */
 .logo {
-  font-size: 20px;
+  font-size: 30px;
   font-weight: bold;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
+  color: #ffffff;
+  text-align: center;
+  width: 100%;
 }
 
 /* 菜单列表 */
@@ -90,17 +96,27 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 80%;
 }
 
 /* 单个菜单项 */
 .nav-item {
   display: block;
-  padding: 12px 16px;
+  width: 100%; 
+  padding: 14px 0; 
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s, box-shadow 0.3s;
   color: #fff;
   text-decoration: none;
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: center; 
+  white-space: nowrap; 
+  box-sizing: border-box;
 }
 
 /* 悬停效果 */
@@ -112,6 +128,7 @@
 .nav-item-active {
   background: #475569;
   font-weight: bold;
+  font-size: 18px;
 }
 
 /* 您之前的 ::before 样式可能会导致布局问题，我将其注释掉，

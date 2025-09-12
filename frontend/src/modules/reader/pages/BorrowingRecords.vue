@@ -52,7 +52,7 @@ onMounted(loadRecords);
   text-align: center;
   margin-bottom: 20px;
   color: #2c3e50;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: bold;
 }
 
@@ -68,7 +68,7 @@ onMounted(loadRecords);
   border-radius: 6px;
   border: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 18px;
   transition: 0.3s;
 }
 .btn-refresh:hover {
