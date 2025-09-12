@@ -31,7 +31,7 @@ public class CommentRepository
         using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
         await connection.OpenAsync();
 
-        Console.WriteLine($"id = {comment_id}");
+        // Console.WriteLine($"id = {comment_id}");
         return await Dapper.SqlMapper.QueryAsync<CommentDetailDto>(connection, sql, new { comment_id = comment_id });
     }
     
@@ -48,89 +48,89 @@ public class CommentRepository
     }
 }
 
-public class ReportRepository
-{
-    private readonly string _connectionString;
+// public class ReportRepository
+// {
+//     private readonly string _connectionString;
 
-    public ReportRepository(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
+//     public ReportRepository(string connectionString)
+//     {
+//         _connectionString = connectionString;
+//     }
 
-    public async Task<IEnumerable<ReportDto>> GetReportsAsyncByReaderID(decimal reader_id)
-    {
-        var sql = @"
-            SELECT *
-            FROM REPORT
-            WHERE READERID = :reader_id";
+//     public async Task<IEnumerable<ReportDto>> GetReportsAsyncByReaderID(decimal reader_id)
+//     {
+//         var sql = @"
+//             SELECT *
+//             FROM REPORT
+//             WHERE READERID = :reader_id";
 
-        using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
-        await connection.OpenAsync();
+//         using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
+//         await connection.OpenAsync();
 
-        return await Dapper.SqlMapper.QueryAsync<ReportDto>(connection, sql, new { reader_id = reader_id });
-    }
-    
+//         return await Dapper.SqlMapper.QueryAsync<ReportDto>(connection, sql, new { reader_id = reader_id });
+//     }
+    // 
 
-    public async Task<IEnumerable<ReportDto>> GetReportsAsyncByLibrarianID(decimal librarian_id)
-    {
-        var sql = @"
-            SELECT *
-            FROM REPORT
-            WHERE LIBRARIANID = :librarian_id and status = '待处理'";
+//     public async Task<IEnumerable<ReportDto>> GetReportsAsyncByLibrarianID(decimal librarian_id)
+//     {
+//         var sql = @"
+//             SELECT *
+//             FROM REPORT
+//             WHERE LIBRARIANID = :librarian_id and status = '待处理'";
 
-        using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
-        await connection.OpenAsync();
+//         using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
+//         await connection.OpenAsync();
 
-        return await Dapper.SqlMapper.QueryAsync<ReportDto>(connection, sql, new { librarian_id = librarian_id });
-    }
+//         return await Dapper.SqlMapper.QueryAsync<ReportDto>(connection, sql, new { librarian_id = librarian_id });
+//     }
 
-    public async Task<int> AddReportAsync(ReportDto report)
-    {
-        var sql = @"
-            INSERT INTO report(COMMENTID, READERID, REPORTREASON, REPORTTIME, STATUS, LIBRARIANID)
-            VALUES (:CommentID, :READERID, :ReportReason, :ReportTime, :Status, :LibrarianID)";
+//     public async Task<int> AddReportAsync(ReportDto report)
+//     {
+//         var sql = @"
+//             INSERT INTO report(COMMENTID, READERID, REPORTREASON, REPORTTIME, STATUS, LIBRARIANID)
+//             VALUES (:CommentID, :READERID, :ReportReason, :ReportTime, :Status, :LibrarianID)";
 
-        using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
-        await connection.OpenAsync();
+//         using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
+//         await connection.OpenAsync();
         
-        return await Dapper.SqlMapper.ExecuteAsync(connection, sql, report);
-    }
+//         return await Dapper.SqlMapper.ExecuteAsync(connection, sql, report);
+//     }
 
-    public async Task<int> ChangeStatusAsync(ReportStatusDto report_status)
-    {
-        // 如果状态是处理完成，先删除相关评论
-        if (report_status.Status == "处理完成") {
-            Console.WriteLine($"准备更新评论状态，ReportID: {report_status.ReportID}");
-            var delete_comment_sql = @"update comment_table
-                                        set status = '已删除'
-                                        where commentid = (select commentID 
-                                                        from report 
-                                                        where reportID = :ReportID)";
+//     public async Task<int> ChangeStatusAsync(ReportStatusDto report_status)
+//     {
+//         // 如果状态是处理完成，先删除相关评论
+//         if (report_status.Status == "处理完成") {
+//             // Console.WriteLine($"准备更新评论状态，ReportID: {report_status.ReportID}");
+//             var delete_comment_sql = @"update comment_table
+//                                         set status = '已删除'
+//                                         where commentid = (select commentID 
+//                                                         from report 
+//                                                         where reportID = :ReportID)";
 
 
-            using var delete_comment_connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
-            await delete_comment_connection.OpenAsync();
-            Console.WriteLine($"执行SQL: {delete_comment_sql}, 参数: ReportID={report_status.ReportID}");
-            await Dapper.SqlMapper.ExecuteAsync(delete_comment_connection, delete_comment_sql, new { 
-            ReportID = report_status.ReportID  });
-            Console.WriteLine("评论状态更新完成");
-        }
+//             using var delete_comment_connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
+//             await delete_comment_connection.OpenAsync();
+//             // Console.WriteLine($"执行SQL: {delete_comment_sql}, 参数: ReportID={report_status.ReportID}");
+//             await Dapper.SqlMapper.ExecuteAsync(delete_comment_connection, delete_comment_sql, new { 
+//             ReportID = report_status.ReportID  });
+//             // Console.WriteLine("评论状态更新完成");
+//         }
 
-        // 更新报告状态
-        var sql = @"
-            UPDATE report
-            SET STATUS = :Status
-            WHERE REPORTID = :ReportID";
+//         // 更新报告状态
+//         var sql = @"
+//             UPDATE report
+//             SET STATUS = :Status
+//             WHERE REPORTID = :ReportID";
 
-        using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
-        await connection.OpenAsync();
+//         using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
+//         await connection.OpenAsync();
 
-        Console.WriteLine($"执行SQL: {sql}, 参数: Status={report_status.Status}, ReportID={report_status.ReportID}");
-        var result = await Dapper.SqlMapper.ExecuteAsync(connection, sql, new { 
-            Status = report_status.Status, 
-            ReportID = report_status.ReportID 
-        });
-        Console.WriteLine($"报告状态更新完成，影响行数: {result}");
-        return result;
-    }
-}
+//         // Console.WriteLine($"执行SQL: {sql}, 参数: Status={report_status.Status}, ReportID={report_status.ReportID}");
+//         var result = await Dapper.SqlMapper.ExecuteAsync(connection, sql, new { 
+//             Status = report_status.Status, 
+//             ReportID = report_status.ReportID 
+//         });
+//         // Console.WriteLine($"报告状态更新完成，影响行数: {result}");
+//         return result;
+//     }
+// }

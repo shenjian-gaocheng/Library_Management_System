@@ -20,8 +20,8 @@ public class ReportDto
     public decimal LibrarianID { get; set; }
 }
 
-public class ReportStatusDto
-{
-    public decimal ReportID { get; set; }
-    public string Status { get; set; } = "待处理";
-}
+// public class ReportStatusDto
+// {
+//     public decimal ReportID { get; set; }
+//     public string Status { get; set; } = "待处理";
+// }

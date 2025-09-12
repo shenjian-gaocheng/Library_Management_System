@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="max-w-3xl mx-auto px-4 py-6">
+  <div class="max-w-3xl mx-auto px-4 py-6 mt-[60px]">
     <div class="mb-4">
       <div class="text-xl font-semibold leading-tight">借还服务（按条码）</div>
       <p class="text-sm text-gray-500">输入条码 → 查询 → 执行对应操作</p>
@@ -12,10 +12,18 @@
           v-model="barcode"
           class="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           type="text"
-          placeholder="例如：BC2025082400001"
+          placeholder="例如：BC2025090300021"
           @keyup.enter="query"
           autofocus
         />
+        <button
+          type="button"
+          class="px-2 py-1 rounded bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200"
+          @click="copyExample"
+          title="点击复制示例条码"
+        >
+          BC2025082400001
+        </button>
         <button
           class="px-3 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-60"
           :disabled="!barcode || loading"
@@ -106,5 +114,11 @@ function clearForm() {
   book.value = null
   error.value = ''
   tip.value = ''
+}
+
+function copyExample() {
+  const example = 'BC2025090300021'
+  navigator.clipboard.writeText(example)
+  barcode.value = example
 }
 </script>

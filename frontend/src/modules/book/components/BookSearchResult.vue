@@ -1,6 +1,8 @@
 ﻿<template>
-  <section class="search-result-wrapper bg-gray-100">
-    <h2 class="title">搜索结果："{{ keyword }}"</h2>
+  <section class="search-result-wrapper bg-gray-100 " >
+    <div class="search-bar-container">
+      <BookSearchBar />
+    </div>
 
     <div v-if="loading" class="loading">加载中...</div>
 
@@ -60,6 +62,8 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getBooks } from '@/modules/book/api.js'
+import BookSearchBar from '@/modules/home/components/BookSearchBar.vue'
+
 
 const route = useRoute()
 const router = useRouter()
@@ -150,11 +154,12 @@ watch(
 </script>
 
 <style scoped>
+
 .search-result-wrapper {
   position: relative;
-  margin: 2rem auto;
-  padding: 0 12rem;
-  color:#666;
+  margin: 0 auto;        /* 不再用 margin-top */
+  padding: 10px 12rem 0; /* 顶部留 60px 内边距 */
+  color: #666;
 }
 .title {
   font-size: 1.25rem;
@@ -220,5 +225,15 @@ watch(
 .comments-button, .physical-books-button {
   width: 120px;  /* 或者具体的像素值，如 width: 80px; */
   
+}
+
+.fixed-cover-size {
+  display: block;
+  margin: 0 auto; /* 居中关键 */
+  max-width: 100%; /* 避免溢出 */
+}
+
+.search-bar-container {
+  margin: 60px 0 30px 0; /* 上 40px，下 30px，左右 0 */
 }
 </style>
