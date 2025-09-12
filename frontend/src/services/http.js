@@ -11,13 +11,12 @@ const http = axios.create({
 
 // 自动带上 JWT Token
 http.interceptors.request.use((config) => {
-  if(config.withToken) {
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
+  const token = localStorage.getItem('token');
+  if (token) {
+    // 不再需要 if(config.withToken) 判断，直接为所有请求添加 token
+    config.headers.Authorization = `Bearer ${token}`;
   }
-  return config
+  return config;
 })
 
 // 响应拦截器

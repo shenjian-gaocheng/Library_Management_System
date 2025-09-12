@@ -137,4 +137,5 @@ public class BookShelfController : ControllerBase
 /*
 set ASPNETCORE_ENVIRONMENT = Development
 dotnet run
+Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");/////
 */

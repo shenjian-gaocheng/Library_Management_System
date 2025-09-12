@@ -10,15 +10,15 @@ public class Reader: User
 
     public string? FullName { get; set; } = "";
 
-    public string? NickName { get; set; } = "Ĭ���û��ǳ�";
+    public string? NickName { get; set; } = "默认用户名";
 
     public string? Avatar { get; set; } = "";
 
     public int CreditScore { get; set; } = 100;
 
-    public string AccountStatus { get; set; } = "����";
+    public string AccountStatus { get; set; } = "正常";
 
-    public string Permission { get; set; } = "��ͨ";
+    public string Permission { get; set; } = "普通";
 
 
 }

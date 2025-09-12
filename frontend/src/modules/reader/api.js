@@ -45,6 +45,9 @@ export const updateBorrowingRecord = (data) => http.put('/borrowing', data,{with
 export const deleteBorrowingRecord = (id) => http.delete(`/borrowing/${id}`,{withToken:true});
 export const returnBook = (id) => http.put(`/borrowing/${id}/return`,{withToken:true});
 export const renewBorrowing = (id) => http.put(`/borrowing/${id}/renew`,{withToken:true});
+export const getUnreturnedCount = (id) => http.get('/borrowing/unreturned-count/placeholder', { withToken: true });
+export const getOverdueUnreturnedCount = (id) => http.get('/borrowing/overdue-unreturned-count/placeholder', { withToken: true });
+export const getAllOverdueUnreturnedCountByReader = (id) => http.get('/borrowing/all-overdue-unreturned-count/placeholder', { withToken: true });
 
 // ——————————————————Librarian相关接口————————————————
 
