@@ -276,12 +276,12 @@ const updateOptions = () => {
   if (newShelfForm.BUILDINGID === '21') {
     // 总图书馆：14层，每层4区(A~D)，每区10个书架
     availableFloors.value = Array.from({length: 14}, (_, i) => i + 1)
-    availableZones.value = ['A', 'B', 'C', 'D']
+    availableZones.value = ['A区', 'B区', 'C区', 'D区']
     availableSequences.value = Array.from({length: 10}, (_, i) => i + 1)
   } else if (newShelfForm.BUILDINGID === '22') {
     // 德文图书馆：2层，每层2区(A~B)，每区5个书架
     availableFloors.value = Array.from({length: 2}, (_, i) => i + 1)
-    availableZones.value = ['A', 'B']
+    availableZones.value = ['A区', 'B区']
     availableSequences.value = Array.from({length: 5}, (_, i) => i + 1)
   } else {
     availableFloors.value = []
@@ -300,8 +300,9 @@ const updateOptions = () => {
 const updateShelfCode = () => {
   if (newShelfForm.FLOOR && newShelfForm.ZONE && newShelfForm.SEQUENCE) {
     const floor = newShelfForm.FLOOR.toString().padStart(2, '0')
+    
     const sequence = newShelfForm.SEQUENCE.toString().padStart(3, '0')
-    newShelfForm.SHELFCODE = `${floor}${newShelfForm.ZONE}-${sequence}`
+    newShelfForm.SHELFCODE = `${floor}${zone}-${sequence}`
   } else {
     newShelfForm.SHELFCODE = ''
   }
@@ -342,7 +343,7 @@ const confirmAdd = async () => {
       Number(newShelfForm.BUILDINGID),  // 确保转换为number
       newShelfForm.SHELFCODE,
       Number(newShelfForm.FLOOR),      // 确保转换为number
-      newShelfForm.ZONE
+      newShelfForm.ZONE 
     )
     alert('新增书架成功')
     showDialog.value = false

@@ -118,7 +118,7 @@
                       <button class="edit-btn" @click="openEditDialog(book)">修改</button>
                     </template>
                     <template v-else-if="book.STATUS === '借出'">
-                      <button class="return-btn" @click="handleReturn(book)">归还</button>
+                      <button class="return-btn" @click="handleReturn(book)">修改</button>
                      
                     </template>
                     <!-- 下架状态不显示任何按钮 -->
@@ -227,7 +227,7 @@
     
     <div class="dialog-buttons">
       <button class="cancel-btn" @click="closeReturnDialog">取消</button>
-      <button class="confirm-btn" @click="saveReturnLocation">确认归还</button>
+      <button class="confirm-btn" @click="saveReturnLocation">确认</button>
     </div>
   </div>
 </div>
@@ -442,11 +442,12 @@ const saveLocation = async () => {
   }
   const formattedShelfCode = formatShelfCode(editLocation.shelfCode);
   try {
+    const zoneForBackend = editLocation.zone.includes('区') ? editLocation.zone : editLocation.zone + '区';
     const { data: shelfExists } = await checkShelfExists(
       editLocation.buildingId,
       formattedShelfCode,
       editLocation.floor,
-      editLocation.zone
+      zoneForBackend
     );
     
     if (!shelfExists) {
@@ -458,7 +459,7 @@ const saveLocation = async () => {
       editLocation.buildingId,
       formattedShelfCode,
       editLocation.floor,
-      editLocation.zone
+      zoneForBackend
     );
     
     await returnBook(currentBook.value.BOOKID, shelfId);
@@ -531,10 +532,7 @@ const openReturnDialog = (book) => {
    currentBook.value = book;
    console.log(currentBook.value);
   showReturnDialog.value = true
-  returnLocation.buildingId = book.BUILDINGID || null
-  returnLocation.floor = book.FLOOR || null
-  returnLocation.zone = book.ZONE || ''
-  returnLocation.shelfCode = book.SHELFCODE || null
+
 }
 
 const closeReturnDialog = () => {
@@ -560,11 +558,12 @@ const saveReturnLocation = async () => {
   
   try {
     const formattedShelfCode = formatShelfCode(returnLocation.shelfCode);
+     const zoneForBackend = returnLocation.zone.includes('区') ? returnLocation.zone : returnLocation.zone + '区';
     const { data: shelfExists } = await checkShelfExists(
       returnLocation.buildingId,
       formattedShelfCode,
       returnLocation.floor,
-      returnLocation.zone
+      zoneForBackend
     );
     
     if (!shelfExists) {
@@ -576,16 +575,16 @@ const saveReturnLocation = async () => {
       returnLocation.buildingId,
       formattedShelfCode,
       returnLocation.floor,
-      returnLocation.zone
+      zoneForBackend
     );
     
     await returnBook(currentBook.value.BOOKID, shelfId);
-    alert('归还成功');
+    alert('修改成功');
     closeReturnDialog();
     
   } catch (error) {
-    console.error('归还失败:', error);
-    alert('归还失败: ' + (error.response?.data || error.message));
+    console.error('修改失败:', error);
+    alert('修改失败: ' + (error.response?.data || error.message));
   }
 }
 </script>
@@ -634,8 +633,8 @@ const saveReturnLocation = async () => {
 .confirm-btn:hover { background-color: #40a9ff; }
 .borrow-btn { padding: 6px 12px; background-color: #67c23a; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 8px; }
 .borrow-btn:hover { background-color: #85ce61; }
-.return-btn { padding: 6px 12px; background-color: #e6a23c; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 8px; }
-.return-btn:hover { background-color: #ebb563; }
+.return-btn { padding: 6px 12px; background-color: #1890ff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 8px; }
+.return-btn:hover { background-color: #40a9ff; }
 .header-section { background: linear-gradient(135deg, #2575fc 0%, #e7e9eeff 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
 .header-section h1 { margin: 0 0 8px 0; font-size: 28px; }
 .header-section p { margin: 0; opacity: 0.9; }

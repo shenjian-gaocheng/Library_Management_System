@@ -213,6 +213,7 @@ const updateOptions = () => {
 const updateShelfCode = () => {
   if (newShelfForm.FLOOR && newShelfForm.ZONE && newShelfForm.SEQUENCE) {
     const floor = newShelfForm.FLOOR.toString().padStart(2, '0');
+    
     const sequence = newShelfForm.SEQUENCE.toString().padStart(3, '0');
     newShelfForm.SHELFCODE = `${floor}${newShelfForm.ZONE}-${sequence}`;
   } else {
@@ -236,7 +237,7 @@ const confirmAdd = async () => {
     return;
   }
   try {
-    await addShelf(Number(newShelfForm.BUILDINGID), newShelfForm.SHELFCODE, Number(newShelfForm.FLOOR), newShelfForm.ZONE);
+    await addShelf(Number(newShelfForm.BUILDINGID), newShelfForm.SHELFCODE, Number(newShelfForm.FLOOR), newShelfForm.ZONE+'区');
     alert('新增书架成功');
     showDialog.value = false;
     fetchShelves();

@@ -126,8 +126,7 @@
     {
         const string sql = @"
         UPDATE BOOK 
-        SET STATUS = '正常', 
-            SHELFID = :shelfId
+        SET SHELFID = :shelfId
         WHERE BOOKID = :bookId";
 
         using var connection = new Oracle.ManagedDataAccess.Client.OracleConnection(_connectionString);
