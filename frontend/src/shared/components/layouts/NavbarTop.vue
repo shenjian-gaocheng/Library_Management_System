@@ -17,7 +17,7 @@
         <router-link to="/my/home/dashboard" class="nav-item">读者控制台</router-link>
 
 
-        
+
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>
 
@@ -38,9 +38,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { getMyProfile, logout } from '@/modules/reader/api.js'
+import router from '@/router/index.js'
 
-const showServices = ref(false)
-const showLibrary = ref(false)
 const isScrolled = ref(false)
 let   scrollEl     = null   // 实际滚动的容器（#app）
 
