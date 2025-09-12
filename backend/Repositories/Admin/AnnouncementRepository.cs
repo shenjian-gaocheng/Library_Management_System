@@ -25,20 +25,14 @@ namespace backend.Repositories.Admin
         
         public async Task<IEnumerable<AnnouncementDto>> GetPublicAnnouncementsAsync()
         {
-            // 【核心修正】
-            // 1. WHERE 条件包含了 "所有人" 或 "读者"，范围更广
-            // 2. ORDER BY CreateTime DESC 确保按时间倒序排列
-            // 3. FETCH FIRST 3 ROWS ONLY 确保只返回最多3条记录
-            // Console.WriteLine("check1");
-            var sql = @"
-                SELECT * FROM announcement_view 
-                WHERE Status = '发布中' AND (TargetGroup = '所有人' OR TargetGroup = '读者')
-                ORDER BY CreateTime DESC
-                FETCH FIRST 3 ROWS ONLY";
-            // Console.WriteLine("check2");
-                
+            // 核心修改：
+            // 1. 使用 TRIM() 函数来处理字段和参数，消除潜在的空格问题。
+            // 2. 将 '发布中' 作为参数传递，而不是硬编码在 SQL 字符串中。
+            var sql = "SELECT * FROM Announcement WHERE TRIM(Status) = TRIM(:Status) ORDER BY CreateTime DESC";
+            
             using var connection = new OracleConnection(_connectionString);
-            return await connection.QueryAsync<AnnouncementDto>(sql);
+            // 将状态作为参数传入，让驱动程序处理编码
+            return await connection.QueryAsync<AnnouncementDto>(sql, new { Status = "发布中" });
         }
 
         public async Task<AnnouncementDto> CreateAnnouncementAsync(UpsertAnnouncementDto dto, int librarianId)

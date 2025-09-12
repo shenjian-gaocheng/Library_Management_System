@@ -1,4 +1,5 @@
 <template>
+    <Layout>
     <div class="p-4 mt-[60px]">
       <button class="text-blue-500 mb-4" @click="$router.push({ name: 'Booklist' })">
         ⬅ 返回
@@ -23,11 +24,13 @@
         </button>
       </div>
     </div>
+    </Layout>
 </template>
 
 <script setup>
 import { onMounted } from 'vue'
 import { useBooklistStore } from '@/stores/bookliststore'
+import Layout from '@/modules/reader/reader_DashBoard_layout/layout.vue';
 
 const store = useBooklistStore()
 
