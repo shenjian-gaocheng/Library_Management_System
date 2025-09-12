@@ -490,6 +490,7 @@ const saveLocation = async () => {
   }
   const formattedShelfCode = formatShelfCode(editLocation.shelfCode);
   try {
+    const zoneForBackend = editLocation.zone.includes('区') ? editLocation.zone : editLocation.zone + '区';
     const { data: shelfExists } = await checkShelfExists(
       editLocation.buildingId,
       formattedShelfCode,
@@ -579,10 +580,7 @@ const openReturnDialog = (book) => {
    currentBook.value = book;
    console.log(currentBook.value);
   showReturnDialog.value = true
-  returnLocation.buildingId = book.BUILDINGID || null
-  returnLocation.floor = book.FLOOR || null
-  returnLocation.zone = book.ZONE || ''
-  returnLocation.shelfCode = book.SHELFCODE || null
+
 }
 
 const closeReturnDialog = () => {
@@ -608,6 +606,7 @@ const saveReturnLocation = async () => {
   
   try {
     const formattedShelfCode = formatShelfCode(returnLocation.shelfCode);
+     const zoneForBackend = returnLocation.zone.includes('区') ? returnLocation.zone : returnLocation.zone + '区';
     const { data: shelfExists } = await checkShelfExists(
       returnLocation.buildingId,
       formattedShelfCode,
@@ -755,8 +754,8 @@ function resetAddCopyForm() {
 .confirm-btn:hover { background-color: #40a9ff; }
 .borrow-btn { padding: 6px 12px; background-color: #67c23a; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 8px; }
 .borrow-btn:hover { background-color: #85ce61; }
-.return-btn { padding: 6px 12px; background-color: #e6a23c; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 8px; }
-.return-btn:hover { background-color: #ebb563; }
+.return-btn { padding: 6px 12px; background-color: #1890ff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 8px; }
+.return-btn:hover { background-color: #40a9ff; }
 .header-section { background: linear-gradient(135deg, #2575fc 0%, #e7e9eeff 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
 .header-section h1 { margin: 0 0 8px 0; font-size: 28px; }
 .header-section p { margin: 0; opacity: 0.9; }
