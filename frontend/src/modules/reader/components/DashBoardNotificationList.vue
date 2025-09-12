@@ -19,20 +19,20 @@ const notices = [
 .notice-card {
   color: black;
   background: white;
-  padding: 16px;
+  padding: 22px;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 .title {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: bold;
   margin-bottom: 12px;
 }
 .list {
-  padding-left: 16px;
+  padding-left: 22px;
 }
 .item {
-  font-size: 14px;
+  font-size: 16px;
   color: #444;
   margin-bottom: 6px;
 }

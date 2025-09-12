@@ -201,7 +201,7 @@ public class BorrowRecordRepository
         // 假设借阅记录中有借阅时间字段BorrowTime
         var returnTime = DateTime.Now; // 获取当前时间
         var borrowDuration = returnTime - borrowRecord.BorrowTime;
-        var allowedDays = 0; //为了看出效果，先以0天计算
+        var allowedDays = 1; //为了看出效果，先以1天计算
         decimal overdueFine = 0;
 
         // 如果超期，计算罚款
@@ -220,7 +220,7 @@ public class BorrowRecordRepository
 
         await connection.ExecuteAsync(
             sqlUpdate,
-            new { BorrowRecordID = borrowRecord.BorrowRecordId, OverdueFine = overdueFine ,ReturnTime = returnTime}
+            new { BorrowRecordID = borrowRecord.BorrowRecordId, OverdueFine = overdueFine, ReturnTime = returnTime }
         );
 
         return 1; // 归还成功
@@ -283,7 +283,7 @@ public class BorrowRecordRepository
             new { ReaderId = readerId }
         )).AsList();
     }
-    
+
     /**
     * 根据 readerId 获取该读者未归还的借阅数量
     * @param readerId 读者ID
@@ -297,4 +297,55 @@ public class BorrowRecordRepository
         var sql = "SELECT COUNT(*) FROM BorrowRecord WHERE ReaderID = :ReaderID AND ReturnTime IS NULL";
         return await connection.ExecuteScalarAsync<int>(sql, new { ReaderID = readerId });
     }
+
+    /**
+    * 根据 readerId 获取该读者当前未归还且逾期的借阅数量
+    * @param readerId 读者ID
+    * @return 返回未归还且逾期的数量
+    */
+    public async Task<int> GetOverdueUnreturnedCountByReaderAsync(string readerId)
+    {
+        using var connection = new OracleConnection(_connectionString);
+        await connection.OpenAsync();
+
+        // 应用服务器时间 - 1 天
+        var overdueThreshold = DateTime.Now.AddDays(-1);
+
+        var sql = @"
+            SELECT COUNT(*)
+            FROM BorrowRecord
+            WHERE ReaderID = :ReaderID
+            AND ReturnTime IS NULL
+            AND BorrowTime < :OverdueThreshold";
+
+        return await connection.ExecuteScalarAsync<int>(sql, new { ReaderID = readerId, OverdueThreshold = overdueThreshold });
+    }
+    
+    /**
+    * 根据 readerId 获取该读者所有逾期书籍的数量（包含未归还和已归还但超过允许天数的书籍）
+    * @param readerId 读者ID
+    * @return 返回逾期书籍的数量
+    */
+    public async Task<int> GetAllOverdueCountByReaderAsync(string readerId)
+    {
+        using var connection = new OracleConnection(_connectionString);
+        await connection.OpenAsync();
+
+        // 超过允许天数的阈值
+        var overdueThreshold = DateTime.Now.AddDays(-1);
+
+        var sql = @"
+            SELECT COUNT(*)
+            FROM BorrowRecord
+            WHERE ReaderID = :ReaderID
+            AND (
+                    -- 未归还且借阅超过允许天数
+                    (ReturnTime IS NULL AND BorrowTime < :OverdueThreshold)
+                    OR
+                    -- 已归还且归还时间超过允许天数
+                    (ReturnTime IS NOT NULL AND ReturnTime > BorrowTime + INTERVAL '1' DAY)
+                )";
+
+        return await connection.ExecuteScalarAsync<int>(sql, new { ReaderID = readerId, OverdueThreshold = overdueThreshold });
+    } 
 }

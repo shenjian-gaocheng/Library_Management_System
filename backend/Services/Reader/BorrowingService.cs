@@ -168,15 +168,35 @@ namespace backend.Services.BorrowingService
                 };
             }
         }
-        
+
         /**
-        * 获取指定读者未归还书籍数量
+        * 获取指定读者当前未归还书籍数量
         * @param readerId 读者 ID
         * @return 未归还书籍数量
         */
         public async Task<int> GetUnreturnedCountByReaderAsync(string readerId)
         {
             return await _borrowRecordRepository.GetUnreturnedCountByReaderAsync(readerId);
+        }
+
+        /**
+        * 获取指定读者当前未归还且逾期书籍数量
+        * @param readerId 读者 ID
+        * @return 当前未归还且逾期书籍数量
+        */
+        public async Task<int> GetOverdueUnreturnedAndOverdueCountByReaderAsync(string readerId)
+        {
+            return await _borrowRecordRepository.GetOverdueUnreturnedCountByReaderAsync(readerId);
+        }
+        
+        /**
+        * 获取指定读者所有未归还且逾期书籍数量
+        * @param readerId 读者 ID
+        * @return 未归还书籍数量
+        */
+        public async Task<int> GetALlOverdueUnreturnedAndOverdueCountByReaderAsync(string readerId)
+        {
+            return await _borrowRecordRepository.GetAllOverdueCountByReaderAsync(readerId);
         }
     }
     
