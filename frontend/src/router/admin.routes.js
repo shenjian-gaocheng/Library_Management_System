@@ -5,7 +5,7 @@ import AnnouncementManagePage from '@/modules/admin/pages/AnnouncementManagePage
 import BookManagePage from '@/modules/admin/pages/BookManagePage.vue'
 import ShelfManagePage from '@/modules/admin/pages/ShelfManagePage.vue' // 确保这个新页面被引入
 import ReportHandlingPage from '@/modules/admin/pages/ReportHandlingPage.vue'
-
+import BookCategoryManagePage from '@/modules/book/pages/BookCategoryManagePage.vue'
 export default [
   // 管理员仪表盘
   {
@@ -96,5 +96,16 @@ export default [
       requiresAuth: true,
       requiresAdmin: true,
       title: '举报处理' }
-  }
+  },
+
+  {
+    path: '/admin/category2',
+    name: 'BookCategoryManage',
+    component: BookCategoryManagePage,
+    meta: {       
+      layout: 'Admin', 
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: '书籍分类' }
+  },
 ]

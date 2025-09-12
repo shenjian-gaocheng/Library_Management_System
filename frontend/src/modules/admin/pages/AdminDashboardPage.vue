@@ -37,6 +37,10 @@
         <p class="card-description">处理用户提交的各类举报信息。</p>
       </router-link>
 
+      <router-link to="/admin/category2" class="dashboard-card group border-l-4 border-red-500 hover:bg-red-50/60">
+        <h3 class="card-title">书籍分类</h3>
+        <p class="card-description">管理书籍所属的分类情况。</p>
+      </router-link>
     </div>
   </div>
 </template>
