@@ -5,7 +5,7 @@
 
       <nav class="nav-links">
         <router-link to="/" class="nav-item">首页</router-link>
-        <!-- <router-link to="/books" class="nav-item">图书资源</router-link> -->
+        <router-link to="/books" class="nav-item">图书资源</router-link>
 
         <div class="nav-item dropdown">
           <span>借阅服务</span>
