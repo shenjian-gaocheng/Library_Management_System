@@ -53,5 +53,19 @@ namespace backend.Controllers.Admin
             if (!success) return NotFound("No available copies found to takedown for this ISBN.");
             return NoContent();
         }
+
+        [HttpPost("copies")]
+        public async Task<IActionResult> AddCopies([FromBody] AddCopiesDto dto)
+        {
+            try
+            {
+                await _service.AddCopiesAsync(dto);
+                return Ok(new { message = "新副本已成功入库。" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
     }
 }

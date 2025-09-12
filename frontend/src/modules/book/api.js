@@ -234,3 +234,8 @@ export function updateBooklistIntro(booklistId, data) {
 export function GetShelfBooks(shelfId) {
   return http.get(`/bookshelf/shelf-books/${shelfId}`, { withToken: true });
 }
+
+export function addBookCopies(data) {
+  // data should be { ISBN, NumberOfCopies, ShelfID }
+  return http.post('/admin/books/copies', data)
+}
