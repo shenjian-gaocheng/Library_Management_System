@@ -142,25 +142,30 @@ const getOverdueFine = (record) => {
 
 <style scoped>
 .records-container {
-  padding: 20px;
+  padding: 24px;
   background-color: #f9fbfd;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .sort-container {
-  margin-bottom: 10px;
+  margin-bottom: 14px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
+  gap: 8px;
+  font-size: 16px; 
+}
+
+.sort-container select {
+  font-size: 16px;
+  padding: 4px 8px;
 }
 
 .styled-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
-  border-radius: 8px;
+  font-size: 18px; 
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -168,14 +173,16 @@ const getOverdueFine = (record) => {
   background-color: #4da6ff;
   color: white;
   text-align: center;
-  padding: 12px;
+  padding: 16px; 
+  font-size: 17px; 
 }
 
 .styled-table td {
-  padding: 12px;
+  padding: 16px; 
   border-bottom: 1px solid #ddd;
   text-align: center;
-  height: 48px;
+  height: 58px; 
+  font-size: 16px;
 }
 
 .styled-table tbody tr:nth-child(even) {
@@ -189,25 +196,28 @@ const getOverdueFine = (record) => {
 .no-data {
   text-align: center;
   color: #999;
-  padding: 20px;
+  padding: 24px;
+  font-size: 16px;
 }
 
 .pagination {
-  margin-top: 15px;
+  margin-top: 18px;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+  font-size: 16px; 
 }
 
 .pagination button {
-  padding: 6px 12px;
+  padding: 8px 14px;
   background-color: #4da6ff;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s;
+  font-size: 16px; 
 }
 
 .pagination button:hover:not(:disabled) {
@@ -222,5 +232,6 @@ const getOverdueFine = (record) => {
 .overdue {
   color: #e57373;
   font-weight: bold;
+  font-size: 16px;
 }
 </style>
