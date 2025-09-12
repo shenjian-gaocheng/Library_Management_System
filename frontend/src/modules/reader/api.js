@@ -55,3 +55,6 @@ export const updateLibrarian = (data) => http.put('/librarian', data,{withToken:
 export const deleteLibrarian = (id) => http.delete(`/librarian/${id}`,{withToken:true})
 
 export const getLibrarianProfile = () => http.get('/librarian/info',{withToken:true})
+
+// ——————————————————书籍个性化推荐接口相关接口————————————————
+export const getRecommendations = () => http.get('/reader/me/recommendations',{withToken:true})

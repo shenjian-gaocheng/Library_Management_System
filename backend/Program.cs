@@ -11,7 +11,9 @@ using backend.Services.Book;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 using library_system.Repositories.Admin; // 添加这行
-using library_system.Services.Admin;    // 添加这行
+using library_system.Services.Admin;
+using backend.Repositories.RecommendationRepository;
+using backend.Services.RecommendationService;    // 添加这行
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,6 +97,9 @@ services.AddTransient<BorrowingService>();
 
 services.AddSingleton(new LibrarianRepository(connectionString));
 services.AddTransient<LibrarianService>();
+
+services.AddSingleton(new RecommendationRepository(connectionString));
+services.AddTransient<RecommendationService>();
 
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
