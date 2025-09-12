@@ -64,3 +64,4 @@ export function getPendingReports() {
 export function handleReport(reportId, action, banUser) {
   return http.put(`/admin/reports/${reportId}`, { action, banUser },{withToken:true})
 }
+
