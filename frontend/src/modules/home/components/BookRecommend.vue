@@ -7,6 +7,7 @@
         <div class="book-info">
           <h3 class="book-title">{{ book.Title }}</h3>
           <p class="book-author">{{ book.Author }}</p>
+          <p class="book-count">被书单引用: {{ book.BooklistCount }}</p>
         </div>
       </div>
     </div>
@@ -17,9 +18,10 @@
 import { getRecommendations } from '@/modules/reader/api.js'
 import { onMounted, ref } from 'vue'
 import router from '@/router/index.js'
-const defaultCover = new URL('@/assets/book_cover_default.jpg', import.meta.url).href
 
+const defaultCover = new URL('@/assets/book_cover_default.jpg', import.meta.url).href
 const books = ref([])
+
 onMounted(async () => {
   const res = await getRecommendations()
   books.value = res.data || []
@@ -27,7 +29,6 @@ onMounted(async () => {
 
 // 点击跳转评论页
 function goToComments(isbn) {
-  // 路由跳转到 /comments 并带 isbn 查询参数
   router.push({ path: '/comments', query: { isbn } })
 }
 </script>
@@ -85,5 +86,11 @@ function goToComments(isbn) {
 .book-author {
   font-size: 0.9rem;
   color: #666;
+}
+
+.book-count {
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 0.25rem;
 }
 </style>
