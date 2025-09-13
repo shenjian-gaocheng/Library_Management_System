@@ -69,5 +69,11 @@
 
         //头像目录根路径
         public const string AvatarDirectoryRoot = "wwwroot/avatars";
+
+        //密码通配符
+        public const string PasswordAsterisk = "f8K3bPqX7tV2zR9nYwL1sHcD6mE4uJ0aQpG5oBvWkZxTjF3yN8rM\r\n";
+
+        //默认密码
+        public const string DefaultPassword = "1234567890";
     }
 }

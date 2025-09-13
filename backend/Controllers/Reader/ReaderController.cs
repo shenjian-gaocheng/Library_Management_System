@@ -39,9 +39,9 @@ namespace backend.Controllers
          * @return Reader 列表
          */
         [HttpGet("list")]
-        public async Task<ActionResult> list()
+        public async Task<ActionResult> list(string? username = null)
         {
-            var readers = await _readerService.GetAllReadersAsync();
+            var readers = await _readerService.GetAllReadersAsync(username);
             return Ok(readers);
         }
 
@@ -84,6 +84,13 @@ namespace backend.Controllers
             return result > 0 ? Ok() : NotFound();
         }
 
+        [HttpPut("updatePartial")]
+        public async Task<ActionResult> UpdatePartial([FromBody] ReaderShowDto reader)
+        {
+            var result = await _readerService.UpdateReaderPartialAsync(reader);
+            return result > 0 ? Ok() : NotFound();
+        }
+
         /**
          * 删除一个 Reader
          * @param id ReaderID
@@ -123,6 +130,25 @@ namespace backend.Controllers
             {
                 loginUser.Password = NewPwd; // 更新登录用户的密码
                 await _tokenService.SetLoginUserAsync(loginUser);
+                return Ok("密码重置成功");
+            }
+            return BadRequest("密码重置失败");
+        }
+
+
+        /**
+         * 重置密码
+         * @
+         * 
+         */
+        [HttpPut("resetPwd")]
+        public async Task<ActionResult> Reset(string userName, string NewPwd = UserConstants.PasswordAsterisk)
+        {
+
+            NewPwd = PasswordUtils.HashPassword(NewPwd); // 确保新密码被哈希处理
+
+            if (await _readerService.ResetPasswordAsync(userName, NewPwd))
+            {
                 return Ok("密码重置成功");
             }
             return BadRequest("密码重置失败");

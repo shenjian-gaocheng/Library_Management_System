@@ -15,10 +15,14 @@ export const getReaders = (params) => http.get('/reader/list', { withToken:true,
 export const getReaderById = (id) => http.get(`/reader/${id}`,{withToken:true})
 export const addReader = (data) => http.post('/reader', data,{withToken:true})
 export const updateReader = (data) => http.put('/reader', data,{withToken:true})
+export const updateReaderPartial = (data) => http.put('/reader/updatePartial', data,{withToken:true})
 export const deleteReader = (id) => http.delete(`/reader/${id}`,{withToken:true})
 
 
 export const resetPassword = () => http.put(`/reader/me/resetPwd`,{withToken:true})
+export const reset = (username) =>
+  http.put(`/reader/resetPwd?userName=${encodeURIComponent(username)}`, null, { withToken: true })
+
 export const getMyProfile = () => http.get('/reader/me/info',{withToken:true})
 export const getAvatar = (avatarUrl) => http.get(`/reader/me/avatar/${avatarUrl}`,{withToken:true})
 export const uploadAvatar = (file) => {
