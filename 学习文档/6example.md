@@ -264,53 +264,37 @@ npm run build
 ```
 
 ## 5.调用关系
-    ┌────────────────────────────┐
-    │        Frontend 模块       │
-    │   ┌────────────────────┐   │
-    │   │ modules/reader/    │   │← 读者组前端模块（页面、组件）
-    │   ├────────────────────┤   │
-    │   │ modules/book/      │   │← 图书组前端模块
-    │   ├────────────────────┤   │
-    │   │ modules/admin/     │   │← 管理员组前端模块
-    └───┴────────────────────┴───┘
-                │
-                ▼（通过 API 请求）
-    ┌────────────────────────────┐
-    │         Backend 模块       │
-    │   ┌────────────────────┐   │
-    │   │ Controllers/reader/│   │← ReaderController.cs 接收前端请求
-    │   │ Services/reader/   │   │← ReaderService.cs 实现业务逻辑
-    │   │ DTOs/reader/       │   │← ReaderLoginDto.cs 数据结构定义
-    │   ├────────────────────┤   │
-    │   │ Controllers/book/  │   │← 图书组控制器
-    │   │ Services/book/     │   │← 图书组业务逻辑
-    │   │ DTOs/book/         │   │← 图书组数据结构
-    │   ├────────────────────┤   │
-    │   │ Controllers/admin/ │   │← 管理员组控制器
-    │   │ Services/admin/    │   │← 管理员业务逻辑
-    │   │ DTOs/admin/        │   │← 管理员数据结构
-    └───┴────────────────────┴───┘
-                │
-                ▼（通过 DbContext、Dapper 等）
-    ┌────────────────────────────┐
-    │         Database 层        │
-    │（Oracle，单实例 + 单用户） │
-    │                            │
-    │  所有组共用一个用户 schema │
-    │   final_owner@ORCLPDB1     │
-    │                            │
-    │  ┌────────────────────┐   │
-    │  │ schema.sql          │   │← 所有表结构（共享）
-    │  ├────────────────────┤   │
-    │  │ functions/reader/   │   │← 读者组函数
-    │  │ views/reader/       │   │← 读者组视图
-    │  │ triggers/reader/    │   │← 读者组触发器
-    │  ├────────────────────┤   │
-    │  │ functions/book/     │   │← 图书组函数
-    │  │ views/book/         │   │← 图书组视图
-    │  │ triggers/book/      │   │← 图书组触发器
-    │  ├────────────────────┤   │
-    │  │ functions/admin/    │   │← 管理员组函数
-    │  │ views/admin/        │   │← 管理员组视图
-    │  │ triggers/admin/     │   │← 管理员组触发器
-    └───┴────────────────────┴───┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                Frontend 模块                                 │
+│                                                                              │
+│  modules/reader/        modules/book/          modules/admin/                │
+│  ────────────────       ────────────────       ────────────────              │
+│  读者组前端模块（页面）   图书组前端模块          管理员组前端模块               │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼（通过 API 请求）
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                                Backend 模块                                   │
+│                                                                               │
+│  Controllers/reader/   Controllers/book/    Controllers/admin/                │  接收前端请求
+│                                                                               │
+│  Services/reader/      Services/book/       Services/admin/                   │  实现业务逻辑
+│                                                                               │
+│  DTOs/reader/          DTOs/book/           DTOs/admin/                       │  数据结构定义
+│                                                                               │
+│  DTOs/reader/          DTOs/book/           DTOs/admin/                       │  执行 SQL
+└───────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼（通过 DbContext、Dapper 等）
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                Database 层                                   │
+│                Oracle（单实例 + 单用户，final_owner@ORCLPDB1）                │
+│                                                                              │
+│ schema.sql （共享表结构）                                                     │
+│                                                                              │
+│ functions/reader/    functions/book/    functions/admin/                     │
+│ views/reader/        views/book/        views/admin/                         │
+│ triggers/reader/     triggers/book/     triggers/admin/                      │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+
