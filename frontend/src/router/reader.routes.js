@@ -36,5 +36,19 @@ export default [
     name: 'MyReservations',
     component: () => import('@/modules/reader/pages/MyReservationsPage.vue'),
     meta: { requiresAuth: true, title: '我的预约', layout: 'Dashboard' } // 假设读者有自己的控制台布局
-  }
+  },
+    //搜索的实体书页面
+  {
+    path: '/booklocation',
+    name: 'BookSearchLocation',
+    component: () =>
+    import(
+        /* webpackChunkName: "book-search" */
+        '@/modules/book/pages/BookLocationPage.vue'
+    ),
+    meta: {
+      requiresAuth: true,     
+      title: '实体书位置',
+    }
+  },
 ];

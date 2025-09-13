@@ -136,7 +136,7 @@ export default [
         '@/modules/book/pages/BookLocationPage.vue'
     ),
     meta: {
-      requiresAuth: true,
+      requiresAuth: true,     
       title: '实体书位置',
     }
   },
