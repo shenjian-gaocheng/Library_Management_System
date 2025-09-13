@@ -21,7 +21,7 @@
               id="searchKeyword"
               type="text" 
               v-model="searchKeyword" 
-              placeholder="请输入ISBN或分类名称"
+              placeholder="请输入ISBN或分类ID"
               class="form-input"
             />
           </div>
@@ -139,7 +139,6 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue'
-import LayoutDefault from '@/shared/components/layouts/LayoutDefault.vue'
 import { 
   bindBookToCategories, 
   getBookCategories, 

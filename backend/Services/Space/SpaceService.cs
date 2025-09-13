@@ -18,25 +18,16 @@ namespace backend.Services.Space
 
         public async Task CreateSeatReservationAsync(CreateSeatReservationDto dto, long readerId)
         {
-            // 规则1: 结束时间必须在开始时间之后
+            // 规则校验现在都在 Repository 的事务中处理
+            // 我们只在 Service 层做最基本的时间逻辑校验
             if (dto.EndTime <= dto.StartTime)
                 throw new InvalidOperationException("结束时间必须晚于开始时间。");
 
-            // 规则2: 预约时长不能超过4小时
             if ((dto.EndTime - dto.StartTime).TotalHours > 4)
                 throw new InvalidOperationException("单次预约最长为4小时。");
-                
-            // 规则3: 检查读者是否已有未完成的预约
-            var activeReservations = await _repository.GetActiveReservationsCountAsync(readerId);
-            if (activeReservations > 0)
-                throw new InvalidOperationException("您已有未完成的预约，无法再次预约。");
 
-            // 规则4: 检查该座位在该时间段是否已被占用
-            var isAvailable = await _repository.IsSeatAvailableAsync(dto.SeatID, dto.StartTime, dto.EndTime);
-            if (!isAvailable)
-                throw new InvalidOperationException("该座位在此时间段已被预约，请选择其他时间。");
-
-            await _repository.CreateSeatReservationAsync(dto.SeatID, readerId, dto.StartTime, dto.EndTime);
+            // 直接调用新的事务性方法
+            await _repository.CreateSeatReservationInTransactionAsync(dto.SeatID, readerId, dto.StartTime, dto.EndTime);
         }
 
         public Task<IEnumerable<MyReservationDto>> GetMyReservationsAsync(long readerId)

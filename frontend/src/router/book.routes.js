@@ -139,7 +139,21 @@ export default [
       requiresAuth: true,
       title: '实体书位置',
     }
-  }
+  },
+  {
+    path: '/admin/category2',
+    name: 'BookSearchLocation',
+    component: () =>
+    import(
+        /* webpackChunkName: "book-search" */
+        '@/modules/book/pages/BookCategoryManagePage.vue'
+    ),
+    meta: {       
+      layout: 'Admin', 
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: '书籍分类' }
 
+  },
   // ========== 已删除旧的 /bookshelf 路由 ==========
 ]
