@@ -36,7 +36,7 @@
           <label>区域</label>
           <select v-model="addCopyForm.zone">
             <option value="">请选择区域</option>
-            <option v-for="zone in availableAddCopyZones" :key="zone" :value="zone">{{ zone }}区</option>
+            <option v-for="zone in availableAddCopyZones" :key="zone" :value="zone">{{ zone }}</option>
           </select>
         </div>
         <div class="form-item">
@@ -652,8 +652,8 @@ const availableAddCopyFloors = computed(() => {
   return [];
 });
 const availableAddCopyZones = computed(() => {
-  if (addCopyForm.buildingId === 21) return ['A', 'B', 'C', 'D'];
-  if (addCopyForm.buildingId === 22) return ['A', 'B'];
+  if (addCopyForm.buildingId === 21) return ['A区', 'B区', 'C区', 'D区'];
+  if (addCopyForm.buildingId === 22) return ['A区', 'B区'];
   return [];
 });
 const availableAddCopyShelves = computed(() => {
@@ -670,7 +670,8 @@ async function handleAddCopies() {
 
   const floorStr = String(form.floor).padStart(2, '0');
   const shelfNumStr = String(form.shelfCode).padStart(3, '0');
-  const formattedShelfCode = `${floorStr}${form.zone}-${shelfNumStr}`;
+
+  const formattedShelfCode = `${floorStr}${form.zone.replace('区', '')}-${shelfNumStr}`;
 
   try {
     const { data: shelfExists } = await checkShelfExists(form.buildingId, formattedShelfCode, form.floor, form.zone);
