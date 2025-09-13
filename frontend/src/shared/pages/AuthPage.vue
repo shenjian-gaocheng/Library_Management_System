@@ -95,7 +95,7 @@ const loginType = ref("reader")  // 默认读者登录
 
 const form = reactive({
   username: '1234567',
-  password: '1234567890',
+  password: '1234567',
   confirmPassword: '',
 })
 
