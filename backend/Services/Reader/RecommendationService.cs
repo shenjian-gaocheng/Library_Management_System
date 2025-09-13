@@ -23,7 +23,7 @@ namespace backend.Services.RecommendationService
         /// <returns>推荐书籍列表</returns>
         public async Task<IEnumerable<RecommendedBookDto>> GetRecommendationsAsync(long readerId, int topN = 10)
         {
-            return await _recommendationRepository.GetRecommendationsAsync(readerId, topN);
+            return await _recommendationRepository.GetRecommendationAsync(readerId, topN);
         }
     }
 }

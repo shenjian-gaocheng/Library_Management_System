@@ -37,13 +37,14 @@ namespace backend.Repositories.RecommendationRepository
             using var cmd = new OracleCommand("get_recommendations", connection);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            var returnCursor = new OracleParameter
+            // 函数返回值
+            var returnCursor = new OracleParameter("returnCursor", OracleDbType.RefCursor)
             {
-                OracleDbType = OracleDbType.RefCursor,
                 Direction = ParameterDirection.ReturnValue
             };
             cmd.Parameters.Add(returnCursor);
 
+            // 输入参数
             cmd.Parameters.Add("p_ReaderID", OracleDbType.Int32).Value = readerId;
             cmd.Parameters.Add("p_TopN", OracleDbType.Int32).Value = topN;
 
@@ -64,6 +65,7 @@ namespace backend.Repositories.RecommendationRepository
             }
 
             return result;
+
         }
 
         public async Task<IEnumerable<RecommendedBookDto>> GetRecommendationsAsync(long readerId, int topN = 10)
