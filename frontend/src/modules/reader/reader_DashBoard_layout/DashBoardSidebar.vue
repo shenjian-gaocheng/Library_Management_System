@@ -20,15 +20,7 @@
           个人主页
         </router-link>
       </li>
-      <li>
-        <router-link 
-          to="/user/favorites" 
-          class="nav-item" 
-          active-class="nav-item-active"
-        >
-          收藏图书
-        </router-link>
-      </li>
+      
       <li>
         <router-link 
           to="/user/booklist" 
