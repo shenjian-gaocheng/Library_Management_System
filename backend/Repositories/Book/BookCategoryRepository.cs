@@ -186,29 +186,50 @@ namespace backend.Repositories.Book
         /// </summary>
         public async Task<IEnumerable<CategorySelectDto>> GetLeafCategoriesAsync()
         {
-            var sql = @"
-                SELECT 
-                    c.CategoryID,
-                    c.CategoryName
-                FROM Category c
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM Category child 
-                    WHERE child.ParentCategoryID = c.CategoryID
-                )
-                ORDER BY c.CategoryName";
-
+            // 1. 一次性获取所有分类数据
+            var sql = "SELECT CategoryID, CategoryName, ParentCategoryID FROM Category";
             using var connection = new OracleConnection(_connectionString);
-            await connection.OpenAsync();
-            var results = await connection.QueryAsync<CategorySelectDto>(sql);
-            
-            // 为每个结果添加分类路径和叶子节点标识
-            foreach (var result in results)
+            var allCategories = (await connection.QueryAsync<Category>(sql)).ToList();
+
+            if (!allCategories.Any())
             {
-                result.CategoryPath = await GetCategoryPathAsync(result.CategoryID);
-                result.IsLeaf = true;
+                return new List<CategorySelectDto>();
             }
 
-            return results;
+            // 2. 在内存中构建一个方便查找的字典
+            var categoryMap = allCategories.ToDictionary(c => c.CategoryID);
+            
+            var leafNodes = new List<CategorySelectDto>();
+
+            // 3. 找出所有叶子节点
+            var allCategoryIds = new HashSet<string>(allCategories.Select(c => c.CategoryID));
+            var parentCategoryIds = new HashSet<string>(allCategories.Where(c => c.ParentCategoryID != null).Select(c => c.ParentCategoryID!));
+            var leafCategoryIds = allCategoryIds.Except(parentCategoryIds);
+
+            // 4. 为每个叶子节点在内存中构建路径
+            foreach (var leafId in leafCategoryIds)
+            {
+                var path = new List<string>();
+                var currentId = leafId;
+                
+                // 在字典中查找，不再访问数据库
+                while (!string.IsNullOrEmpty(currentId) && categoryMap.ContainsKey(currentId))
+                {
+                    var currentNode = categoryMap[currentId];
+                    path.Insert(0, currentNode.CategoryName);
+                    currentId = currentNode.ParentCategoryID;
+                }
+
+                leafNodes.Add(new CategorySelectDto
+                {
+                    CategoryID = leafId,
+                    CategoryName = categoryMap[leafId].CategoryName,
+                    CategoryPath = string.Join(" / ", path), // 正确赋值
+                    IsLeaf = true
+                });
+            }
+
+            return leafNodes.OrderBy(n => n.CategoryPath);
         }
 
         /// <summary>

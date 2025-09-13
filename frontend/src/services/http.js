@@ -37,7 +37,7 @@ http.interceptors.response.use(
       // router.push({ path: '/login' })
     } else if (status === 400) {
       // 可选：这里也可以不 alert，而是交给业务层抛出更明确的错误信息
-      alert(message || '请求有误')
+      //alert(message || '请求有误')
     } else if (!error.response) {
       alert('无法连接服务器，请检查网络')
     }

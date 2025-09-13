@@ -8,18 +8,16 @@
         <router-link to="/books" class="nav-item">图书资源</router-link>
 
         <div class="nav-item dropdown">
-          <span>借阅服务</span>
+          <span>空间服务</span> <!-- 修改名称 -->
           <div class="dropdown-menu">
-            <router-link to="/services/rules">借阅规则</router-link>
-            <router-link to="/services/reserve">图书预约</router-link>
-            <router-link to="/services/renew">图书续借</router-link>
+            <router-link to="/space/seats">座位预约</router-link> <!-- 修改链接 -->
           </div>
         </div>
 
         <router-link to="/my/home/dashboard" class="nav-item">读者控制台</router-link>
 
 
-        
+
         <router-link to="/about" class="nav-item">关于我们</router-link>
       </nav>
 
@@ -40,9 +38,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { getMyProfile, logout } from '@/modules/reader/api.js'
+import router from '@/router/index.js'
 
-const showServices = ref(false)
-const showLibrary = ref(false)
 const isScrolled = ref(false)
 let   scrollEl     = null   // 实际滚动的容器（#app）
 

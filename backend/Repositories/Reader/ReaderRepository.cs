@@ -1,7 +1,8 @@
+using backend.Common.Utils;
+using backend.DTOs.Reader;
+using backend.Models;
 using Dapper;
 using Oracle.ManagedDataAccess.Client;
-using backend.Models;
-using backend.Common.Utils;
 
 
 namespace backend.Repositories.ReaderRepository;
@@ -51,16 +52,34 @@ public class ReaderRepository
     }
 
     /**
-     * 获取所有 Reader 信息
+     * 获取所有 Reader 信息（支持按用户名搜索）
+     * @param username 可选的用户名关键词
      * @return 返回 Reader 对象列表
      */
-    public async Task<IEnumerable<Reader>> GetAllReadersAsync()
+    public async Task<IEnumerable<Reader>> GetAllReadersAsync(string? username = null)
     {
         using var connection = new OracleConnection(_connectionString);
         await connection.OpenAsync();
-        var sql = "SELECT * FROM Reader";
-        return await connection.QueryAsync<Reader>(sql);
+
+        string sql;
+        object param;
+
+        if (!string.IsNullOrWhiteSpace(username))
+        {
+            // 模糊搜索
+            sql = "SELECT * FROM Reader WHERE UserName LIKE :UserName";
+            param = new { UserName = $"%{username}%" };
+        }
+        else
+        {
+            // 全部查询
+            sql = "SELECT * FROM Reader";
+            param = new { };
+        }
+
+        return await connection.QueryAsync<Reader>(sql, param);
     }
+
 
     /**
      * 新增一个 Reader
@@ -72,7 +91,7 @@ public class ReaderRepository
         using var connection = new OracleConnection(_connectionString);
         await connection.OpenAsync();
 
-        reader.Password = PasswordUtils.HashPassword(reader.Password); // ȷ�����뱻��ϣ����
+        reader.Password = PasswordUtils.HashPassword(reader.Password); 
 
         var sql = @"
             INSERT INTO Reader (Username, Password, Fullname,Nickname,Avatar, CreditScore, AccountStatus, Permission)
@@ -189,5 +208,60 @@ public class ReaderRepository
         return await connection.ExecuteAsync(sql, reader);
     }
 
+    public async Task<int> UpdateReaderPartialAsync(ReaderShowDto dto)
+    {
+        using var connection = new OracleConnection(_connectionString);
+        await connection.OpenAsync();
+
+        // 动态拼接 SQL
+        var updates = new List<string>();
+        var parameters = new DynamicParameters();
+
+        if (!string.IsNullOrEmpty(dto.UserName))
+        {
+            updates.Add("Username = :UserName");
+            parameters.Add("UserName", dto.UserName);
+        }
+        if (!string.IsNullOrEmpty(dto.FullName))
+        {
+            updates.Add("Fullname = :FullName");
+            parameters.Add("Fullname", dto.FullName);
+        }
+        if (!string.IsNullOrEmpty(dto.NickName))
+        {
+            updates.Add("Nickname = :NickName");
+            parameters.Add("Nickname", dto.NickName);
+        }
+        if (dto.CreditScore.HasValue)
+        {
+            updates.Add("CreditScore = :CreditScore");
+            parameters.Add("CreditScore", dto.CreditScore.Value);
+        }
+        if (!string.IsNullOrEmpty(dto.AccountStatus))
+        {
+            updates.Add("AccountStatus = :AccountStatus");
+            parameters.Add("AccountStatus", dto.AccountStatus);
+        }
+        if (!string.IsNullOrEmpty(dto.Permission))
+        {
+            updates.Add("Permission = :Permission");
+            parameters.Add("Permission", dto.Permission);
+        }
+
+        if (updates.Count == 0)
+        {
+            // 没有字段要更新
+            return 0;
+        }
+
+        parameters.Add("ReaderID", dto.ReaderID);
+
+        var sql = $@"
+        UPDATE Reader
+        SET {string.Join(", ", updates)}
+        WHERE ReaderID = :ReaderID";
+
+        return await connection.ExecuteAsync(sql, parameters);
+    }
 
 }

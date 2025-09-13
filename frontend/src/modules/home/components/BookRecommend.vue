@@ -2,11 +2,12 @@
   <section class="book-recommend">
     <h2 class="section-title">推荐图书</h2>
     <div class="book-list">
-      <div v-for="(book, index) in books" :key="index" class="book-card">
-        <img :src="book.cover" class="book-cover" alt="book cover" />
+      <div v-for="(book, index) in books" :key="index" class="book-card" @click="goToComments(book.ISBN)" style="cursor: pointer;">
+        <img :src="`/covers/${book.ISBN}.jpg`" class="book-cover" alt="book cover" @error="e => (e.target.src = defaultCover)"/>
         <div class="book-info">
-          <h3 class="book-title">{{ book.title }}</h3>
-          <p class="book-author">{{ book.author }}</p>
+          <h3 class="book-title">{{ book.Title }}</h3>
+          <p class="book-author">{{ book.Author }}</p>
+          <p class="book-count">被书单引用: {{ book.BooklistCount }}</p>
         </div>
       </div>
     </div>
@@ -14,23 +15,22 @@
 </template>
 
 <script setup>
-const books = [
-  {
-    title: '人工智能导论',
-    author: '周志华',
-    cover: '/images/book1.jpg'
-  },
-  {
-    title: '深入理解计算机系统',
-    author: 'Randal E. Bryant',
-    cover: '/images/book2.jpg'
-  },
-  {
-    title: '数据结构与算法分析',
-    author: 'Mark Allen Weiss',
-    cover: '/images/book3.jpg'
-  }
-]
+import { getRecommendations } from '@/modules/reader/api.js'
+import { onMounted, ref } from 'vue'
+import router from '@/router/index.js'
+
+const defaultCover = new URL('@/assets/book_cover_default.jpg', import.meta.url).href
+const books = ref([])
+
+onMounted(async () => {
+  const res = await getRecommendations()
+  books.value = res.data || []
+})
+
+// 点击跳转评论页
+function goToComments(isbn) {
+  router.push({ path: '/comments', query: { isbn } })
+}
 </script>
 
 <style scoped>
@@ -86,5 +86,11 @@ const books = [
 .book-author {
   font-size: 0.9rem;
   color: #666;
+}
+
+.book-count {
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 0.25rem;
 }
 </style>

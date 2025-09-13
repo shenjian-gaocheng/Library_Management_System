@@ -13,6 +13,28 @@ export default [
     meta: { requiresAuth: false, title: '图书搜索' }
   },
 
+  // 图书分类浏览
+  {
+    path: '/books',
+    name: 'BookCategories',
+    component: () => import('@/modules/book/pages/CategoryDisplayPage.vue'),
+    meta: { 
+      requiresAuth: false,
+      title: '图书分类'
+    }
+  },
+
+  // 分类下的图书
+  {
+    path: '/books/category/:categoryId',
+    name: 'CategoryBooks',
+    component: () => import('@/modules/book/pages/CategoryBooksPage.vue'),
+    props: true,
+    meta: { 
+      requiresAuth: false,
+      title: '分类图书'
+    }
+  },
   // 添加首页头部导航栏 "我的图书馆" 中 "我的书单主页面" 路由
   {
     path: '/user/booklist',

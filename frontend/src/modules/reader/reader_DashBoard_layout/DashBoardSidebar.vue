@@ -47,6 +47,19 @@
           借阅记录
         </router-link>
       </li>
+
+      <!-- ========== 修改部分开始 ========== -->
+      <li>
+        <router-link 
+          to="/my/reservations" 
+          class="nav-item" 
+          active-class="nav-item-active"
+        >
+          我的预约
+        </router-link>
+      </li>
+      <!-- ========== 修改部分结束 ========== -->
+
     </ul>
   </div>
 </template>
@@ -118,5 +131,17 @@
   font-size: 18px;
 }
 
-
+/* 您之前的 ::before 样式可能会导致布局问题，我将其注释掉，
+   因为 nav-item-active 已经有背景色和粗体来标示选中状态了 */
+/*
+.nav-item-active::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  border-radius: 2px;
+}
+*/
 </style>

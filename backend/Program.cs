@@ -13,6 +13,11 @@ using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 using backend.Repositories.Admin;
 using backend.Services.Admin;
+using backend.Repositories.RecommendationRepository;
+using backend.Services.RecommendationService;    // 添加这行
+using backend.Repositories.ReaderRepository;
+using backend.Repositories.Space; // <-- 新增或修改
+using backend.Services.Space;   // <-- 新增或修改
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,6 +107,9 @@ builder.Services.AddSingleton<IOracleConnectionFactory, OracleConnectionFactory>
 services.AddSingleton(new LibrarianRepository(connectionString));
 services.AddTransient<LibrarianService>();
 
+services.AddSingleton(new RecommendationRepository(connectionString));
+services.AddTransient<RecommendationService>();
+
 // 注册服务依赖（Repository 使用 Singleton，Service 使用 Transient）
 builder.Services.AddSingleton(new BookRepository(connectionString));
 builder.Services.AddSingleton(new CommentRepository(connectionString));
@@ -118,12 +126,15 @@ builder.Services.AddTransient<BookShelfService>();
 
 builder.Services.AddSingleton(new PurchaseAnalysisRepository(connectionString));
 builder.Services.AddTransient<PurchaseAnalysisService>();
-builder.Services.AddSingleton(new ReportRepository(connectionString)); 
+builder.Services.AddSingleton(new ReportRepository(connectionString));
 builder.Services.AddTransient<ReportService>();
 builder.Services.AddSingleton(new AnnouncementRepository(connectionString));
 builder.Services.AddTransient<AnnouncementService>();
 builder.Services.AddSingleton(new BookAdminRepository(connectionString));
 builder.Services.AddTransient<BookAdminService>();
+
+services.AddSingleton(new SpaceRepository(connectionString));
+services.AddTransient<SpaceService>();
 
 var app = builder.Build();
 

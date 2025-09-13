@@ -46,9 +46,9 @@ namespace backend.Services.ReaderService
          * 锟斤拷取锟斤拷锟斤拷 Reader 锟斤拷锟斤拷
          * @return Reader 锟斤拷锟斤拷锟叫憋拷
          */
-        public async Task<IEnumerable<Reader>> GetAllReadersAsync()
+        public async Task<IEnumerable<Reader>> GetAllReadersAsync(string? username = null)
         {
-            return await _readerRepository.GetAllReadersAsync();
+            return await _readerRepository.GetAllReadersAsync(username);
         }
 
         /**
@@ -69,6 +69,11 @@ namespace backend.Services.ReaderService
         public async Task<int> UpdateReaderAsync(Reader reader)
         {
             return await _readerRepository.UpdateReaderAsync(reader);
+        }
+
+        public async Task<int> UpdateReaderPartialAsync(ReaderShowDto dto)
+        {
+            return await _readerRepository.UpdateReaderPartialAsync(dto);
         }
 
         /**

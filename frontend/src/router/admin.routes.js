@@ -5,7 +5,13 @@ import AnnouncementManagePage from '@/modules/admin/pages/AnnouncementManagePage
 import BookManagePage from '@/modules/admin/pages/BookManagePage.vue'
 import ShelfManagePage from '@/modules/admin/pages/ShelfManagePage.vue' // 确保这个新页面被引入
 import ReportHandlingPage from '@/modules/admin/pages/ReportHandlingPage.vue'
+<<<<<<< HEAD
 import BookCategoryManagePage from '@/modules/book/pages/BookCategoryManagePage.vue'
+=======
+import ReaderMagnagePage from '@/modules/admin/pages/ReaderMagnagePage.vue'
+import BookBindCategoryPage from '@/modules/admin/pages/BookBindCategoryPage.vue';
+
+>>>>>>> 06ea0c9d3c31315c43747876c00e05c2b14dd4f6
 export default [
   // 管理员仪表盘
   {
@@ -60,7 +66,7 @@ export default [
       title: '公告发布'
     }
   },
-  
+
   // 图书管理
   {
     path: '/admin/books',
@@ -73,7 +79,7 @@ export default [
       title: '图书管理'
     }
   },
-  
+
   // 书架管理 (新的、正确的路由)
   {
     path: '/admin/shelves',
@@ -91,14 +97,15 @@ export default [
     path: '/admin/reports',
     name: 'ReportHandling',
     component: ReportHandlingPage,
-    meta: {       
-      layout: 'Admin', 
+    meta: {
+      layout: 'Admin',
       requiresAuth: true,
       requiresAdmin: true,
       title: '举报处理' }
   },
 
   {
+<<<<<<< HEAD
     path: '/admin/category2',
     name: 'BookCategoryManage',
     component: BookCategoryManagePage,
@@ -109,3 +116,29 @@ export default [
       title: '书籍分类' }
   },
 ]
+=======
+    path: '/admin/readers',
+    name: 'ReaderManage',
+    component: ReaderMagnagePage,
+    meta: {
+      layout: 'Admin',
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: '读者管理' }
+  },
+
+  {
+    path: '/admin/book-category',
+    name: 'BookBindCategory',
+    component: BookBindCategoryPage,
+    meta: {
+      layout: 'Admin',
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: '书籍分类'
+    }
+  },
+
+
+]
+>>>>>>> 06ea0c9d3c31315c43747876c00e05c2b14dd4f6
