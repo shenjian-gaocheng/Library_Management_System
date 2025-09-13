@@ -1,7 +1,7 @@
 <template>
   <div class="category-display-page">
     <div class="page-header">
-      <h1 class="text-2xl font-bold text-gray-900">图书分类</h1>
+      <h1 class="text-2xl font-bold text-gray-900 mt-[60px]">图书分类</h1>
       <!-- <p class="text-gray-600 mt-2">查看图书馆所有分类</p> -->
     </div>
 
