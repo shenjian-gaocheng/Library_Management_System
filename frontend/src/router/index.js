@@ -11,6 +11,8 @@ import adminRoutes  from '@/router/admin.routes.js'
 import bookRoutes   from '@/router/book.routes.js'
 // import readerRoutes from '@/router/reader.routes.js'
 
+import AboutPage from '@/shared/pages/AboutPage.vue'; // 1. 引入新页面
+
 const routes = [
   { path: '/', name: 'HomeView', component: HomeView },
   ...adminRoutes,
@@ -19,6 +21,13 @@ const routes = [
     path: '/auth',
     name: 'AuthPage',
     component: () => import('@/shared/pages/AuthPage.vue')
+  },
+
+  {
+    path: '/about',
+    name: 'About',
+    component: AboutPage, // <-- 必须是组件本身，而不是一个字符串
+    meta: { title: '关于我们' }
   },
   ...readerRoutes,
   //...adminRoutes,
