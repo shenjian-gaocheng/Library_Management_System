@@ -1,8 +1,8 @@
 <template>
   <section class="category-books-wrapper bg-gray-100">
     <div class="category-header">
-      <h1 class="text-2xl font-bold text-gray-900 mb-2">分类: {{ categoryName }}</h1>
-      <p class="text-gray-600">该分类下的所有图书</p>
+      <h1 class="text-2xl font-bold text-gray-900 mb-2 mt-[60px]">分类: {{ categoryName }}</h1>
+      <p class="text-gray-600 mt-[60px]">该分类下的所有图书</p>
     </div>
 
     <!-- <div class="search-bar-container">

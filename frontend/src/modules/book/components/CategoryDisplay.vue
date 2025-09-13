@@ -1,5 +1,5 @@
 <template>
-  <div class="category-display">
+  <div class="category-display mt-[60px]">
     <div class="tree-header">
       <h3 class="text-lg font-semibold mb-4">图书分类</h3>
     </div>
