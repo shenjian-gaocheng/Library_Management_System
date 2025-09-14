@@ -64,7 +64,7 @@
             >
           </div>
 
-          <!-- 密码 -->
+          <!-- 密码
           <div class="form-group">
             <label for="password" class="form-label">密码</label>
             <input
@@ -74,7 +74,7 @@
               class="form-control"
               placeholder="密码暂时不允许修改，且用户名也不要随意修改，避免无法登录）"
             >
-          </div>
+          </div> -->
         </form>
       </div>
 
