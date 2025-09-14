@@ -8,7 +8,7 @@
       <input 
         v-model="searchTerm" 
         @keyup.enter="searchBooks"
-        placeholder="输入书名、作者或ISBN进行搜索..." 
+        placeholder="输入书名或作者进行搜索..." 
         class="search-input"
       >
       <button @click="searchBooks" class="btn-primary">搜索图书</button>
