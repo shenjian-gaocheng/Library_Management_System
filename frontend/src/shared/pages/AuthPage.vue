@@ -58,7 +58,7 @@
         <!-- 记住我（登录时显示） -->
         <div v-if="isLogin" class="flex justify-between items-center mb-4">
           <label><input type="checkbox" v-model="rememberMe" /> 记住我</label>
-          <a href="#" class="forgot-link">忘记密码？</a>
+          <!-- <a href="#" class="forgot-link">忘记密码？</a> -->
         </div>
 
         <!-- 提交按钮 -->
