@@ -39,7 +39,7 @@ import { useUserStore } from '@/stores/user.js'
 const userStore = useUserStore()
 const router = useRouter()
 
-const baseAvatarUrl = 'http://localhost:5000/avatars/'
+const baseAvatarUrl = import.meta.env.VITE_BASE_AVATAR_URL
 
 const nickname = computed(() => userStore.nickName)
 const avatar = computed(() => baseAvatarUrl + userStore.avatar)
@@ -94,15 +94,15 @@ const handleLogout = async () => {
   border-bottom: 1px solid #ddd;
   position: relative;
 
-  width: calc(100% + 40px); 
-  margin-left: -40px;       
+  width: calc(100% + 40px);
+  margin-left: -40px;
 }
 
 .title {
   color: black;
   font-size: 32px;
   font-weight: bold;
-  margin-left: 20px; 
+  margin-left: 20px;
 }
 
 .user {
@@ -152,8 +152,8 @@ const handleLogout = async () => {
 .modal-overlay {
   position: fixed;
   top: 0;
-  left: -40px;                
-  width: calc(100vw + 40px);  
+  left: -40px;
+  width: calc(100vw + 40px);
   height: 30vh;
   background-color: rgba(0, 0, 0, 0.3);
   display: flex;

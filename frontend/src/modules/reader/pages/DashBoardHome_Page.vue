@@ -63,7 +63,7 @@ const overdueCount = ref(0)
 const allOverdueCount = ref(0)
 
 const userStore = useUserStore()
-const baseAvatarUrl = 'http://localhost:5000/avatars/'
+const baseAvatarUrl = import.meta.env.VITE_BASE_AVATAR_URL
 const avatar = computed(() => baseAvatarUrl + userStore.avatar)
 
 const userName = computed(() => userStore.userName)

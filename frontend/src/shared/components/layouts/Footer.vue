@@ -2,7 +2,7 @@
   <footer class="footer">
     <div class="footer-content">
       <p>© 2025 图书馆管理系统 - Library Management System</p>
-      <p>联系邮箱：example</p>
+      <p>联系邮箱：2351039@tongji.edu.cn</p>
     </div>
   </footer>
 </template>

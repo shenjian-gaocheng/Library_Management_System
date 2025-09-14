@@ -142,7 +142,7 @@ namespace backend.Controllers
          * 
          */
         [HttpPut("resetPwd")]
-        public async Task<ActionResult> Reset(string userName, string NewPwd = UserConstants.PasswordAsterisk)
+        public async Task<ActionResult> Reset(string userName, string NewPwd = UserConstants.DefaultPassword)
         {
 
             NewPwd = PasswordUtils.HashPassword(NewPwd); // 确保新密码被哈希处理

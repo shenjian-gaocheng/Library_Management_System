@@ -36,15 +36,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { getMyProfile, logout } from '@/modules/reader/api.js'
 import router from '@/router/index.js'
+import { useRoute } from 'vue-router'
 
 const isScrolled = ref(false)
 let   scrollEl     = null   // 实际滚动的容器（#app）
 
 const isLoggedIn = ref(false)
 const displayName = ref('')
+const route = useRoute()
 
 
 function handleScroll () {
@@ -65,21 +67,26 @@ onUnmounted(() => {
   scrollEl && scrollEl.removeEventListener('scroll', handleScroll)
 })
 
-// === 登录状态检测 ===
-onMounted(async () => {
+// === 登录状态检测：封装为函数，并在挂载与路由变化时调用 ===
+async function loadProfile () {
   try {
-    const res = await getMyProfile()               // 要求 http 拦截器自动带 token
-    // const res2 = await getLibrarianProfile()               // 要求 http 拦截器自动带 token
+    const res = await getMyProfile() // 要求拦截器自动带 token
     const u = res?.data ?? res
     isLoggedIn.value = true
     displayName.value = u.fullName || u.nickName || u.userName || ''
-    // 可选：缓存
     localStorage.setItem('user', JSON.stringify(u))
   } catch (e) {
-    // 未登录或 token 失效
     isLoggedIn.value = false
+    displayName.value = ''
   }
+}
+
+onMounted(loadProfile)
+
+watch(() => route.fullPath, () => {
+  loadProfile()
 })
+
 
 // === 退出登录 ===
 async function handleLogout() {
